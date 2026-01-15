@@ -41,16 +41,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         K
                     </div>
                     <Title level={4} style={{ margin: 0, color: '#2c3e50' }}>
-                        SyncLife Kanban
+                        태스크 관리
                     </Title>
                 </div>
 
                 <Popconfirm
-                    title="Delete All Tasks"
-                    description="Are you sure you want to delete ALL tasks?"
+                    title="모든 태스크 삭제"
+                    description="정말로 모든 태스크를 삭제하시겠습니까?"
                     onConfirm={() => useTaskStore.getState().clearAllTasks()}
-                    okText="Yes"
-                    cancelText="No"
+                    okText="삭제"
+                    cancelText="취소"
                 >
                     <Button
                         danger

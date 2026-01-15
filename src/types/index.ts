@@ -9,6 +9,7 @@ export interface Task {
   priority: Priority;
   createdAt: number; // timestamp
   updatedAt?: number; // timestamp of last update
+  dueDate?: number; // timestamp for deadline
 }
 
 export type TasksState = {
