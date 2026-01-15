@@ -13,6 +13,9 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterPriority, setFilterPriority] = useState<string[]>([]);
   const [filterTags, setFilterTags] = useState<string[]>([]);
+  const [filterDate, setFilterDate] = useState<string>('all'); // 'all', 'today', 'week', 'overdue'
+  const [filterFavorite, setFilterFavorite] = useState<boolean>(false);
+  const [searchScope, setSearchScope] = useState<string>('all'); // 'all', 'title', 'tag'
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -55,6 +58,9 @@ function App() {
             searchQuery={searchQuery}
             filterPriority={filterPriority}
             filterTags={filterTags}
+            filterDate={filterDate}
+            filterFavorite={filterFavorite}
+            searchScope={searchScope}
             onEditTask={handleEditTask}
           />
 
@@ -70,6 +76,9 @@ function App() {
           onSearch={setSearchQuery}
           onFilterPriority={setFilterPriority}
           onFilterTags={setFilterTags}
+          onFilterDate={setFilterDate}
+          onFilterFavorite={setFilterFavorite}
+          onSearchScope={setSearchScope}
           onCollapse={setIsSidebarCollapsed}
         />
       </div>

@@ -8,20 +8,76 @@ interface BoardProps {
     searchQuery: string;
     filterPriority: string[];
     filterTags: string[];
+    filterDate?: string; // 'all' | 'today' | 'week' | 'overdue'
+    filterFavorite?: boolean;
+    searchScope?: string; // 'all' | 'title' | 'tag'
     onEditTask: (task: Task) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, onEditTask }) => {
+const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, filterDate = 'all', filterFavorite = false, searchScope = 'all', onEditTask }) => {
     const tasks = useTaskStore((state) => state.tasks);
     const moveTask = useTaskStore((state) => state.moveTask);
     const updateTaskOrder = useTaskStore((state) => state.updateTaskOrder);
 
     const filteredTasks = useMemo(() => {
         return tasks.filter((t) => {
-            const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase());
+            let matchesSearch = true;
+            const query = searchQuery.toLowerCase();
+            if (query) {
+                if (searchScope === 'title') {
+                    matchesSearch = t.title.toLowerCase().includes(query);
+                } else if (searchScope === 'description') {
+                    matchesSearch = t.description ? t.description.toLowerCase().includes(query) : false;
+                } else {
+                    // All: Title, Desc (Excluded Tags as per user request to separate them)
+                    matchesSearch = t.title.toLowerCase().includes(query) ||
+                        (t.description ? t.description.toLowerCase().includes(query) : false);
+                }
+            }
+
             const matchesPriority = filterPriority.length === 0 || filterPriority.includes(t.priority);
-            const matchesTags = filterTags.length === 0 || (t.tags && t.tags.some(tag => filterTags.includes(tag)));
-            return matchesSearch && matchesPriority && matchesTags;
+            const matchesFavorite = !filterFavorite || (filterFavorite && t.isFavorite);
+            // AND Condition: Task must have ALL selected tags
+            const matchesTags = filterTags.length === 0 || filterTags.every(tag => t.tags && t.tags.includes(tag));
+            // Date Filter Logic
+            let matchesDate = true;
+            if (filterDate && filterDate !== 'all') {
+                const now = new Date();
+                const todayValues = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+                if (filterDate === 'overdue') {
+                    if (t.dueDate) {
+                        const deadlineDate = new Date(t.dueDate).getTime();
+                        if (filterDate === 'overdue') matchesDate = deadlineDate < todayValues && t.status !== 'DONE';
+                        else if (filterDate === 'today') {
+                            const d = new Date(t.dueDate);
+                            matchesDate = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+                        }
+                        else if (filterDate === 'week') {
+                            const nextWeek = new Date(todayValues + 7 * 24 * 60 * 60 * 1000).getTime();
+                            const deadline = new Date(t.dueDate).getTime();
+                            matchesDate = deadline >= todayValues && deadline <= nextWeek;
+                        }
+                    } else {
+                        matchesDate = false;
+                    }
+                } else {
+                    if (t.dueDate) {
+                        const deadlineDate = new Date(t.dueDate).getTime();
+                        if (filterDate === 'today') {
+                            const d = new Date(t.dueDate);
+                            matchesDate = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+                        } else if (filterDate === 'week') {
+                            const nextWeek = new Date(todayValues + 7 * 24 * 60 * 60 * 1000).getTime();
+                            matchesDate = deadlineDate >= todayValues && deadlineDate <= nextWeek;
+                        }
+                    } else {
+                        matchesDate = false;
+                    }
+                }
+            }
+
+            return matchesSearch && matchesPriority && matchesTags && matchesDate && matchesFavorite;
         });
     }, [tasks, searchQuery, filterPriority, filterTags]);
 

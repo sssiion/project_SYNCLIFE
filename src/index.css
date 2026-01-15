@@ -197,3 +197,19 @@ code {
     max-width: 100%;
   }
 }
+
+/* Custom Select Placeholder Color */
+/* Custom Select Placeholder Color - Force Black */
+.select-placeholder-black .ant-select-selector .ant-select-selection-placeholder,
+.select-placeholder-black .ant-select-selector .ant-select-selection-item,
+.select-placeholder-black input::placeholder {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-weight: 500;
+  -webkit-text-fill-color: #000 !important;
+}
+
+/* Fallback for specificity issues */
+div.ant-select-selector span.ant-select-selection-placeholder {
+  color: #000 !important;
+}

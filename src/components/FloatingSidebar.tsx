@@ -10,6 +10,9 @@ interface FloatingSidebarProps {
     onSearch: (query: string) => void;
     onFilterPriority: (priority: string[]) => void;
     onFilterTags: (tags: string[]) => void;
+    onFilterDate?: (date: string) => void;
+    onFilterFavorite?: (isFav: boolean) => void;
+    onSearchScope?: (scope: string) => void;
     onCollapse?: (collapsed: boolean) => void;
 }
 
@@ -18,6 +21,9 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
     onSearch,
     onFilterPriority,
     onFilterTags,
+    onFilterDate,
+    onFilterFavorite,
+    onSearchScope,
     onCollapse
 }) => {
     // Default to collapsed for the "extracted" view to be initial state
@@ -79,6 +85,9 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     onSearch={onSearch}
                                     onFilterPriority={onFilterPriority}
                                     onFilterTags={onFilterTags}
+                                    onFilterDate={onFilterDate}
+                                    onFilterFavorite={onFilterFavorite}
+                                    onSearchScope={onSearchScope}
                                 />
                             </div>
 
@@ -122,6 +131,9 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     onSearch={onSearch}
                                     onFilterPriority={onFilterPriority}
                                     onFilterTags={onFilterTags}
+                                    onFilterDate={onFilterDate}
+                                    onFilterFavorite={onFilterFavorite}
+                                    onSearchScope={onSearchScope}
                                 />
                             </div>
 
@@ -321,6 +333,9 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                         onSearch={onSearch}
                                         onFilterPriority={onFilterPriority}
                                         onFilterTags={onFilterTags}
+                                        onFilterDate={onFilterDate}
+                                        onFilterFavorite={onFilterFavorite}
+                                        onSearchScope={onSearchScope}
                                     />
                                 </div>
                             </div>

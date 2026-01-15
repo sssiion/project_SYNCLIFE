@@ -269,7 +269,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                                 {task.tags.map(tag => (
                                     <Tag
                                         key={tag}
-                                        bordered={false}
                                         style={{
                                             fontSize: '11px',
                                             color: '#7f8c8d',

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Tag } from 'antd';
-import { Search, X } from 'lucide-react';
+import { Search, X, Star } from 'lucide-react';
 import { useTaskStore } from '../store/useTaskStore';
 
 const { Option } = Select;
@@ -9,10 +9,14 @@ interface SearchBarProps {
     onSearch: (query: string) => void;
     onFilterPriority: (priority: string[]) => void;
     onFilterTags?: (tags: string[]) => void;
+    onFilterDate?: (date: string) => void;
+    onFilterFavorite?: (isFav: boolean) => void;
+    onSearchScope?: (scope: string) => void;
     simple?: boolean;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFilterTags, simple }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFilterTags, onFilterDate, onFilterFavorite, onSearchScope, simple }) => {
+    const [isFavActive, setIsFavActive] = useState(false);
     const tasks = useTaskStore((state) => state.tasks);
     const [recentSearches, setRecentSearches] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -59,6 +63,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
         setInputValue(term);
     };
 
+    const handleFavoriteToggle = () => {
+        const newState = !isFavActive;
+        setIsFavActive(newState);
+        if (onFilterFavorite) {
+            onFilterFavorite(newState);
+        }
+    };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center', gap: '12px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
@@ -74,9 +86,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         background: 'rgba(255,255,255,0.6)',
                         padding: '0 12px',
                         backdropFilter: 'blur(10px)',
+                        height: '40px',
                     }}
                 >
-                    <Search size={16} color="rgba(0,0,0,0.45)" style={{ marginRight: '8px' }} />
+                    <Search size={16} color="rgba(0, 0, 0, 0.45)" style={{ marginRight: '8px' }} />
                     <Input
                         placeholder="검색어를 입력하세요."
                         value={inputValue}
@@ -90,6 +103,26 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                             color: '#2c3e50'
                         }}
                     />
+                    {!simple && onFilterFavorite && (
+                        <div
+                            onClick={handleFavoriteToggle}
+                            style={{
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '4px',
+                                marginLeft: '8px',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            <Star
+                                size={18}
+                                fill={isFavActive ? "#f1c40f" : "none"}
+                                color={isFavActive ? "#f1c40f" : "rgba(0,0,0,0.45)"}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {!simple && onFilterTags && (
@@ -100,11 +133,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         onChange={onFilterTags}
                         className="glass-panel"
                         style={{
-                            minWidth: 110,
-                            maxWidth: 200,
-                            height: '30px',
+                            width: '100%',
+                            height: '40px',
                             borderRadius: '12px',
-                            alignSelf: 'flex-end', // Align to right
                         }}
                         bordered={false}
                         optionLabelProp="label"
@@ -123,32 +154,81 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                 )}
 
                 {!simple && (
-                    <Select
-                        mode="multiple"
-                        allowClear
-                        showSearch={false}
-                        placeholder="priority"
-                        onChange={onFilterPriority}
-                        className="glass-panel"
-                        style={{
-                            minWidth: '100px',
-                            maxWidth: '150px',
-                            height: '30px',
-                            borderRadius: '12px',
-                            alignSelf: 'flex-end',
-                        }}
-                        bordered={false}
-                        dropdownStyle={{ minWidth: '120px' }}
-                        // @ts-ignore
-                        styles={{
-                            popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' } }
-                        }}
-                        options={[
-                            { value: 'HIGH', label: 'High' },
-                            { value: 'MEDIUM', label: 'Medium' },
-                            { value: 'LOW', label: 'Low' },
-                        ]}
-                    />
+                    <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+                        <Select
+                            showSearch={false}
+                            placeholder='priority'
+                            onChange={onFilterPriority}
+                            className="glass-panel"
+                            style={{
+                                flex: 1,
+                                height: '40px',
+                                borderRadius: '12px',
+                                fontSize: '11px',
+                                color: '#000',
+                            }}
+                            bordered={false}
+                            dropdownStyle={{ minWidth: '140px', fontSize: '11px' }}
+                            // @ts-ignore
+                            styles={{
+                                popup: { root: { background: 'rgba(255, 255, 255, 0.9)', } }
+                            }}
+                            options={[
+                                { value: 'HIGH', label: 'High' },
+                                { value: 'MEDIUM', label: 'Medium' },
+                                { value: 'LOW', label: 'Low' },
+                            ]}
+                        />
+
+                        {onFilterDate && (
+                            <Select
+                                defaultValue="all"
+                                placeholder="Date"
+                                onChange={onFilterDate}
+                                className="glass-panel"
+                                style={{
+                                    flex: 1,
+                                    height: '40px',
+                                    borderRadius: '12px',
+                                    fontSize: '10px',
+                                }}
+                                bordered={false}
+                                // @ts-ignore
+                                styles={{
+                                    popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '10px' } }
+                                }}
+                                options={[
+                                    { value: 'all', label: 'ALL' },
+                                    { value: 'today', label: '오늘' },
+                                    { value: 'week', label: '이번주' },
+                                    { value: 'overdue', label: '지남' },
+                                ]}
+                            />
+                        )}
+
+                        {onSearchScope && (
+                            <Select
+                                defaultValue="all"
+                                placeholder="Scope"
+                                onChange={onSearchScope}
+                                className="glass-panel"
+                                style={{
+                                    flex: 1,
+                                    height: '40px',
+                                    borderRadius: '12px',
+                                    fontSize: '11px',
+                                }}
+                                bordered={false}
+                                // @ts-ignore
+                                styles={{ popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '11px' } } }}
+                                options={[
+                                    { value: 'all', label: '제목+내용' },
+                                    { value: 'title', label: '제목' },
+                                    { value: 'description', label: '내용' },
+                                ]}
+                            />
+                        )}
+                    </div>
                 )}
             </div>
 
@@ -164,6 +244,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                             }}
                             onClick={() => handleTagClick(term)}
                             closeIcon={<X size={12} style={{ verticalAlign: 'middle' }} />}
+                            bordered={false}
                             style={{
                                 cursor: 'pointer',
                                 borderRadius: '16px',
