@@ -33,20 +33,28 @@ body {
   background: var(--main-bg);
   color: var(--text-primary);
   min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Hide scrollbar strictly for all elements if possible, but definitely for background */
+html,
+body,
+#root {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  overflow: hidden;
+  /* Force no scroll on main container if height is fixed, but if scrolling is needed, keep auto but hide bar */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
-/* Scrollbar Styling - Light Mode */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
