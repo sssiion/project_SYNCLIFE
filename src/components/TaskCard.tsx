@@ -86,34 +86,39 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                     style={{
                         ...provided.draggableProps.style,
                         marginBottom: '16px',
-                        // Combine drag transform with hover scale if not dragging
-                        transform: snapshot.isDragging
-                            ? provided.draggableProps.style?.transform
-                            : isHovered
-                                ? 'scale(1.05)'
-                                : provided.draggableProps.style?.transform,
-                        zIndex: isHovered && !snapshot.isDragging ? 100 : 1, // Bring to front on hover
-                        transition: snapshot.isDragging ? 'none' : 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', // Smooth transition
-                        position: 'relative', // Context for z-index
+                        outline: 'none',
+                        // IMPORTANT: Force z-index high when dragging to appear above others
+                        zIndex: snapshot.isDragging ? 9999 : 1,
+                        // Fix position issues during drag
+                        position: snapshot.isDragging ? 'fixed' : 'relative',
+                        // If fixed, left/top are handled by draggableProps.style
+                        // But we must ensure width is preserved if possible, 
+                        // though rbd handles this via provided.draggableProps.style usually.
                     }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
                     <Card
-                        onDoubleClick={() => onEditTask(task)} // Double click to edit
+                        onDoubleClick={() => onEditTask(task)}
                         variant="borderless"
                         className="glass-panel"
                         hoverable
                         style={{
-                            background: task.status === 'DONE' ? 'rgba(235, 235, 235, 0.6)' : 'rgba(255, 255, 255, 0.75)', // Darker for Done
+                            background: task.status === 'DONE' ? 'rgba(235, 235, 235, 0.6)' : 'rgba(255, 255, 255, 0.75)',
                             backdropFilter: 'blur(20px)',
-                            border: isHovered ? '1px solid rgba(142, 197, 252, 0.8)' : '1px solid rgba(255, 255, 255, 0.8)', // Highlight border on hover
+                            border: isHovered ? '1px solid rgba(142, 197, 252, 0.8)' : '1px solid rgba(255, 255, 255, 0.8)',
                             boxShadow: isHovered || snapshot.isDragging
                                 ? '0 20px 40px rgba(0,0,0,0.2)'
                                 : '0 4px 16px rgba(0,0,0,0.03)',
                             borderRadius: '16px',
                             cursor: 'grab',
-                            minHeight: '100px', // Prevent jumpiness
+                            minHeight: '100px',
+                            // Apply hover scale ONLY if not dragging to avoid conflict
+                            transform: isHovered && !snapshot.isDragging ? 'scale(1.05)' : 'none',
+                            // Use specific transitions to avoid checking 'transform' or 'left/top' of parent
+                            transition: 'background 0.3s, border 0.3s, box-shadow 0.3s, transform 0.3s',
+                            position: 'relative',
+                            zIndex: 2, // Content z-index
                         }}
                         styles={{ body: { padding: '16px' } }}
                     >
