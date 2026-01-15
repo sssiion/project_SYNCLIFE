@@ -136,6 +136,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                             width: '100%',
                             height: '40px',
                             borderRadius: '12px',
+                            alignItems: 'center',
                         }}
                         bordered={false}
                         optionLabelProp="label"
@@ -157,7 +158,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                     <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
                         <Select
                             showSearch={false}
-                            placeholder='priority'
+                            placeholder="Priority"
                             onChange={onFilterPriority}
                             className="glass-panel"
                             style={{
@@ -168,7 +169,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                                 color: '#000',
                             }}
                             bordered={false}
-                            dropdownStyle={{ minWidth: '140px', fontSize: '11px' }}
+                            dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
                             // @ts-ignore
                             styles={{
                                 popup: { root: { background: 'rgba(255, 255, 255, 0.9)', } }
@@ -182,7 +183,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
 
                         {onFilterDate && (
                             <Select
-                                defaultValue="all"
                                 placeholder="Date"
                                 onChange={onFilterDate}
                                 className="glass-panel"
@@ -190,9 +190,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                                     flex: 1,
                                     height: '40px',
                                     borderRadius: '12px',
-                                    fontSize: '10px',
+                                    fontSize: '11px',
                                 }}
                                 bordered={false}
+                                dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
                                 // @ts-ignore
                                 styles={{
                                     popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '10px' } }
@@ -208,8 +209,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
 
                         {onSearchScope && (
                             <Select
-                                defaultValue="all"
-                                placeholder="Scope"
+                                placeholder="제목+내용"
                                 onChange={onSearchScope}
                                 className="glass-panel"
                                 style={{
@@ -219,6 +219,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                                     fontSize: '11px',
                                 }}
                                 bordered={false}
+                                dropdownStyle={{ minWidth: '100px', fontSize: '11px' }}
                                 // @ts-ignore
                                 styles={{ popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '11px' } } }}
                                 options={[
