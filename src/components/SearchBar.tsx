@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Tag } from 'antd';
 import { Search, X } from 'lucide-react';
-import type { Priority } from '../types';
 import { useTaskStore } from '../store/useTaskStore';
 
 const { Option } = Select;
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
-    onFilterPriority: (priority: Priority | 'ALL') => void;
+    onFilterPriority: (priority: string[]) => void;
     onFilterTags?: (tags: string[]) => void;
 }
 
@@ -55,43 +54,59 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginBottom: '12px', width: '100%' }}>
-                <Input
-                    placeholder="검색어를 입력하세요."
-                    prefix={<Search size={16} color="rgba(0,0,0,0.45)" />}
-                    value={inputValue}
-                    onChange={handleSearchChange}
-                    onKeyDown={handleKeyDown}
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+                {/* Unified Search Bar Container */}
+                <div
                     className="glass-panel"
                     style={{
-                        borderRadius: '12px',
-                        border: '1px solid rgba(255,255,255,0.8)',
-                        background: 'rgba(255,255,255,0.6)',
-                        backdropFilter: 'blur(10px)',
                         display: 'flex',
                         alignItems: 'center',
                         flex: 1,
-                    }}
-                />
-                <Select
-                    defaultValue="ALL"
-                    onChange={onFilterPriority}
-                    className="glass-panel priority-filter"
-                    style={{
-                        width: 120,
-                        height: '40px', // Match Input height
                         borderRadius: '12px',
+                        border: '1px solid rgba(255,255,255,0.8)',
+                        background: 'rgba(255,255,255,0.6)',
+                        padding: '0 12px',
+                        backdropFilter: 'blur(10px)',
                     }}
-                    bordered={false}
-                    // @ts-ignore
-                    styles={{ popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' } } }}
                 >
-                    <Option value="ALL">All Levels</Option>
-                    <Option value="HIGH">High</Option>
-                    <Option value="MEDIUM">Medium</Option>
-                    <Option value="LOW">Low</Option>
-                </Select>
+                    <Search size={16} color="rgba(0,0,0,0.45)" style={{ marginRight: '8px' }} />
+                    <Input
+                        placeholder="검색어를 입력하세요."
+                        value={inputValue}
+                        onChange={handleSearchChange}
+                        onKeyDown={handleKeyDown}
+                        bordered={false}
+                        style={{
+                            flex: 1,
+                            background: 'transparent',
+                            padding: '4px 0',
+                            color: '#2c3e50'
+                        }}
+                    />
+                    <div style={{ width: '1px', height: '20px', background: 'rgba(0,0,0,0.1)', margin: '0 8px' }} />
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        showSearch={false}
+                        placeholder="Level"
+                        onChange={onFilterPriority}
+                        style={{
+                            minWidth: '80px',
+                            maxWidth: '150px',
+                        }}
+                        bordered={false}
+                        dropdownStyle={{ minWidth: '120px' }}
+                        // @ts-ignore
+                        styles={{
+                            popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' } }
+                        }}
+                    >
+                        <Option value="HIGH">High</Option>
+                        <Option value="MEDIUM">Medium</Option>
+                        <Option value="LOW">Low</Option>
+                    </Select>
+                </div>
 
                 {onFilterTags && (
                     <Select
@@ -101,13 +116,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         onChange={onFilterTags}
                         className="glass-panel"
                         style={{
-                            minWidth: 120,
+                            minWidth: 110,
                             maxWidth: 200,
-                            height: '40px',
+                            height: '30px',
                             borderRadius: '12px',
+                            alignSelf: 'flex-end', // Align to right
                         }}
                         bordered={false}
                         optionLabelProp="label"
+                        // @ts-ignore
+                        styles={{
+                            popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' } }
+                        }}
                     >
                         {Array.from(new Set(tasks.flatMap(t => t.tags || []))).map(tag => (
                             <Option key={tag} value={tag} label={`#${tag}`}>

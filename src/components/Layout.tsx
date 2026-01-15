@@ -1,7 +1,5 @@
 import React from 'react';
-import { Layout as AntLayout, Typography, Button, Popconfirm } from 'antd';
-import { Trash2 } from 'lucide-react';
-import { useTaskStore } from '../store/useTaskStore';
+import { Layout as AntLayout, Typography } from 'antd';
 
 const { Header, Content } = AntLayout;
 const { Title } = Typography;
@@ -19,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                justifyContent: 'center', // Centered logo since controls are gone? Or leave left. Left is fine.
                 padding: '0 24px',
                 position: 'sticky',
                 top: 0,
@@ -44,26 +42,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         태스크 관리
                     </Title>
                 </div>
-
-                <Popconfirm
-                    title="모든 태스크 삭제"
-                    description="정말로 모든 태스크를 삭제하시겠습니까?"
-                    onConfirm={() => useTaskStore.getState().clearAllTasks()}
-                    okText="삭제"
-                    cancelText="취소"
-                >
-                    <Button
-                        danger
-                        icon={<Trash2 size={16} />}
-                        style={{
-                            background: 'rgba(255, 255, 255, 0.5)',
-                            border: '1px solid #ff7875',
-                            color: '#ff4d4f'
-                        }}
-                    >
-                        Delete All
-                    </Button>
-                </Popconfirm>
             </Header>
 
             <Content style={{ padding: '24px', overflowY: 'auto' }}>

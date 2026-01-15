@@ -6,7 +6,7 @@ import type { TaskStatus, Priority, Task } from '../types';
 
 interface BoardProps {
     searchQuery: string;
-    filterPriority: Priority | 'ALL';
+    filterPriority: string[];
     filterTags: string[];
     onEditTask: (task: Task) => void;
 }
@@ -18,7 +18,7 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
     const filteredTasks = useMemo(() => {
         return tasks.filter((t) => {
             const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesPriority = filterPriority === 'ALL' || t.priority === filterPriority;
+            const matchesPriority = filterPriority.length === 0 || filterPriority.includes(t.priority);
             const matchesTags = filterTags.length === 0 || (t.tags && t.tags.some(tag => filterTags.includes(tag)));
             return matchesSearch && matchesPriority && matchesTags;
         });
