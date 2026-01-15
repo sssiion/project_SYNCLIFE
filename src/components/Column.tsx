@@ -14,9 +14,10 @@ interface ColumnProps {
     tasks: Task[];
     color: string;
     onEditTask: (task: Task) => void;
+    searchQuery?: string;
 }
 
-const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask }) => {
+const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask, searchQuery }) => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -114,6 +115,7 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                                     task={task}
                                     index={index}
                                     onEditTask={onEditTask}
+                                    searchQuery={searchQuery}
                                 />
                             ))}
                             {provided.placeholder}

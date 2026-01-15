@@ -155,6 +155,7 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                     tasks={columns.TODO}
                     color="var(--col-todo)"
                     onEditTask={onEditTask}
+                    searchQuery={searchQuery}
                 />
                 <Column
                     title="In Progress"
@@ -162,6 +163,7 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                     tasks={columns.IN_PROGRESS}
                     color="var(--col-progress)"
                     onEditTask={onEditTask}
+                    searchQuery={searchQuery}
                 />
                 <Column
                     title="Done"
@@ -169,6 +171,7 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                     tasks={columns.DONE}
                     color="var(--col-done)"
                     onEditTask={onEditTask}
+                    searchQuery={searchQuery}
                 />
             </div>
         </DragDropContext>

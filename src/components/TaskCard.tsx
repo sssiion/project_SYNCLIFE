@@ -12,15 +12,33 @@ interface TaskCardProps {
     task: Task;
     index: number;
     onEditTask: (task: Task) => void;
+    searchQuery?: string;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuery }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
     const toggleFavorite = useTaskStore((state) => state.toggleFavorite);
     const moveTask = useTaskStore((state) => state.moveTask);
 
     const [isHovered, setIsHovered] = React.useState(false);
     const isMobile = useMediaQuery('(max-width: 768px)');
+
+    // Highlight Text Helper
+    const highlightText = (text: string, query?: string) => {
+        if (!query || !text) return text;
+        const parts = text.split(new RegExp(`(${query})`, 'gi'));
+        return (
+            <span>
+                {parts.map((part, i) =>
+                    part.toLowerCase() === query.toLowerCase() ? (
+                        <span key={i} style={{ backgroundColor: '#fff700', borderRadius: '2px', color: 'black' }}>{part}</span>
+                    ) : (
+                        part
+                    )
+                )}
+            </span>
+        );
+    };
 
     // Swipe Logic State
     const [touchStart, setTouchStart] = React.useState<number | null>(null);
@@ -243,7 +261,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                             style={{ fontSize: '16px', marginBottom: '4px', color: '#2c3e50', margin: 0 }}
                             ellipsis={isHovered ? false : { rows: 2, tooltip: task.title }}
                         >
-                            {task.title}
+                            {highlightText(task.title, searchQuery)}
                         </Paragraph>
 
                         {task.tags && task.tags.length > 0 && (
@@ -264,7 +282,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                                             lineHeight: '18px'
                                         }}
                                     >
-                                        #{tag}
+                                        #{highlightText(tag, searchQuery)}
                                     </Tag>
                                 ))}
                             </div>
@@ -281,7 +299,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                                 <Paragraph
                                     style={{ fontSize: '13px', color: '#596275', marginTop: '8px' }}
                                 >
-                                    {task.description}
+                                    {highlightText(task.description, searchQuery)}
                                 </Paragraph>
                             )}
                         </div>
