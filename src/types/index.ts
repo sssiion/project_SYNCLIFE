@@ -8,6 +8,7 @@ export interface Task {
   status: TaskStatus;
   priority: Priority;
   createdAt: number; // timestamp
+  updatedAt?: number; // timestamp of last update
 }
 
 export type TasksState = {
@@ -16,4 +17,5 @@ export type TasksState = {
   moveTask: (id: string, newStatus: TaskStatus) => void;
   updateTask: (id: string, updates: Partial<Omit<Task, 'id' | 'createdAt'>>) => void;
   deleteTask: (id: string) => void;
+  clearAllTasks: () => void;
 };

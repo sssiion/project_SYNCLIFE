@@ -2,14 +2,15 @@ import React, { useMemo } from 'react';
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import { useTaskStore } from '../store/useTaskStore';
 import Column from './Column';
-import type { TaskStatus, Priority } from '../types';
+import type { TaskStatus, Priority, Task } from '../types';
 
 interface BoardProps {
     searchQuery: string;
     filterPriority: Priority | 'ALL';
+    onEditTask: (task: Task) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority }) => {
+const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, onEditTask }) => {
     const tasks = useTaskStore((state) => state.tasks);
     const moveTask = useTaskStore((state) => state.moveTask);
 
@@ -81,18 +82,21 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority }) => {
                     status="TODO"
                     tasks={columns.TODO}
                     color="var(--col-todo)"
+                    onEditTask={onEditTask}
                 />
                 <Column
                     title="In Progress"
                     status="IN_PROGRESS"
                     tasks={columns.IN_PROGRESS}
                     color="var(--col-progress)"
+                    onEditTask={onEditTask}
                 />
                 <Column
                     title="Done"
                     status="DONE"
                     tasks={columns.DONE}
                     color="var(--col-done)"
+                    onEditTask={onEditTask}
                 />
             </div>
         </DragDropContext>

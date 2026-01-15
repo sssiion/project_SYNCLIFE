@@ -11,9 +11,10 @@ interface ColumnProps {
     status: TaskStatus;
     tasks: Task[];
     color: string;
+    onEditTask: (task: Task) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ title, status, tasks, color }) => {
+const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask }) => {
     return (
         <div
             className="kanban-column"
@@ -21,8 +22,9 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
-                width: '350px',
-                flexShrink: 0,
+                // width: '350px', // Removed fixed width for responsiveness
+                // flexShrink: 0, // Allow shrinking
+                width: '100%', // Take available space (up to flex-basis/max)
                 transition: 'all 0.3s ease'
             }}>
             <div style={{
@@ -54,7 +56,9 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color }) => {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         style={{
-                            background: snapshot.isDraggingOver ? 'rgba(0,0,0,0.03)' : 'transparent',
+                            background: snapshot.isDraggingOver
+                                ? 'rgba(0,0,0,0.03)'
+                                : 'transparent',
                             borderRadius: '16px',
                             padding: '12px',
                             flex: 1,
@@ -64,7 +68,12 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color }) => {
                         }}
                     >
                         {tasks.map((task, index) => (
-                            <TaskCard key={task.id} task={task} index={index} />
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                index={index}
+                                onEditTask={onEditTask}
+                            />
                         ))}
                         {provided.placeholder}
                     </div>

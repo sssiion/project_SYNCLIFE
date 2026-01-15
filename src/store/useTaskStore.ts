@@ -32,12 +32,13 @@ export const useTaskStore = create<TasksState>()(
             })),
             updateTask: (id, updates) => set((state) => ({
                 tasks: state.tasks.map((task) =>
-                    task.id === id ? { ...task, ...updates } : task
+                    task.id === id ? { ...task, ...updates, updatedAt: Date.now() } : task
                 )
             })),
             deleteTask: (id) => set((state) => ({
                 tasks: state.tasks.filter((task) => task.id !== id)
             })),
+            clearAllTasks: () => set({ tasks: [] }),
         }),
         {
             name: 'task-storage',

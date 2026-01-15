@@ -130,11 +130,62 @@ code {
 
   /* On mobile, columns take almost full width and snap */
   .kanban-board-container {
-    scroll-snap-type: x mandatory;
+    flex-direction: column !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    align-items: stretch !important;
+    gap: 24px !important;
+    padding-bottom: 100px !important;
+    /* Space for FAB */
   }
 
   .kanban-column {
-    scroll-snap-align: center;
-    min-width: 85vw !important;
+    min-width: 100% !important;
+    width: 100% !important;
+    margin-bottom: 24px;
+    height: auto !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* FAB for Add Task Button */
+  .add-task-btn {
+    position: fixed !important;
+    bottom: 24px !important;
+    right: 24px !important;
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    z-index: 1001;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 20px rgba(118, 75, 162, 0.5) !important;
+  }
+
+  .add-task-btn span {
+    display: none !important;
+    /* Hide text on mobile */
+  }
+
+  .add-task-btn .anticon {
+    margin: 0 !important;
+    font-size: 24px !important;
+  }
+}
+
+/* Responsive Columns for Desktop Resizing */
+@media (min-width: 769px) {
+  .kanban-board-container {
+    /* Allow items to shrink if space is tight */
+    flex-wrap: nowrap;
+  }
+
+  .kanban-column {
+    flex: 1 1 300px;
+    min-width: 0 !important;
+    /* Allow shrinking */
+    max-width: 100%;
   }
 }

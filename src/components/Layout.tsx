@@ -1,6 +1,7 @@
 import React from 'react';
-import { Layout as AntLayout, Typography, Button } from 'antd';
-import { GithubOutlined } from '@ant-design/icons';
+import { Layout as AntLayout, Typography, Button, Popconfirm } from 'antd';
+import { Trash2 } from 'lucide-react';
+import { useTaskStore } from '../store/useTaskStore';
 
 const { Header, Content } = AntLayout;
 const { Title } = Typography;
@@ -44,15 +45,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </Title>
                 </div>
 
-                <Button
-                    type="text"
-                    icon={<GithubOutlined />}
-                    style={{ color: '#2c3e50' }}
-                    href="https://github.com/sssiion/project_SYNCLIFE"
-                    target="_blank"
+                <Popconfirm
+                    title="Delete All Tasks"
+                    description="Are you sure you want to delete ALL tasks?"
+                    onConfirm={() => useTaskStore.getState().clearAllTasks()}
+                    okText="Yes"
+                    cancelText="No"
                 >
-                    GitHub
-                </Button>
+                    <Button
+                        danger
+                        icon={<Trash2 size={16} />}
+                        style={{
+                            background: 'rgba(255, 255, 255, 0.5)',
+                            border: '1px solid #ff7875',
+                            color: '#ff4d4f'
+                        }}
+                    >
+                        Delete All
+                    </Button>
+                </Popconfirm>
             </Header>
 
             <Content style={{ padding: '24px', overflowY: 'auto' }}>

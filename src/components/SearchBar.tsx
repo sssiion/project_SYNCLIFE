@@ -12,7 +12,7 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority }) => {
     return (
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '24px' }}>
             <Input
                 placeholder="Search tasks..."
                 prefix={<Search size={16} color="rgba(0,0,0,0.45)" />}

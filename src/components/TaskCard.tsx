@@ -10,9 +10,10 @@ const { Paragraph } = Typography;
 interface TaskCardProps {
     task: Task;
     index: number;
+    onEditTask: (task: Task) => void;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
 
     const getPriorityColor = (priority: string) => {
@@ -58,11 +59,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
                     }}
                 >
                     <Card
+                        onDoubleClick={() => onEditTask(task)} // Double click to edit
                         variant="borderless"
                         className="glass-panel"
                         hoverable
                         style={{
-                            background: 'rgba(255, 255, 255, 0.75)', // Higher opacity for light theme readability
+                            background: task.status === 'DONE' ? 'rgba(235, 235, 235, 0.6)' : 'rgba(255, 255, 255, 0.75)', // Darker for Done
                             backdropFilter: 'blur(20px)',
                             border: '1px solid rgba(255, 255, 255, 0.8)',
                             boxShadow: snapshot.isDragging
@@ -84,6 +86,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
                                     size="small"
                                     icon={<MoreVertical size={16} />}
                                     style={{ color: 'rgba(0,0,0,0.45)' }}
+                                    // Prevent double click on dropdown from triggering edit
+                                    onDoubleClick={(e) => e.stopPropagation()}
+                                    onClick={(e) => e.stopPropagation()} // Stop click propagation too just in case
                                 />
                             </Dropdown>
                         </div>
@@ -108,7 +113,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginTop: 'auto' }}>
                             <div style={{ display: 'flex', alignItems: 'center', color: '#bdc3c7', fontSize: '12px', fontWeight: 500 }}>
                                 <Clock size={12} style={{ marginRight: '4px' }} />
-                                {formatDate(task.createdAt)}
+                                {task.updatedAt ? (
+                                    <span>{formatDate(task.updatedAt)} (수정)</span>
+                                ) : (
+                                    formatDate(task.createdAt)
+                                )}
                             </div>
                         </div>
                     </Card>
