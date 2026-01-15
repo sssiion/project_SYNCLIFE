@@ -44,7 +44,9 @@ body,
   /* Firefox */
   -ms-overflow-style: none;
   /* IE/Edge */
-  overflow: hidden;
+  overflow-x: hidden;
+  /* Allow vertical scrolling */
+  overflow-y: auto;
   /* Force no scroll on main container if height is fixed, but if scrolling is needed, keep auto but hide bar */
 }
 

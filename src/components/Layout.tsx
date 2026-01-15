@@ -25,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             </Header>
 
-            <Content style={{ padding: '24px', overflowY: 'auto' }}>
+            <Content style={{ padding: '24px', overflowY: 'visible' }}>
                 {children}
             </Content>
         </AntLayout>

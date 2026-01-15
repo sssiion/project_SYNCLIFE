@@ -64,6 +64,10 @@ const StatisticsPanel: React.FC = () => {
                         backfaceVisibility: 'hidden',
                         WebkitBackfaceVisibility: 'hidden',
                         boxShadow: '0 8px 32px rgba(31, 38, 135, 0.05)',
+                        // Fix overlap: Hide when flipped (delayed to mid-flip)
+                        opacity: isFlipped ? 0 : 1,
+                        visibility: isFlipped ? 'hidden' : 'visible',
+                        transition: 'opacity 0s linear 0.15s, visibility 0s linear 0.15s', // Swap at 90deg (approx)
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -124,7 +128,6 @@ const StatisticsPanel: React.FC = () => {
                         position: 'absolute',
                         width: '100%',
                         height: '100%',
-                        padding: '20px',
                         borderRadius: '24px',
                         background: 'rgba(255, 255, 255, 0.45)',
                         display: 'flex',
@@ -136,37 +139,42 @@ const StatisticsPanel: React.FC = () => {
                         WebkitBackfaceVisibility: 'hidden',
                         transform: 'rotateY(180deg)',
                         boxShadow: '0 8px 32px rgba(31, 38, 135, 0.05)',
+                        // Fix overlap: Hide when not flipped (delayed to mid-flip)
+                        opacity: isFlipped ? 1 : 0,
+                        visibility: isFlipped ? 'visible' : 'hidden',
+                        transition: 'opacity 0s linear 0.15s, visibility 0s linear 0.15s',
                     }}
-                >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#34495e' }}>Priority</h3>
-                        <span style={{ fontSize: '16px', color: '#7f8c8d' }}>↩</span>
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>
-                        {/* High */}
-                        <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px', color: '#e17055', fontWeight: 600 }}>
-                                <span>High</span>
-                                <span>{highPriority}</span>
-                            </div>
-                            <Progress percent={totalTasks ? (highPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#e17055" railColor="rgba(255,255,255,0.5)" size="small" />
+                >   <div style={{ padding: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#34495e' }}>Priority</h3>
+                            <span style={{ fontSize: '16px', color: '#7f8c8d' }}>↩</span>
                         </div>
-                        {/* Medium */}
-                        <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px', color: '#fdcb6e', fontWeight: 600 }}>
-                                <span>Medium</span>
-                                <span>{mediumPriority}</span>
+                        <div style={{ width: '100%', height: "50px" }} ></div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>
+                            {/* High */}
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px', color: '#e17055', fontWeight: 600 }}>
+                                    <span>High</span>
+                                    <span>{highPriority}</span>
+                                </div>
+                                <Progress percent={totalTasks ? (highPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#e17055" railColor="rgba(255,255,255,0.5)" size="small" />
                             </div>
-                            <Progress percent={totalTasks ? (mediumPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#fdcb6e" railColor="rgba(255,255,255,0.5)" size="small" />
-                        </div>
-                        {/* Low */}
-                        <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px', color: '#00b894', fontWeight: 600 }}>
-                                <span>Low</span>
-                                <span>{lowPriority}</span>
+                            {/* Medium */}
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px', color: '#fdcb6e', fontWeight: 600 }}>
+                                    <span>Medium</span>
+                                    <span>{mediumPriority}</span>
+                                </div>
+                                <Progress percent={totalTasks ? (mediumPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#fdcb6e" railColor="rgba(255,255,255,0.5)" size="small" />
                             </div>
-                            <Progress percent={totalTasks ? (lowPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#00b894" railColor="rgba(255,255,255,0.5)" size="small" />
+                            {/* Low */}
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px', color: '#00b894', fontWeight: 600 }}>
+                                    <span>Low</span>
+                                    <span>{lowPriority}</span>
+                                </div>
+                                <Progress percent={totalTasks ? (lowPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#00b894" railColor="rgba(255,255,255,0.5)" size="small" />
+                            </div>
                         </div>
                     </div>
                 </div>

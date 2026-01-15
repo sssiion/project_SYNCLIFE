@@ -89,10 +89,15 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                                     : 'transparent',
                                 borderRadius: '16px',
                                 padding: '12px',
+                                paddingBottom: '100px', // Ensure last item is reachable above mobile bottom bar
                                 flex: 1,
                                 transition: 'background 0.2s ease',
                                 minHeight: '200px',
-                                border: snapshot.isDraggingOver ? '1px dashed rgba(0,0,0,0.1)' : '1px solid transparent'
+                                border: snapshot.isDraggingOver ? '1px dashed rgba(0,0,0,0.1)' : '1px solid transparent',
+                                overflowY: isMobile ? 'visible' : 'auto', // Use visible on mobile to allow Page Scroll to handle it
+                                overflowX: 'hidden',
+                                // Fix for iOS scrolling issues with DnD
+                                WebkitOverflowScrolling: 'touch',
                             }}
                         >
                             {tasks.length === 0 && (

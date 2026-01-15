@@ -341,19 +341,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                             </div>
 
                             {/* Bottom Actions */}
-                            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <Button
-                                    onClick={handleOpenSettings}
-                                    icon={<Settings size={16} />}
-                                    style={{
-                                        background: 'rgba(255, 255, 255, 0.5)',
-                                        border: 'none',
-                                        justifyContent: 'flex-start'
-                                    }}
-                                >
-                                    Settings
-                                </Button>
-
+                            <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Popconfirm
                                     title="Delete All Tasks"
                                     description="Are you sure you want to delete all tasks?"
@@ -363,17 +351,38 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                 >
                                     <Button
                                         danger
-                                        icon={<Trash2 size={16} />}
+                                        type="text"
+                                        icon={<Trash2 size={20} />}
                                         style={{
-                                            background: 'rgba(255, 255, 255, 0.5)',
-                                            border: '1px solid #ff7875',
+                                            width: '40px',
+                                            height: '40px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            background: 'rgba(255, 77, 79, 0.1)',
+                                            border: 'none',
                                             color: '#ff4d4f',
-                                            justifyContent: 'flex-start'
+                                            borderRadius: '12px'
                                         }}
-                                    >
-                                        Delete All Tasks
-                                    </Button>
+                                    />
                                 </Popconfirm>
+
+                                <Button
+                                    type="text"
+                                    onClick={handleOpenSettings}
+                                    icon={<Settings size={20} />}
+                                    style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        background: 'rgba(44, 62, 80, 0.05)',
+                                        border: 'none',
+                                        color: '#2c3e50',
+                                        borderRadius: '12px'
+                                    }}
+                                />
                             </div>
                         </>
                     ) : (

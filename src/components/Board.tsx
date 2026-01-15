@@ -3,6 +3,7 @@ import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import { useTaskStore } from '../store/useTaskStore';
 import Column from './Column';
 import type { TaskStatus, Priority, Task } from '../types';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 interface BoardProps {
     searchQuery: string;
@@ -18,6 +19,7 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
     const tasks = useTaskStore((state) => state.tasks);
     const moveTask = useTaskStore((state) => state.moveTask);
     const updateTaskOrder = useTaskStore((state) => state.updateTaskOrder);
+    const isMobile = useMediaQuery('(max-width: 768px)');
 
     const filteredTasks = useMemo(() => {
         return tasks.filter((t) => {
@@ -205,12 +207,14 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                 className="kanban-board-container"
                 style={{
                     display: 'flex',
-                    gap: '32px',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    gap: isMobile ? '40px' : '32px', // Larger gap for visual separation on mobile
                     padding: '24px',
-                    height: 'calc(100vh - 140px)',
-                    overflowX: 'auto',
+                    paddingBottom: isMobile ? '150px' : '24px', // Extra padding at bottom for mobile scrolling
+                    height: isMobile ? 'auto' : 'calc(100vh - 140px)', // Auto height on mobile for Page Scroll
+                    overflowX: isMobile ? 'hidden' : 'auto',
                     alignItems: 'flex-start',
-                    justifyContent: 'flex-start', // Allows scrolling on small screens
+                    justifyContent: 'flex-start',
                     scrollBehavior: 'smooth'
                 }}>
                 <Column
