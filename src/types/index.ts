@@ -12,13 +12,15 @@ export interface Task {
   dueDate?: number; // timestamp for deadline
   isFavorite?: boolean; // favorite status
   tags?: string[]; // tags for the task
+  order?: number;
 }
 
 export type TasksState = {
   tasks: Task[];
   addTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
   moveTask: (id: string, newStatus: TaskStatus) => void;
-  updateTask: (id: string, updates: Partial<Omit<Task, 'id' | 'createdAt'>>) => void;
+  updateTask: (id: string, updates: Partial<Task>) => void;
+  updateTaskOrder: (id: string, newOrder: number) => void;
   deleteTask: (id: string) => void;
   toggleFavorite: (id: string) => void;
   clearAllTasks: () => void;

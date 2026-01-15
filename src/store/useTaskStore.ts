@@ -23,7 +23,7 @@ export const useTaskStore = create<TasksState>()(
         (set) => ({
             tasks: INITIAL_TASKS,
             addTask: (taskData) => set((state) => ({
-                tasks: [...state.tasks, { ...taskData, id: uuidv4(), createdAt: Date.now() }]
+                tasks: [...state.tasks, { ...taskData, id: uuidv4(), createdAt: Date.now(), order: Date.now() }]
             })),
             moveTask: (id, newStatus) => set((state) => ({
                 tasks: state.tasks.map((task) =>
@@ -35,6 +35,11 @@ export const useTaskStore = create<TasksState>()(
                     task.id === id ? { ...task, ...updates, updatedAt: Date.now() } : task
                 )
             })),
+            updateTaskOrder: (id, newOrder) => set((state) => ({
+                tasks: state.tasks.map((task) =>
+                    task.id === id ? { ...task, order: newOrder } : task
+                )
+            })),
             deleteTask: (id) => set((state) => ({
                 tasks: state.tasks.filter((task) => task.id !== id)
             })),
@@ -44,18 +49,10 @@ export const useTaskStore = create<TasksState>()(
 
                 const isFavorite = !task.isFavorite;
                 const updatedTask = { ...task, isFavorite };
-
-                if (isFavorite) {
-                    // Move to top
-                    return {
-                        tasks: [updatedTask, ...state.tasks.filter((t) => t.id !== id)]
-                    };
-                } else {
-                    // Just update in place (or simpler: map)
-                    return {
-                        tasks: state.tasks.map((t) => t.id === id ? updatedTask : t)
-                    };
-                }
+                // Favorites simply toggle property; sorting handles the rest
+                return {
+                    tasks: state.tasks.map((t) => t.id === id ? updatedTask : t)
+                };
             }),
             clearAllTasks: () => set({ tasks: [] }),
         }),
