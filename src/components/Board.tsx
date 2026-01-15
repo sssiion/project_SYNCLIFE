@@ -7,10 +7,11 @@ import type { TaskStatus, Priority, Task } from '../types';
 interface BoardProps {
     searchQuery: string;
     filterPriority: Priority | 'ALL';
+    filterTags: string[];
     onEditTask: (task: Task) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, onEditTask }) => {
+const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, onEditTask }) => {
     const tasks = useTaskStore((state) => state.tasks);
     const moveTask = useTaskStore((state) => state.moveTask);
 
@@ -18,9 +19,10 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, onEditTask }
         return tasks.filter((t) => {
             const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesPriority = filterPriority === 'ALL' || t.priority === filterPriority;
-            return matchesSearch && matchesPriority;
+            const matchesTags = filterTags.length === 0 || (t.tags && t.tags.some(tag => filterTags.includes(tag)));
+            return matchesSearch && matchesPriority && matchesTags;
         });
-    }, [tasks, searchQuery, filterPriority]);
+    }, [tasks, searchQuery, filterPriority, filterTags]);
 
     const columns = useMemo(() => {
         // Priority weights for sorting: LOW (top) -> MEDIUM -> HIGH (bottom)
@@ -32,6 +34,11 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, onEditTask }
 
         const sortTasks = (tasksToSort: typeof tasks) => {
             return [...tasksToSort].sort((a, b) => {
+                // 1. Favorites always at top
+                if (a.isFavorite && !b.isFavorite) return -1;
+                if (!a.isFavorite && b.isFavorite) return 1;
+
+                // 2. Then by Priority (Level)
                 const weightA = priorityWeight[a.priority as Priority] || 99;
                 const weightB = priorityWeight[b.priority as Priority] || 99;
                 return weightA - weightB;

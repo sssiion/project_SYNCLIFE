@@ -10,6 +10,8 @@ export interface Task {
   createdAt: number; // timestamp
   updatedAt?: number; // timestamp of last update
   dueDate?: number; // timestamp for deadline
+  isFavorite?: boolean; // favorite status
+  tags?: string[]; // tags for the task
 }
 
 export type TasksState = {
@@ -18,5 +20,6 @@ export type TasksState = {
   moveTask: (id: string, newStatus: TaskStatus) => void;
   updateTask: (id: string, updates: Partial<Omit<Task, 'id' | 'createdAt'>>) => void;
   deleteTask: (id: string) => void;
+  toggleFavorite: (id: string) => void;
   clearAllTasks: () => void;
 };

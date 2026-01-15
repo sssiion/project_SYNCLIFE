@@ -12,6 +12,7 @@ function App() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterPriority, setFilterPriority] = useState<Priority | 'ALL'>('ALL');
+  const [filterTags, setFilterTags] = useState<string[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const handleEditTask = (task: Task) => {
@@ -44,6 +45,7 @@ function App() {
             <SearchBar
               onSearch={setSearchQuery}
               onFilterPriority={setFilterPriority}
+              onFilterTags={setFilterTags}
             />
           </div>
 
@@ -69,6 +71,7 @@ function App() {
         <Board
           searchQuery={searchQuery}
           filterPriority={filterPriority}
+          filterTags={filterTags}
           onEditTask={handleEditTask}
         />
 

@@ -28,6 +28,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                     title: taskToEdit.title,
                     description: taskToEdit.description,
                     dueDate: taskToEdit.dueDate ? dayjs(taskToEdit.dueDate) : undefined,
+                    tags: taskToEdit.tags,
                 });
                 setPriority(taskToEdit.priority);
             } else {
@@ -43,6 +44,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
             description: values.description,
             priority: priority,
             dueDate: values.dueDate ? values.dueDate.valueOf() : undefined,
+            tags: values.tags,
         };
 
         if (taskToEdit) {
@@ -109,6 +111,30 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                     rules={[{ required: true, message: 'Please enter a task title' }]}
                 >
                     <Input placeholder="업무명을 입력해주세요." style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(0,0,0,0.1)', color: '#2c3e50' }} />
+                </Form.Item>
+
+                <Form.Item
+                    name="tags"
+                    label={<span style={{ color: '#2c3e50' }}>Tags (Max 3)</span>}
+                    rules={[
+                        {
+                            validator: (_, value) => {
+                                if (value && value.length > 3) {
+                                    return Promise.reject(new Error('Tags are limited to 3'));
+                                }
+                                return Promise.resolve();
+                            },
+                        },
+                    ]}
+                >
+                    <Select
+                        mode="tags"
+                        style={{ width: '100%' }}
+                        placeholder="태그를 입력하세요 (최대 3개)"
+                        maxCount={3}
+                        // @ts-ignore
+                        styles={{ selector: { background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(0,0,0,0.1)' } }}
+                    />
                 </Form.Item>
 
                 <div style={{ display: 'flex', gap: '16px' }}>

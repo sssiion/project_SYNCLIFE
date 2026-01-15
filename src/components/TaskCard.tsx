@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Tag, Typography, Button, Dropdown, Modal } from 'antd';
 import { Draggable } from '@hello-pangea/dnd';
-import { Clock, MoreVertical, Trash2, Edit, Calendar } from 'lucide-react';
+import { Clock, MoreVertical, Trash2, Edit, Calendar, Star } from 'lucide-react';
 import type { Task } from '../types';
 import { useTaskStore } from '../store/useTaskStore';
 
@@ -15,6 +15,7 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
+    const toggleFavorite = useTaskStore((state) => state.toggleFavorite);
     const [isHovered, setIsHovered] = React.useState(false);
 
     const getPriorityColor = (priority: string) => {
@@ -120,17 +121,35 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                             <Tag color={getPriorityColor(task.priority)} style={{ borderRadius: '8px', fontWeight: 600, border: 'none' }}>
                                 {task.priority}
                             </Tag>
-                            <Dropdown menu={{ items }} trigger={['click']} placement="bottomRight">
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <Button
                                     type="text"
                                     size="small"
-                                    icon={<MoreVertical size={16} />}
-                                    style={{ color: 'rgba(0,0,0,0.45)' }}
-                                    // Prevent double click on dropdown from triggering edit
-                                    onDoubleClick={(e) => e.stopPropagation()}
-                                    onClick={(e) => e.stopPropagation()} // Stop click propagation too just in case
+                                    icon={
+                                        <Star
+                                            size={16}
+                                            fill={task.isFavorite ? "#f1c40f" : "transparent"}
+                                            color={task.isFavorite ? "#f1c40f" : "#bdc3c7"}
+                                        />
+                                    }
+                                    style={{ marginRight: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleFavorite(task.id);
+                                    }}
                                 />
-                            </Dropdown>
+                                <Dropdown menu={{ items }} trigger={['click']} placement="bottomRight">
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        icon={<MoreVertical size={16} />}
+                                        style={{ color: 'rgba(0,0,0,0.45)' }}
+                                        // Prevent double click on dropdown from triggering edit
+                                        onDoubleClick={(e) => e.stopPropagation()}
+                                        onClick={(e) => e.stopPropagation()} // Stop click propagation too just in case
+                                    />
+                                </Dropdown>
+                            </div>
                         </div>
 
                         <Paragraph
@@ -140,6 +159,30 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                         >
                             {task.title}
                         </Paragraph>
+
+                        {task.tags && task.tags.length > 0 && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px', marginTop: '4px' }}>
+                                {task.tags.map(tag => (
+                                    <Tag
+                                        key={tag}
+                                        bordered={false}
+                                        style={{
+                                            fontSize: '11px',
+                                            color: '#7f8c8d',
+                                            background: 'rgba(0,0,0,0.04)',
+                                            borderRadius: '4px',
+                                            margin: 0,
+                                            padding: '0 6px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            lineHeight: '18px'
+                                        }}
+                                    >
+                                        #{tag}
+                                    </Tag>
+                                ))}
+                            </div>
+                        )}
 
                         {/* Description only visible on hover */}
                         <div style={{
@@ -168,11 +211,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                                 )}
                             </div>
 
-                            {task.dueDate && (
+                            {task.dueDate && task.status !== 'DONE' && (
                                 <div style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    color: task.dueDate < Date.now() && task.status !== 'DONE' ? '#ff4d4f' : '#8c8c8c',
+                                    color: task.dueDate < Date.now() ? '#ff4d4f' : '#8c8c8c',
                                     fontWeight: isHovered ? 400 : 700
                                 }}>
                                     <Calendar size={12} style={{ marginRight: '4px' }} />

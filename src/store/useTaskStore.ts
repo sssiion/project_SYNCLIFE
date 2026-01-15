@@ -38,6 +38,25 @@ export const useTaskStore = create<TasksState>()(
             deleteTask: (id) => set((state) => ({
                 tasks: state.tasks.filter((task) => task.id !== id)
             })),
+            toggleFavorite: (id) => set((state) => {
+                const task = state.tasks.find((t) => t.id === id);
+                if (!task) return state;
+
+                const isFavorite = !task.isFavorite;
+                const updatedTask = { ...task, isFavorite };
+
+                if (isFavorite) {
+                    // Move to top
+                    return {
+                        tasks: [updatedTask, ...state.tasks.filter((t) => t.id !== id)]
+                    };
+                } else {
+                    // Just update in place (or simpler: map)
+                    return {
+                        tasks: state.tasks.map((t) => t.id === id ? updatedTask : t)
+                    };
+                }
+            }),
             clearAllTasks: () => set({ tasks: [] }),
         }),
         {
