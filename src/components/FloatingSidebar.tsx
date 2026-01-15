@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { Button, Popconfirm, Switch, Statistic, Row, Col } from 'antd';
-import { Plus, Trash2, Settings, ChevronRight, ChevronDown, ArrowLeft, Moon, Menu } from 'lucide-react';
+
+import React, { useState } from 'react';
+import { Button, Popconfirm, Switch } from 'antd';
+import { Plus, Settings, ChevronRight, ChevronDown, Menu, ArrowLeft, Trash2, Moon } from 'lucide-react';
+import StatisticsPanel from './StatisticsPanel';
 import SearchBar from './SearchBar';
 import { useTaskStore } from '../store/useTaskStore';
 import { useMediaQuery } from '../hooks/useMediaQuery';
@@ -31,16 +33,6 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
     const [view, setView] = useState<'menu' | 'settings'>('menu');
     const isMobile = useMediaQuery('(max-width: 768px)');
 
-    // Task Stats
-    const tasks = useTaskStore((state) => state.tasks);
-    const stats = useMemo(() => {
-        const total = tasks.length;
-        const todo = tasks.filter(t => t.status === 'TODO').length;
-        const inProgress = tasks.filter(t => t.status === 'IN_PROGRESS').length;
-        const done = tasks.filter(t => t.status === 'DONE').length;
-        const high = tasks.filter(t => t.priority === 'HIGH').length;
-        return { total, todo, inProgress, done, high };
-    }, [tasks]);
 
     const toggleSidebar = () => {
         const newState = !isCollapsed;
@@ -190,18 +182,18 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.1)',
                     borderTop: '1px solid rgba(255, 255, 255, 0.5)',
                 } : {
-                    // Desktop: Side Drawer
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
+                    // Desktop: Floating Banner
+                    right: '16px',
+                    top: '16px',
+                    bottom: '16px',
                     left: 'auto',
                     width: '320px',
-                    height: '100vh',
-                    // If collapsed, move off-screen tight
-                    transform: isCollapsed ? 'translateX(100%)' : 'translateX(0)',
-                    borderLeft: '1px solid rgba(255, 255, 255, 0.5)',
-                    borderRadius: '0',
-                    boxShadow: isCollapsed ? 'none' : '-4px 0 24px rgba(0, 0, 0, 0.05)',
+                    height: 'calc(100vh - 32px)',
+                    // If collapsed, move off-screen (adjust for gap)
+                    transform: isCollapsed ? 'translateX(calc(100% + 20px))' : 'translateX(0)',
+                    border: '1px solid rgba(255, 255, 255, 0.5)',
+                    borderRadius: '24px',
+                    boxShadow: isCollapsed ? 'none' : '-4px 4px 24px rgba(0, 0, 0, 0.05)',
                 }),
 
                 background: 'rgba(255, 255, 255, 0.85)',
@@ -218,39 +210,46 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                 <div
                     onClick={isMobile ? toggleSidebar : undefined}
                     style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
                         padding: '12px 24px',
                         borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
                         cursor: isMobile ? 'pointer' : 'default',
                         flexShrink: 0,
                         height: '60px',
-                        justifyContent: 'center'
+                        display: 'grid',
+                        gridTemplateColumns: '40px 1fr 40px',
+                        alignItems: 'center',
                     }}
                 >
                     {isMobile && (
                         <div style={{
+                            position: 'absolute',
+                            top: '8px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
                             width: '40px',
                             height: '4px',
                             background: 'rgba(0,0,0,0.2)',
                             borderRadius: '2px',
-                            marginBottom: '8px'
                         }} />
                     )}
 
-                    <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {/* Left: Back or Empty */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                         {view === 'settings' && (
-                            <div onClick={(e) => { e.stopPropagation(); handleBackToMenu(); }} style={{ cursor: 'pointer', marginRight: '8px' }}>
-                                <ArrowLeft size={20} color="#2c3e50" />
+                            <div onClick={(e) => { e.stopPropagation(); handleBackToMenu(); }} style={{ cursor: 'pointer', display: 'flex' }}>
+                                <ArrowLeft size={24} color="#2c3e50" />
                             </div>
                         )}
+                        {/* If in Menu mode and desktop, maybe show nothing or generic icon? Keeping empty to align Title */}
+                    </div>
 
+                    {/* Center: Title */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                         {view === 'menu' ? (
                             <>
                                 <div style={{
-                                    width: '32px',
-                                    height: '32px',
+                                    width: '28px',
+                                    height: '28px',
                                     background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
                                     borderRadius: '8px',
                                     display: 'flex',
@@ -259,30 +258,29 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     fontWeight: 'bold',
                                     color: '#2c3e50',
                                     fontSize: '14px',
-                                    boxShadow: '0 4px 12px rgba(161, 196, 253, 0.4)'
+                                    boxShadow: '0 4px 12px rgba(161, 196, 253, 0.4)',
+                                    userSelect: 'none',
+                                    WebkitUserSelect: 'none'
                                 }}>
                                     K
                                 </div>
-                                <div>
-                                    <h2 style={{ margin: 0, fontSize: '16px', color: '#2c3e50', fontWeight: 700 }}>Task Manager</h2>
-                                </div>
+                                <h2 style={{ margin: 0, fontSize: '18px', color: '#2c3e50', fontWeight: 700, userSelect: 'none', WebkitUserSelect: 'none' }}>Task Manager</h2>
                             </>
                         ) : (
-                            <h2 style={{ margin: 0, fontSize: '16px', color: '#2c3e50', fontWeight: 700 }}>Settings</h2>
+                            <h2 style={{ margin: 0, fontSize: '18px', color: '#2c3e50', fontWeight: 700 }}>Settings</h2>
                         )}
+                    </div>
 
-                        {isMobile && (
-                            <div style={{ marginLeft: 'auto', color: '#888' }}>
-                                <ChevronDown size={20} />
-                            </div>
-                        )}
-                        {!isMobile && (
-                            // Close button for Desktop inside the drawer since external toggle is gone
+                    {/* Right: Close or Chevron */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                        {isMobile ? (
+                            <ChevronDown size={24} color="#888" />
+                        ) : (
                             <div
                                 onClick={(e) => { e.stopPropagation(); toggleSidebar(); }}
-                                style={{ marginLeft: 'auto', cursor: 'pointer', color: '#888' }}
+                                style={{ cursor: 'pointer', display: 'flex' }}
                             >
-                                <ChevronRight size={20} />
+                                <ChevronRight size={24} color="#888" />
                             </div>
                         )}
                     </div>
@@ -300,6 +298,8 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                 }}>
                     {view === 'menu' ? (
                         <>
+
+
                             {/* Action Buttons */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 <Button
@@ -379,31 +379,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     ) : (
                         // Settings View
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                            {/* Stats */}
-                            <div style={{
-                                background: 'rgba(255,255,255,0.5)',
-                                borderRadius: '16px',
-                                padding: '16px'
-                            }}>
-                                <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '14px', color: '#596275' }}>Task Statistics</h3>
-                                <Row gutter={[16, 16]}>
-                                    <Col span={12}>
-                                        <Statistic title="Total" value={stats.total} />
-                                    </Col>
-                                    <Col span={12}>
-                                        <Statistic title="High Priority" value={stats.high} valueStyle={{ color: '#ff7675' }} />
-                                    </Col>
-                                    <Col span={8}>
-                                        <Statistic title="Todo" value={stats.todo} valueStyle={{ fontSize: '16px' }} />
-                                    </Col>
-                                    <Col span={8}>
-                                        <Statistic title="Active" value={stats.inProgress} valueStyle={{ fontSize: '16px', color: '#0984e3' }} />
-                                    </Col>
-                                    <Col span={8}>
-                                        <Statistic title="Done" value={stats.done} valueStyle={{ fontSize: '16px', color: '#00b894' }} />
-                                    </Col>
-                                </Row>
-                            </div>
+                            <StatisticsPanel />
 
                             {/* Appearance */}
                             <div style={{
@@ -414,6 +390,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                 alignItems: 'center',
                                 justifyContent: 'space-between'
                             }}>
+
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                     <div style={{ padding: '8px', background: '#ecf0f1', borderRadius: '8px' }}>
                                         <Moon size={18} color="#2d3436" />

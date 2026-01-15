@@ -5,7 +5,7 @@ import { useTaskStore } from '../store/useTaskStore';
 
 const { Option } = Select;
 
-interface SearchBarProps {
+export interface SearchBarProps {
     onSearch: (query: string) => void;
     onFilterPriority: (priority: string[]) => void;
     onFilterTags?: (tags: string[]) => void;
@@ -73,7 +73,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center', gap: '12px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
                 {/* Unified Search Bar Container */}
                 <div
                     className="glass-panel"
@@ -82,6 +82,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         alignItems: 'center',
                         flex: 1,
                         borderRadius: '12px', // Fully rounded for simple mode? Or keep consistent.
+                        userSelect: 'none',
+                        WebkitUserSelect: 'none',
                         border: '1px solid rgba(255,255,255,0.8)',
                         background: 'rgba(255,255,255,0.6)',
                         padding: '0 12px',
@@ -95,7 +97,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         value={inputValue}
                         onChange={handleSearchChange}
                         onKeyDown={handleKeyDown}
-                        bordered={false}
+                        variant="borderless"
                         style={{
                             flex: 1,
                             background: 'transparent',
@@ -137,8 +139,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                             height: '40px',
                             borderRadius: '12px',
                             alignItems: 'center',
+                            userSelect: 'none',
+                            WebkitUserSelect: 'none',
                         }}
-                        bordered={false}
+                        variant="borderless"
                         optionLabelProp="label"
                         maxTagCount="responsive"
                         // @ts-ignore
@@ -155,80 +159,80 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                 )}
 
                 {!simple && (
-                    <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                        <Select
-                            showSearch={false}
-                            placeholder="Priority"
-                            onChange={onFilterPriority}
-                            className="glass-panel"
-                            style={{
-                                flex: 1,
-                                height: '40px',
-                                borderRadius: '12px',
-                                fontSize: '11px',
-                                color: '#000',
-                            }}
-                            bordered={false}
-                            dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
-                            // @ts-ignore
-                            styles={{
-                                popup: { root: { background: 'rgba(255, 255, 255, 0.9)', } }
-                            }}
-                            options={[
-                                { value: 'HIGH', label: 'High' },
-                                { value: 'MEDIUM', label: 'Medium' },
-                                { value: 'LOW', label: 'Low' },
-                            ]}
-                        />
-
-                        {onFilterDate && (
+                    <div style={{ display: 'flex', width: '100%' }}>
+                        <div style={{ gap: '4px', display: 'flex', width: '100%' }}>
                             <Select
-                                placeholder="Date"
-                                onChange={onFilterDate}
+                                showSearch={false}
+                                placeholder="Priority"
+                                onChange={onFilterPriority}
                                 className="glass-panel"
                                 style={{
                                     flex: 1,
-                                    height: '40px',
+                                    height: '30px',
                                     borderRadius: '12px',
                                     fontSize: '11px',
+                                    color: '#000',
                                 }}
-                                bordered={false}
+                                variant="borderless"
                                 dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
                                 // @ts-ignore
-                                styles={{
-                                    popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '10px' } }
-                                }}
+                                styles={{ popup: { minWidth: '140px', fontSize: '11px', background: 'rgba(255, 255, 255, 0.9)' } }}
                                 options={[
-                                    { value: 'all', label: 'ALL' },
-                                    { value: 'today', label: '오늘' },
-                                    { value: 'week', label: '이번주' },
-                                    { value: 'overdue', label: '지남' },
+                                    { value: 'HIGH', label: 'High' },
+                                    { value: 'MEDIUM', label: 'Medium' },
+                                    { value: 'LOW', label: 'Low' },
                                 ]}
                             />
-                        )}
 
-                        {onSearchScope && (
-                            <Select
-                                placeholder="제목+내용"
-                                onChange={onSearchScope}
-                                className="glass-panel"
-                                style={{
-                                    flex: 1,
-                                    height: '40px',
-                                    borderRadius: '12px',
-                                    fontSize: '11px',
-                                }}
-                                bordered={false}
-                                dropdownStyle={{ minWidth: '100px', fontSize: '11px' }}
-                                // @ts-ignore
-                                styles={{ popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '11px' } } }}
-                                options={[
-                                    { value: 'all', label: '제목+내용' },
-                                    { value: 'title', label: '제목' },
-                                    { value: 'description', label: '내용' },
-                                ]}
-                            />
-                        )}
+                            {onFilterDate && (
+                                <Select
+                                    placeholder="Date"
+                                    onChange={onFilterDate}
+                                    className="glass-panel"
+                                    style={{
+                                        flex: 1,
+                                        height: '30px',
+                                        borderRadius: '12px',
+                                        fontSize: '11px',
+                                    }}
+                                    variant="borderless"
+                                    dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
+                                    // @ts-ignore
+                                    styles={{
+                                        popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '10px' } }
+                                    }}
+                                    options={[
+                                        { value: 'all', label: 'ALL' },
+                                        { value: 'today', label: '오늘' },
+                                        { value: 'week', label: '이번주' },
+                                        { value: 'overdue', label: '지남' },
+                                    ]}
+                                />
+                            )}
+
+                            {onSearchScope && (
+                                <Select
+                                    placeholder="제목+내용"
+                                    onChange={onSearchScope}
+                                    className="glass-panel"
+                                    style={{
+                                        flex: 1,
+                                        height: '30px',
+                                        borderRadius: '12px',
+                                        fontSize: '11px',
+                                    }}
+                                    variant="borderless"
+                                    dropdownStyle={{ minWidth: '100px', fontSize: '11px' }}
+                                    // @ts-ignore
+                                    styles={{ popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '11px' } } }}
+                                    options={[
+                                        { value: 'all', label: '제목+내용' },
+                                        { value: 'title', label: '제목' },
+                                        { value: 'description', label: '내용' },
+                                    ]}
+                                />
+                            )}
+                        </div>
                     </div>
                 )}
             </div>

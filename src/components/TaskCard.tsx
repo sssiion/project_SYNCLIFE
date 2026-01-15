@@ -201,23 +201,24 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                     onClick={handleClick}
                 >
                     <Card
-                        onDoubleClick={() => onEditTask(task)}
-                        variant="borderless"
-                        className="glass-panel"
-                        hoverable
+                        onTouchStart={isMobile ? onTouchStart : undefined}
+                        onTouchEnd={isMobile ? onTouchEnd : undefined}
+                        className={`glass-panel ${snapshot.isDragging ? 'is-dragging' : ''}`}
                         style={{
-                            background: task.status === 'DONE' ? 'rgba(235, 235, 235, 0.6)' : 'rgba(255, 255, 255, 0.75)',
-                            backdropFilter: 'blur(20px)',
-                            border: isHovered ? '1px solid rgba(142, 197, 252, 0.8)' : '1px solid rgba(255, 255, 255, 0.8)',
-                            boxShadow: isHovered || snapshot.isDragging
-                                ? '0 20px 40px rgba(0,0,0,0.2)'
-                                : '0 4px 16px rgba(0,0,0,0.03)',
-                            borderRadius: '16px',
+                            ...provided.draggableProps.style,
+                            marginBottom: '16px',
                             cursor: 'grab',
-                            minHeight: '100px',
-                            transform: isHovered && !snapshot.isDragging ? 'scale(1.05)' : 'none',
-                            transition: 'background 0.3s, border 0.3s, box-shadow 0.3s, transform 0.3s',
-                            position: 'relative',
+                            border: snapshot.isDragging ? '1px solid #74b9ff' : '1px solid rgba(255, 255, 255, 0.6)',
+                            boxShadow: isHovered
+                                ? '0 10px 25px rgba(0,0,0,0.08)' // stronger shadow on hover
+                                : snapshot.isDragging
+                                    ? '0 20px 40px rgba(116, 185, 255, 0.4)'
+                                    : '0 4px 12px rgba(0,0,0,0.02)',
+                            transform: isHovered && !snapshot.isDragging ? 'translateY(-4px) scale(1.02)' : provided.draggableProps.style?.transform,
+                            transition: snapshot.isDragging ? 'none' : 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)', // Bouncy effect
+                            opacity: snapshot.isDragging ? 0.9 : 1,
+                            userSelect: 'none',
+                            WebkitUserSelect: 'none',
                             zIndex: 2,
                         }}
                         styles={{ body: { padding: '16px' } }}
