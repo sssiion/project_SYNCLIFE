@@ -19,7 +19,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
     const updateTask = useTaskStore((state) => state.updateTask);
 
     // Manage priority state manually since header is outside Form context
-    const [priority, setPriority] = useState<Priority>('MEDIUM');
+    const [priority, setPriority] = useState<Priority | undefined>(undefined);
 
     React.useEffect(() => {
         if (visible) {
@@ -33,7 +33,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                 setPriority(taskToEdit.priority);
             } else {
                 form.resetFields();
-                setPriority('MEDIUM');
+                setPriority(undefined);
             }
         }
     }, [visible, taskToEdit, form]);
@@ -42,7 +42,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
         const payload: any = {
             title: values.title,
             description: values.description,
-            priority: priority,
+            priority: priority || 'MEDIUM', // Default to MEDIUM if not selected
             dueDate: values.dueDate ? values.dueDate.valueOf() : undefined,
             tags: values.tags,
         };
@@ -58,7 +58,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
         }
 
         form.resetFields();
-        setPriority('MEDIUM');
+        setPriority(undefined);
         onClose();
     };
 
@@ -69,7 +69,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                 <Select
                     value={priority}
                     onChange={(value: Priority) => setPriority(value)}
-                    placeholder="Level"
+                    placeholder="priority"
                     style={{ width: 100 }}
                     // @ts-ignore - fixing deprecated warning
                     styles={{ popup: { root: { background: '#ffffff' } } }}

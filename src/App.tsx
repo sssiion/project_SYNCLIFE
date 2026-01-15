@@ -5,6 +5,7 @@ import NewTaskModal from './components/NewTaskModal';
 import FloatingSidebar from './components/FloatingSidebar';
 import { ConfigProvider, theme } from 'antd';
 import type { Task } from './types';
+import { useMediaQuery } from './hooks/useMediaQuery';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
   const [filterTags, setFilterTags] = useState<string[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleEditTask = (task: Task) => {
     setEditingTask(task);
@@ -38,7 +40,11 @@ function App() {
         },
       }}
     >
-      <div style={{ paddingRight: isSidebarCollapsed ? '0' : '320px', transition: 'padding-right 0.3s ease' }}> {/* Make space for sidebar */}
+      <div style={{
+        paddingRight: isMobile ? 0 : (isSidebarCollapsed ? 0 : '320px'),
+        paddingBottom: isMobile ? '60px' : 0, // Space for bottom sidebar toggle
+        transition: 'all 0.3s ease'
+      }}>
         <Layout>
           {/* Main Content Area */}
           <div style={{ marginBottom: 24, display: 'none' }}>

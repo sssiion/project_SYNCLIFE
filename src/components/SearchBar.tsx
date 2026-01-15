@@ -9,9 +9,10 @@ interface SearchBarProps {
     onSearch: (query: string) => void;
     onFilterPriority: (priority: string[]) => void;
     onFilterTags?: (tags: string[]) => void;
+    simple?: boolean;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFilterTags }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFilterTags, simple }) => {
     const tasks = useTaskStore((state) => state.tasks);
     const [recentSearches, setRecentSearches] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -63,7 +64,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         display: 'flex',
                         alignItems: 'center',
                         flex: 1,
-                        borderRadius: '12px',
+                        borderRadius: '12px', // Fully rounded for simple mode? Or keep consistent.
                         border: '1px solid rgba(255,255,255,0.8)',
                         background: 'rgba(255,255,255,0.6)',
                         padding: '0 12px',
@@ -84,31 +85,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                             color: '#2c3e50'
                         }}
                     />
-                    <div style={{ width: '1px', height: '20px', background: 'rgba(0,0,0,0.1)', margin: '0 8px' }} />
-                    <Select
-                        mode="multiple"
-                        allowClear
-                        showSearch={false}
-                        placeholder="Level"
-                        onChange={onFilterPriority}
-                        style={{
-                            minWidth: '80px',
-                            maxWidth: '150px',
-                        }}
-                        bordered={false}
-                        dropdownStyle={{ minWidth: '120px' }}
-                        // @ts-ignore
-                        styles={{
-                            popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' } }
-                        }}
-                    >
-                        <Option value="HIGH">High</Option>
-                        <Option value="MEDIUM">Medium</Option>
-                        <Option value="LOW">Low</Option>
-                    </Select>
                 </div>
 
-                {onFilterTags && (
+                {!simple && onFilterTags && (
                     <Select
                         mode="multiple"
                         allowClear
@@ -124,6 +103,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         }}
                         bordered={false}
                         optionLabelProp="label"
+                        maxTagCount="responsive"
                         // @ts-ignore
                         styles={{
                             popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' } }
@@ -136,9 +116,38 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         ))}
                     </Select>
                 )}
+
+                {!simple && (
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        showSearch={false}
+                        placeholder="priority"
+                        onChange={onFilterPriority}
+                        className="glass-panel"
+                        style={{
+                            minWidth: '100px',
+                            maxWidth: '150px',
+                            height: '30px',
+                            borderRadius: '12px',
+                            alignSelf: 'flex-end',
+                        }}
+                        bordered={false}
+                        dropdownStyle={{ minWidth: '120px' }}
+                        // @ts-ignore
+                        styles={{
+                            popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' } }
+                        }}
+                        options={[
+                            { value: 'HIGH', label: 'High' },
+                            { value: 'MEDIUM', label: 'Medium' },
+                            { value: 'LOW', label: 'Low' },
+                        ]}
+                    />
+                )}
             </div>
 
-            {recentSearches.length > 0 && (
+            {!simple && recentSearches.length > 0 && (
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-start', width: '100%', paddingLeft: '4px' }}>
                     {recentSearches.map((term) => (
                         <Tag

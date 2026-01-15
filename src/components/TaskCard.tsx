@@ -2,8 +2,9 @@ import React from 'react';
 import { Card, Tag, Typography, Button, Dropdown, Modal } from 'antd';
 import { Draggable } from '@hello-pangea/dnd';
 import { Clock, MoreVertical, Trash2, Edit, Calendar, Star } from 'lucide-react';
-import type { Task } from '../types';
+import type { Task, TaskStatus } from '../types';
 import { useTaskStore } from '../store/useTaskStore';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const { Paragraph } = Typography;
 
@@ -16,8 +17,16 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
     const toggleFavorite = useTaskStore((state) => state.toggleFavorite);
-    const [isHovered, setIsHovered] = React.useState(false);
+    const moveTask = useTaskStore((state) => state.moveTask);
 
+    const [isHovered, setIsHovered] = React.useState(false);
+    const isMobile = useMediaQuery('(max-width: 768px)');
+
+    // Swipe Logic State
+    const [touchStart, setTouchStart] = React.useState<number | null>(null);
+    const minSwipeDistance = 50;
+
+    // Helper Functions
     const getPriorityColor = (priority: string) => {
         switch (priority) {
             case 'HIGH': return 'error';
@@ -47,6 +56,96 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
         });
     };
 
+    const getDDay = (dueDate: number) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const due = new Date(dueDate);
+        due.setHours(0, 0, 0, 0);
+        const diffTime = due.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) return 'Today';
+        if (diffDays < 0) return `D+${Math.abs(diffDays)}`;
+        return `D-${diffDays}`;
+    };
+
+    // Swipe Handlers
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = (e: React.TouchEvent) => {
+        if (!touchStart) return;
+        const touchEnd = e.changedTouches[0].clientX;
+        const distance = touchStart - touchEnd;
+        const isSwipe = Math.abs(distance) > minSwipeDistance;
+
+        if (isSwipe) {
+            // Swipe Left (distance > 0) or Right (distance < 0)
+            const direction = distance > 0 ? 'left' : 'right';
+            handleSwipe(direction);
+        }
+        setTouchStart(null);
+    };
+
+    const handleSwipe = (direction: 'left' | 'right') => {
+        if (!isMobile) return;
+
+        const statusFlow: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
+        const currentIndex = statusFlow.indexOf(task.status);
+        if (currentIndex === -1) return;
+
+        let nextIndex;
+        if (direction === 'right') {
+            // Right Swipe: Move to Next (TODO -> IN_PROGRESS -> DONE -> TODO Loop)
+            // But usually Swipe Right means moving content to the right? 
+            // Wait, if I swipe my finger right -> I am pulling content to the right. 
+            // This usually reveals left content or goes to "Previous" page visually.
+            // But User Requirement: "Task card move right -> InProgress". 
+            // Does this mean visually drag it? Or swipe gesture? 
+            // "Mobile mode from todo task card right swipe -> move to inprogress"
+            // Let's assume standard carousel logic: Swipe LEFT (finger moves right to left) goes to NEXT item. 
+            // Swipe RIGHT (finger moves left to right) goes to PREV item.
+            // BUT User says: "Task Card Right Swipe -> InProgress".
+            // Left Swipe -> Done.
+            // Todo is Leftmost. InProgress is Middle. Done is Rightmost.
+            // If I am in Todo, and I "Swipe Right" (Finger moves L->R), that feels like pushing it to the Right (In Progress).
+            // Let's stick to the direction variable: 'right' means finger went L -> R. 'left' means R -> L.
+
+            // User: "Todo task card right swipe -> InProgress".
+            // So distance < 0 (Right Swipe) -> InProgress.
+
+            // Re-reading logic in handleSwipe:
+            // current logic: distance = start - end.
+            // If start=10, end=100 (Right movement), distance = -90.
+            // distance > 0 ? 'left' : 'right'. So -90 is 'right'.
+
+            // Logic check:
+            // TODO (Right Swipe) -> IN_PROGRESS.
+            // IN_PROGRESS (Right Swipe) -> DONE.
+            // DONE (Right Swipe) -> TODO.
+
+            // TODO (Left Swipe) -> DONE.
+            // IN_PROGRESS (Left Swipe) -> TODO.
+            // DONE (Left Swipe) -> IN_PROGRESS.
+
+            nextIndex = (currentIndex + 1) % statusFlow.length;
+        } else {
+            // Left Swipe
+            nextIndex = (currentIndex - 1 + statusFlow.length) % statusFlow.length;
+        }
+
+        const nextStatus = statusFlow[nextIndex];
+        moveTask(task.id, nextStatus);
+        setIsHovered(false); // Close details on move
+    };
+
+    const handleClick = () => {
+        if (isMobile) {
+            setIsHovered(!isHovered);
+        }
+    };
+
     const items = [
         {
             key: 'edit',
@@ -63,19 +162,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
         },
     ];
 
-    const getDDay = (dueDate: number) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const due = new Date(dueDate);
-        due.setHours(0, 0, 0, 0);
-        const diffTime = due.getTime() - today.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 0) return 'Today';
-        if (diffDays < 0) return `D+${Math.abs(diffDays)}`;
-        return `D-${diffDays}`;
-    };
-
     return (
         <Draggable draggableId={task.id} index={index}>
             {(provided, snapshot) => (
@@ -87,16 +173,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                         ...provided.draggableProps.style,
                         marginBottom: '16px',
                         outline: 'none',
-                        // IMPORTANT: Force z-index high when dragging to appear above others
                         zIndex: snapshot.isDragging ? 9999 : 1,
-                        // Fix position issues during drag
                         position: snapshot.isDragging ? 'fixed' : 'relative',
-                        // If fixed, left/top are handled by draggableProps.style
-                        // But we must ensure width is preserved if possible, 
-                        // though rbd handles this via provided.draggableProps.style usually.
                     }}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
+                    onMouseEnter={() => !isMobile && setIsHovered(true)}
+                    onMouseLeave={() => !isMobile && setIsHovered(false)}
+                    onTouchStart={onTouchStart}
+                    onTouchEnd={onTouchEnd}
+                    onClick={handleClick}
                 >
                     <Card
                         onDoubleClick={() => onEditTask(task)}
@@ -113,12 +197,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                             borderRadius: '16px',
                             cursor: 'grab',
                             minHeight: '100px',
-                            // Apply hover scale ONLY if not dragging to avoid conflict
                             transform: isHovered && !snapshot.isDragging ? 'scale(1.05)' : 'none',
-                            // Use specific transitions to avoid checking 'transform' or 'left/top' of parent
                             transition: 'background 0.3s, border 0.3s, box-shadow 0.3s, transform 0.3s',
                             position: 'relative',
-                            zIndex: 2, // Content z-index
+                            zIndex: 2,
                         }}
                         styles={{ body: { padding: '16px' } }}
                     >
@@ -149,9 +231,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                                         size="small"
                                         icon={<MoreVertical size={16} />}
                                         style={{ color: 'rgba(0,0,0,0.45)' }}
-                                        // Prevent double click on dropdown from triggering edit
                                         onDoubleClick={(e) => e.stopPropagation()}
-                                        onClick={(e) => e.stopPropagation()} // Stop click propagation too just in case
+                                        onClick={(e) => e.stopPropagation()}
                                     />
                                 </Dropdown>
                             </div>
@@ -160,7 +241,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                         <Paragraph
                             strong
                             style={{ fontSize: '16px', marginBottom: '4px', color: '#2c3e50', margin: 0 }}
-                            ellipsis={isHovered ? false : { rows: 2, tooltip: task.title }} // Expand title on hover if needed
+                            ellipsis={isHovered ? false : { rows: 2, tooltip: task.title }}
                         >
                             {task.title}
                         </Paragraph>
@@ -189,7 +270,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
                             </div>
                         )}
 
-                        {/* Description only visible on hover */}
                         <div style={{
                             maxHeight: isHovered ? '200px' : '0px',
                             overflow: 'hidden',
