@@ -15,11 +15,13 @@ function App() {
   return (
     <ConfigProvider
       theme={{
-        algorithm: theme.darkAlgorithm,
+        algorithm: theme.defaultAlgorithm,
         token: {
           fontFamily: 'Inter, sans-serif',
-          colorPrimary: '#764ba2',
-          colorBgContainer: 'rgba(255, 255, 255, 0.1)',
+          colorPrimary: '#8ec5fc', // Pastel Blue
+          colorBgContainer: 'rgba(255, 255, 255, 0.6)',
+          colorText: '#2c3e50',
+          colorTextHeading: '#1e272e',
         },
       }}
     >

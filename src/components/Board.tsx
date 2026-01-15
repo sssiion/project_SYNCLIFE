@@ -22,10 +22,25 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority }) => {
     }, [tasks, searchQuery, filterPriority]);
 
     const columns = useMemo(() => {
+        // Priority weights for sorting: LOW (top) -> MEDIUM -> HIGH (bottom)
+        const priorityWeight: Record<Priority, number> = {
+            LOW: 1,
+            MEDIUM: 2,
+            HIGH: 3,
+        };
+
+        const sortTasks = (tasksToSort: typeof tasks) => {
+            return [...tasksToSort].sort((a, b) => {
+                const weightA = priorityWeight[a.priority as Priority] || 99;
+                const weightB = priorityWeight[b.priority as Priority] || 99;
+                return weightA - weightB;
+            });
+        };
+
         const cols: Record<TaskStatus, typeof tasks> = {
-            TODO: filteredTasks.filter((t) => t.status === 'TODO'),
-            IN_PROGRESS: filteredTasks.filter((t) => t.status === 'IN_PROGRESS'),
-            DONE: filteredTasks.filter((t) => t.status === 'DONE'),
+            TODO: sortTasks(filteredTasks.filter((t) => t.status === 'TODO')),
+            IN_PROGRESS: sortTasks(filteredTasks.filter((t) => t.status === 'IN_PROGRESS')),
+            DONE: sortTasks(filteredTasks.filter((t) => t.status === 'DONE')),
         };
         return cols;
     }, [filteredTasks]);

@@ -21,8 +21,7 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
-                minWidth: '320px',
-                maxWidth: '350px',
+                width: '350px',
                 flexShrink: 0,
                 transition: 'all 0.3s ease'
             }}>
@@ -35,14 +34,14 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color }) => {
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: color }} />
-                    <Title level={5} style={{ margin: 0, color: 'white', fontWeight: 600 }}>
+                    <Title level={5} style={{ margin: 0, color: '#2c3e50', fontWeight: 600 }}>
                         {title}
                     </Title>
                     <Badge
                         count={tasks.length}
                         style={{
-                            backgroundColor: 'rgba(255,255,255,0.2)',
-                            color: 'white',
+                            backgroundColor: 'rgba(0,0,0,0.06)',
+                            color: '#596275',
                             boxShadow: 'none'
                         }}
                     />
@@ -55,13 +54,13 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color }) => {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         style={{
-                            background: snapshot.isDraggingOver ? 'rgba(255,255,255,0.05)' : 'transparent',
+                            background: snapshot.isDraggingOver ? 'rgba(0,0,0,0.03)' : 'transparent',
                             borderRadius: '16px',
                             padding: '12px',
                             flex: 1,
                             transition: 'background 0.2s ease',
                             minHeight: '200px',
-                            border: snapshot.isDraggingOver ? '1px dashed rgba(255,255,255,0.3)' : '1px solid transparent'
+                            border: snapshot.isDraggingOver ? '1px dashed rgba(0,0,0,0.1)' : '1px solid transparent'
                         }}
                     >
                         {tasks.map((task, index) => (
