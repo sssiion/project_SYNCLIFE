@@ -24,14 +24,22 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
             let matchesSearch = true;
             const query = searchQuery.toLowerCase();
             if (query) {
-                if (searchScope === 'title') {
-                    matchesSearch = t.title.toLowerCase().includes(query);
-                } else if (searchScope === 'description') {
-                    matchesSearch = t.description ? t.description.toLowerCase().includes(query) : false;
-                } else {
-                    // All: Title, Desc (Excluded Tags as per user request to separate them)
-                    matchesSearch = t.title.toLowerCase().includes(query) ||
-                        (t.description ? t.description.toLowerCase().includes(query) : false);
+                // Strict filtering as per user request
+                switch (searchScope) {
+                    case 'title':
+                        // Only search in Title
+                        matchesSearch = t.title.toLowerCase().includes(query);
+                        break;
+                    case 'description':
+                        // Only search in Description
+                        matchesSearch = (t.description || '').toLowerCase().includes(query);
+                        break;
+                    case 'all':
+                    default:
+                        // Search in both Title OR Description
+                        matchesSearch = t.title.toLowerCase().includes(query) ||
+                            (t.description || '').toLowerCase().includes(query);
+                        break;
                 }
             }
 
@@ -79,7 +87,7 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
 
             return matchesSearch && matchesPriority && matchesTags && matchesDate && matchesFavorite;
         });
-    }, [tasks, searchQuery, filterPriority, filterTags]);
+    }, [tasks, searchQuery, filterPriority, filterTags, searchScope, filterDate, filterFavorite]);
 
     const columns = useMemo(() => {
         // Priority weights for sorting: LOW (top) -> MEDIUM -> HIGH (bottom)

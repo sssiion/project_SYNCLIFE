@@ -28,13 +28,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
         }
     }, []);
 
+    const [isFocused, setIsFocused] = useState(false);
+
     useEffect(() => {
         const timer = setTimeout(() => {
+            // User Request Update:
+            // 1. "300ms after focus": logic handled by isFocused dependency triggering this effect.
+            // 2. "Maintain if input exists": run onSearch(inputValue) regardless of focus state.
             onSearch(inputValue);
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [inputValue, onSearch]);
+    }, [inputValue, isFocused, onSearch]);
 
     const saveSearch = (term: string) => {
         if (!term.trim()) return;
@@ -97,6 +102,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                         value={inputValue}
                         onChange={handleSearchChange}
                         onKeyDown={handleKeyDown}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
                         variant="borderless"
                         style={{
                             flex: 1,
