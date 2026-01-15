@@ -14,7 +14,7 @@ function App() {
   const [filterPriority, setFilterPriority] = useState<string[]>([]);
   const [filterTags, setFilterTags] = useState<string[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleEditTask = (task: Task) => {

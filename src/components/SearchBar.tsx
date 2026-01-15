@@ -24,6 +24,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
         }
     }, []);
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            onSearch(inputValue);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [inputValue, onSearch]);
+
     const saveSearch = (term: string) => {
         if (!term.trim()) return;
         const newHistory = [term, ...recentSearches.filter(t => t !== term)].slice(0, 5);
@@ -38,9 +46,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
     };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value;
-        setInputValue(val);
-        onSearch(val);
+        setInputValue(e.target.value);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -51,7 +57,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
 
     const handleTagClick = (term: string) => {
         setInputValue(term);
-        onSearch(term);
     };
 
     return (
