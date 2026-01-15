@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Tag, Typography, Button, Dropdown } from 'antd';
+import { Card, Tag, Typography, Button, Dropdown, Modal } from 'antd';
 import { Draggable } from '@hello-pangea/dnd';
 import { Clock, MoreVertical, Trash2 } from 'lucide-react';
 import type { Task } from '../types';
@@ -32,13 +32,26 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask }) => {
         });
     };
 
+    const handleDelete = () => {
+        Modal.confirm({
+            title: '삭제',
+            content: '태스크를 진짜 삭제하시겠습니까?',
+            okText: 'Delete',
+            okType: 'danger',
+            cancelText: 'Cancel',
+            onOk() {
+                deleteTask(task.id);
+            },
+        });
+    };
+
     const items = [
         {
             key: 'delete',
             label: 'Delete',
             icon: <Trash2 size={14} />,
             danger: true,
-            onClick: () => deleteTask(task.id),
+            onClick: handleDelete,
         },
     ];
 

@@ -58,24 +58,35 @@ Glassmorphism(유리 아키텍처) 디자인을 적용하여 심미적으로 우
    - GitHub 저장소의 `Actions` 탭에서 `Deploy to GitHub Pages` 워크플로우가 실행되는 것을 확인할 수 있습니다.
    - 완료되면 설정된 URL(예: `https://<username>.github.io/project_SYNCLIFE/`)에서 사이트를 볼 수 있습니다.
 
-## 🤖 AI 도구 사용 내역 (AI Usage Log)
-이 프로젝트는 **Google DeepMind Antigravity** 에이전트와의 협업으로 제작되었습니다.
+## 🤖 AI 도구 및 활용 방법 (AI Tools & Methodology)
 
-### 1. 기획 및 설계
-- **요구사항 분석**: 사용자의 칸반 보드 요구사항(3컬럼, D&D, 로컬스토리지, 모달 등)을 분석하여 기능 명세서 작성
-- **아키텍처 제안**: React + TypeScript + Vite 기반의 프로젝트 구조 및 Zustand 상태 관리 패턴 제안
-- **디자인 컨셉**: "Rich Aesthetics"를 목표로 Glassmorphism 스타일 및 애니메이션 효과 제안
+본 프로젝트는 **Google DeepMind의 Antigravity (Agentic AI)** 를 활용하여 기획부터 배포까지의 전 과정을 협업으로 진행했습니다.
 
-### 2. 코드 구현
-- **스캐폴딩**: Vite 프로젝트 초기화 및 라이브러리 설치 자동화
-- **컴포넌트 개발**:
-  - `Board`, `Column`, `TaskCard` 등 핵심 컴포넌트의 타입스크립트 코드 작성
-  - `useTaskStore`를 통한 상태 관리 로직(CRUD, D&D 핸들링) 구현
-- **스타일링**: CSS Variables를 활용한 전역 테마 및 반응형 레이아웃(`kanban-board-container`) 구현
+### 1. 활용된 AI 도구
+- **Core Agent**: Google DeepMind Antigravity
+    - *역할*: 프로젝트 매니징, 코드 설계, UI/UX 디자인, 트러블슈팅
+- **IDE Integration**: VS Code 기반의 Agentic Workflow
 
-### 3. 문제 해결
-- **빌드 오류 수정**: TypeScript 타입 정의 오류(`import type`) 및 미사용 변수 자동 수정
-- **배포 방식 개선**: 사용자의 피드백을 반영하여 수동 배포(`gh-pages` 패키지)에서 **GitHub Actions 자동 배포**로 전환 (`deploy.yml` 작성)
+### 2. AI 활용 방법 (Development Workflow)
+AI 에이전트는 단순한 코드 생성을 넘어, 다음과 같은 주도적인 역할을 수행했습니다:
+
+- **🏗️ 아키텍처 설계 (Architecture Design)**
+    - React + TypeScript + Vite 기반의 모던 웹 스택 제안
+    - 확장성을 고려한 Zustand 상태 관리 및 컴포넌트 구조 설계
+
+- **🎨 UI/UX 디자인 (Generative UI)**
+    - "Rich Aesthetics" 프롬프트를 기반으로 Glassmorphism 디자인 시스템 구축
+    - 모바일 반응형 레이아웃 및 심미적인 애니메이션 효과 구현
+
+- **⚡ 기능 구현 (Autonomous Coding)**
+    - 복잡한 드래그 앤 드롭(DnD) 로직 및 데이터 영속성(LocalStorage) 구현
+    - 사용자의 피드백을 실시간으로 반영하여 모달, 검색 기능 등 추가 개발
+
+- **🔧 디버깅 및 최적화 (Self-Correction)**
+    - 빌드 에러 및 런타임 이슈 발생 시, 에이전트가 스스로 로그를 분석하고 해결책 제시
+    - 코드 리팩토링 및 린트(Lint) 규칙 준수
+
+이 프로젝트는 인간 개발자의 **의사결정(Decision Making)**과 AI의 **실행력(Execution)**이 결합된 성공적인 협업 사례입니다.
 
 ---
 © 2026 SyncLife Project. All rights reserved.
