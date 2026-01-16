@@ -30,6 +30,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                     description: taskToEdit.description,
                     dueDate: taskToEdit.dueDate ? dayjs(taskToEdit.dueDate) : undefined,
                     tags: taskToEdit.tags,
+                    assignee: taskToEdit.assignee,
                 });
                 setPriority(taskToEdit.priority);
             } else {
@@ -56,7 +57,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
             priority: priority,
             dueDate: values.dueDate ? values.dueDate.valueOf() : undefined,
             tags: values.tags,
-            // assignee: values.assignee // Add if form has assignee input
+            assignee: values.assignee
         };
 
         if (taskToEdit) {
@@ -189,6 +190,20 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                     <TextArea
                         rows={4}
                         placeholder="상세 내용을 입력해주세요."
+                        style={{
+                            background: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.5)',
+                            border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+                            color: 'var(--text-primary)'
+                        }}
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    name="assignee"
+                    label={<span style={{ color: 'var(--text-primary)' }}>담당자 (Assignee)</span>}
+                >
+                    <Input
+                        placeholder="이름을 입력해주세요"
                         style={{
                             background: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.5)',
                             border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',

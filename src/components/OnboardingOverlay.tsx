@@ -562,6 +562,14 @@ const OnboardingOverlay: React.FC = () => {
                             </div>
                         </div>
 
+                        {/* Assignee Field Added */}
+                        <div style={{ marginBottom: '12px' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '6px' }}>Assignee (Optional)</div>
+                            <div style={{ width: '100%', height: '36px', border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #dfe6e9', borderRadius: '10px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: isDarkMode ? '#4a4a4a' : '#b2bec3', fontSize: '12px', boxSizing: 'border-box' }}>
+                                담당자 이름 (예: 김철수)
+                            </div>
+                        </div>
+
                         <div style={{ marginBottom: '12px' }}>
                             <div style={{ fontSize: '12px', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '6px' }}>Deadline (Optional)</div>
                             <div style={{ width: '100%', height: '36px', border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #dfe6e9', borderRadius: '10px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: isDarkMode ? '#4a4a4a' : '#b2bec3', fontSize: '12px', boxSizing: 'border-box' }}>
@@ -580,7 +588,7 @@ const OnboardingOverlay: React.FC = () => {
                         </div>
                     </div>
                     <h2 style={{ fontSize: '20px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, margin: '20px 0 8px' }}>새 할일 상세 설정</h2>
-                    <p style={{ fontSize: '14px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.6' }}>우선순위, 업무명, 태그, 마감일, 상세내용을<br />자유롭게 입력하여 할일을 꼼꼼하게 관리하세요!</p>
+                    <p style={{ fontSize: '14px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.6' }}>우선순위, 업무명, 태그, <strong>담당자</strong>, 마감일, 상세내용을<br />자유롭게 입력하여 할일을 꼼꼼하게 관리하세요!</p>
                     <NavigationButtons />
                 </div>
             )}

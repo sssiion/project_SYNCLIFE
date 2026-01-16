@@ -4,7 +4,7 @@ import { Typography, Badge } from 'antd';
 import { ChevronDown, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import type { Task, TaskStatus } from '../types';
 import TaskCard from './TaskCard';
-import { useTaskStore } from '../store/useTaskStore';
+
 import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const { Title } = Typography;
@@ -31,38 +31,9 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
         }
     };
 
-    const updateTaskOrder = useTaskStore((state) => state.updateTaskOrder);
 
-    const handleMoveTask = (task: Task, direction: 'up' | 'down') => {
-        const index = tasks.findIndex(t => t.id === task.id);
-        if (index === -1) return;
 
-        let targetIndex;
-        if (direction === 'up') {
-            targetIndex = index - 1;
-        } else {
-            targetIndex = index + 1;
-        }
 
-        if (targetIndex < 0 || targetIndex >= tasks.length) return;
-
-        const targetTask = tasks[targetIndex];
-
-        // Swap Orders
-        // Fallback to createdAt if order is missing to ensure stability
-        const orderA = task.order ?? task.createdAt;
-        const orderB = targetTask.order ?? targetTask.createdAt;
-
-        // If orders are identical, spread them slightly
-        const newOrderA = orderB;
-        const newOrderB = orderA;
-
-        // If A and B were equal, we need to force a diff. 
-        // But likely they are distinct enough due to createdAt.
-
-        updateTaskOrder(task.id, newOrderA);
-        updateTaskOrder(targetTask.id, newOrderB);
-    };
 
     return (
         <div
@@ -199,7 +170,7 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                                     task={task}
                                     index={index}
                                     onEditTask={onEditTask}
-                                    onMoveTask={handleMoveTask}
+
                                     searchQuery={searchQuery}
                                 />
                             ))}

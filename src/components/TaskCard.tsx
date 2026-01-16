@@ -13,11 +13,10 @@ interface TaskCardProps {
     task: Task;
     index: number;
     onEditTask: (task: Task) => void;
-    onMoveTask?: (task: Task, direction: 'up' | 'down') => void;
     searchQuery?: string;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask, searchQuery }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuery }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
     const toggleFavorite = useTaskStore((state) => state.toggleFavorite);
 
@@ -288,10 +287,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: isHovered ? '0' : '8px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 500 }}>
                                 <Clock size={12} style={{ marginRight: '4px' }} />
-                                {task.updatedAt ? (
-                                    <span>{formatDate(task.updatedAt)} (수정)</span>
+                                {task.assignee ? (
+                                    <span>{formatDate(task.createdAt)} ({task.assignee})</span>
                                 ) : (
-                                    formatDate(task.createdAt)
+                                    <span>{formatDate(task.createdAt)}</span>
                                 )}
                             </div>
 
