@@ -6,6 +6,7 @@ import StatisticsPanel from './StatisticsPanel';
 import SearchBar from './SearchBar';
 import { useTaskStore } from '../store/useTaskStore';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import type { SortOption } from '../types';
 
 interface FloatingSidebarProps {
     onAddTask: () => void;
@@ -13,9 +14,12 @@ interface FloatingSidebarProps {
     onFilterPriority: (priority: string[]) => void;
     onFilterTags: (tags: string[]) => void;
     onFilterDate?: (date: string) => void;
+
     onFilterFavorite?: (isFav: boolean) => void;
     onSearchScope?: (scope: string) => void;
     onCollapse?: (collapsed: boolean) => void;
+    sortOption?: SortOption;
+    onSortChange?: (option: SortOption) => void;
 }
 
 const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
@@ -25,8 +29,11 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
     onFilterTags,
     onFilterDate,
     onFilterFavorite,
+
     onSearchScope,
-    onCollapse
+    onCollapse,
+    sortOption,
+    onSortChange
 }) => {
     // Default to collapsed for the "extracted" view to be initial state
     const [isCollapsed, setIsCollapsed] = useState(true);
@@ -71,7 +78,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                             }}
                         >
                             {/* Simplified Search Bar */}
-                            <div style={{ width: '300px' }}>
+                            <div style={{ width: '300px', display: 'flex', flexDirection: 'column' }}>
                                 <SearchBar
                                     simple
                                     onSearch={onSearch}
@@ -81,6 +88,36 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     onFilterFavorite={onFilterFavorite}
                                     onSearchScope={onSearchScope}
                                 />
+                                {sortOption && onSortChange && (
+                                    <div style={{ marginTop: '4px', display: 'flex', gap: '4px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none', animation: 'fadeIn 0.5s ease-out' }}>
+                                        {[
+                                            { value: 'priority-asc', label: '중요도(낮은)' },
+                                            { value: 'priority-desc', label: '중요도(높은)' },
+                                            { value: 'created-desc', label: '최신순' },
+                                            { value: 'due-asc', label: '마감일' },
+                                            { value: 'manual', label: '자유(직접)' },
+                                        ].map((opt) => (
+                                            <div
+                                                key={opt.value}
+                                                // @ts-ignore
+                                                onClick={() => onSortChange(opt.value)}
+                                                style={{
+                                                    fontSize: '10px',
+                                                    color: sortOption === opt.value ? 'var(--text-primary)' : 'rgba(255,255,255,0.8)',
+                                                    background: sortOption === opt.value ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.2)',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer',
+                                                    whiteSpace: 'nowrap',
+                                                    boxShadow: sortOption === opt.value ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
+                                                    fontWeight: sortOption === opt.value ? 700 : 400,
+                                                }}
+                                            >
+                                                {opt.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             <div onClick={onAddTask} style={{
@@ -115,7 +152,9 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     left: '16px',
                                     right: '16px',
                                     zIndex: 1002,
-                                    animation: 'slideDown 0.3s ease-out'
+                                    animation: 'slideDown 0.3s ease-out',
+                                    display: 'flex',
+                                    flexDirection: 'column'
                                 }}
                             >
                                 <SearchBar
@@ -127,6 +166,36 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     onFilterFavorite={onFilterFavorite}
                                     onSearchScope={onSearchScope}
                                 />
+                                {sortOption && onSortChange && (
+                                    <div style={{ marginTop: '4px', display: 'flex', gap: '4px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none', justifyContent: 'center', animation: 'fadeIn 0.5s ease-out' }}>
+                                        {[
+                                            { value: 'priority-asc', label: '중요도(낮은)' },
+                                            { value: 'priority-desc', label: '중요도(높은)' },
+                                            { value: 'created-desc', label: '최신순' },
+                                            { value: 'due-asc', label: '마감일' },
+                                            { value: 'manual', label: '자유(직접)' },
+                                        ].map((opt) => (
+                                            <div
+                                                key={opt.value}
+                                                // @ts-ignore
+                                                onClick={() => onSortChange(opt.value)}
+                                                style={{
+                                                    fontSize: '11px',
+                                                    color: sortOption === opt.value ? 'var(--text-primary)' : 'rgba(255,255,255,0.8)',
+                                                    background: sortOption === opt.value ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.2)',
+                                                    padding: '4px 8px',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    whiteSpace: 'nowrap',
+                                                    fontWeight: sortOption === opt.value ? 700 : 400,
+                                                    backdropFilter: 'blur(4px)'
+                                                }}
+                                            >
+                                                {opt.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Bottom: Buttons (FAB style) */}
@@ -196,14 +265,16 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     boxShadow: isCollapsed ? 'none' : '-4px 4px 24px rgba(0, 0, 0, 0.05)',
                 }),
 
-                background: 'rgba(255, 255, 255, 0.85)',
+                background: 'var(--glass-bg)',
                 backdropFilter: 'blur(20px)',
                 boxSizing: 'border-box',
                 padding: '0',
                 display: 'flex',
+                border: 'var(--glass-border)', // Use variable border
+                boxShadow: isCollapsed ? 'none' : 'var(--glass-shadow)', // Use variable shadow
                 flexDirection: 'column',
                 zIndex: 1000,
-                transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s, border 0.3s',
                 visibility: isCollapsed ? 'hidden' : 'visible', // Avoid clicks when hidden
             }}>
                 {/* Header / Handle Area */}
@@ -211,7 +282,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     onClick={isMobile ? toggleSidebar : undefined}
                     style={{
                         padding: '12px 24px',
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)', // Subtler border
                         cursor: isMobile ? 'pointer' : 'default',
                         flexShrink: 0,
                         height: '60px',
@@ -228,7 +299,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                             transform: 'translateX(-50%)',
                             width: '40px',
                             height: '4px',
-                            background: 'rgba(0,0,0,0.2)',
+                            background: 'rgba(128,128,128,0.3)',
                             borderRadius: '2px',
                         }} />
                     )}
@@ -237,7 +308,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                         {view === 'settings' && (
                             <div onClick={(e) => { e.stopPropagation(); handleBackToMenu(); }} style={{ cursor: 'pointer', display: 'flex' }}>
-                                <ArrowLeft size={24} color="#2c3e50" />
+                                <ArrowLeft size={24} color="var(--text-primary)" />
                             </div>
                         )}
                         {/* If in Menu mode and desktop, maybe show nothing or generic icon? Keeping empty to align Title */}
@@ -250,13 +321,13 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                 <div style={{
                                     width: '28px',
                                     height: '28px',
-                                    background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
+                                    background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)', // Keeps brand color
                                     borderRadius: '8px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     fontWeight: 'bold',
-                                    color: '#2c3e50',
+                                    color: '#2c3e50', // Brand text always dark on this gradient
                                     fontSize: '14px',
                                     boxShadow: '0 4px 12px rgba(161, 196, 253, 0.4)',
                                     userSelect: 'none',
@@ -264,10 +335,10 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                 }}>
                                     K
                                 </div>
-                                <h2 style={{ margin: 0, fontSize: '18px', color: '#2c3e50', fontWeight: 700, userSelect: 'none', WebkitUserSelect: 'none' }}>Task Manager</h2>
+                                <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)', fontWeight: 700, userSelect: 'none', WebkitUserSelect: 'none' }}>Task Manager</h2>
                             </>
                         ) : (
-                            <h2 style={{ margin: 0, fontSize: '18px', color: '#2c3e50', fontWeight: 700 }}>Settings</h2>
+                            <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)', fontWeight: 700 }}>Settings</h2>
                         )}
                     </div>
 
@@ -294,6 +365,8 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     flex: 1,
                     overflowY: 'auto',
                     padding: '24px',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
                     // No need for separate opacity transition since the whole container moves
                 }}>
                     {view === 'menu' ? (
@@ -314,7 +387,9 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                         height: '40px',
                                         fontSize: '16px',
                                         fontWeight: 600,
-                                        width: '100%'
+                                        width: '100%',
+                                        userSelect: 'none',
+                                        WebkitUserSelect: 'none'
                                     }}
                                 >
                                     Add New Task
@@ -339,6 +414,8 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     />
                                 </div>
                             </div>
+
+                            {/* Sorting Controls REMOVED from Expanded View as per user request */}
 
                             {/* Bottom Actions */}
                             <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -404,9 +481,14 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     <div style={{ padding: '8px', background: '#ecf0f1', borderRadius: '8px' }}>
                                         <Moon size={18} color="#2d3436" />
                                     </div>
-                                    <span style={{ fontWeight: 600, color: '#2c3e50' }}>Dark Mode</span>
+                                    <span style={{ fontWeight: 600, color: '#2c3e50', userSelect: 'none', WebkitUserSelect: 'none' }}>Dark Mode</span>
                                 </div>
-                                <Switch checkedChildren="ON" unCheckedChildren="OFF" disabled title="Coming Soon" />
+                                <Switch
+                                    checked={useTaskStore((state) => state.isDarkMode)}
+                                    onChange={useTaskStore((state) => state.toggleDarkMode)}
+                                    checkedChildren="ON"
+                                    unCheckedChildren="OFF"
+                                />
                             </div>
                         </div>
                     )}

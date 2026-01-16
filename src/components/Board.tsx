@@ -14,10 +14,11 @@ interface BoardProps {
     filterHideDone?: boolean;
     onFilterHideDone?: (hide: boolean) => void;
     searchScope?: string; // 'all' | 'title' | 'tag'
+    sortOption: 'priority-asc' | 'priority-desc' | 'created-desc' | 'due-asc' | 'manual';
     onEditTask: (task: Task) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, filterDate = 'all', filterFavorite = false, filterHideDone = false, onFilterHideDone, searchScope = 'all', onEditTask }) => {
+const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, filterDate = 'all', filterFavorite = false, filterHideDone = false, onFilterHideDone, searchScope = 'all', sortOption, onEditTask }) => {
 
     const tasks = useTaskStore((state) => state.tasks);
     const moveTask = useTaskStore((state) => state.moveTask);
@@ -105,19 +106,37 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
 
         const sortTasks = (tasksToSort: typeof tasks) => {
             return [...tasksToSort].sort((a, b) => {
+                if (sortOption === 'manual') {
+                    return (a.order ?? a.createdAt) - (b.order ?? b.createdAt);
+                }
+
                 // 1. Favorites always at top
                 if (a.isFavorite && !b.isFavorite) return -1;
                 if (!a.isFavorite && b.isFavorite) return 1;
 
-                // 2. Then by Priority (Level)
-                const weightA = priorityWeight[a.priority as Priority] || 99;
-                const weightB = priorityWeight[b.priority as Priority] || 99;
-                if (weightA !== weightB) {
-                    return weightA - weightB;
+                // 2. Sorting Logic based on sortOption
+                if (sortOption === 'priority-asc') {
+                    // L > M > H
+                    const weightA = priorityWeight[a.priority as Priority] || 99;
+                    const weightB = priorityWeight[b.priority as Priority] || 99;
+                    if (weightA !== weightB) return weightA - weightB;
+                } else if (sortOption === 'priority-desc') {
+                    // H > M > L
+                    const weightA = priorityWeight[a.priority as Priority] || 99;
+                    const weightB = priorityWeight[b.priority as Priority] || 99;
+                    if (weightA !== weightB) return weightB - weightA;
+                } else if (sortOption === 'created-desc') {
+                    // Newest First (Created Date)
+                    return b.createdAt - a.createdAt;
+                } else if (sortOption === 'due-asc') {
+                    // Due Date (Soonest First). Tasks with no due date at bottom?
+                    if (a.dueDate && b.dueDate) return a.dueDate - b.dueDate;
+                    if (a.dueDate && !b.dueDate) return -1;
+                    if (!a.dueDate && b.dueDate) return 1;
+                    // If neither has due date, fallback to created
                 }
 
-                // 3. Then by Order (User manual sort)
-                // Use order if available, else fallback to createdAt (older first or newer first? usually newer at bottom, so IDK. Let's say ascending order)
+                // 3. Fallback to Manual Order or Created
                 const orderA = a.order ?? a.createdAt;
                 const orderB = b.order ?? b.createdAt;
                 return orderA - orderB;
@@ -130,7 +149,7 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
             DONE: sortTasks(filteredTasks.filter((t) => t.status === 'DONE')),
         };
         return cols;
-    }, [filteredTasks]);
+    }, [filteredTasks, sortOption]);
 
     const onDragEnd = (result: DropResult) => {
         const { destination, draggableId, source } = result;

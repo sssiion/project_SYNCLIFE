@@ -1,6 +1,9 @@
 export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 export type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
 
+export type SortOption = 'priority-asc' | 'priority-desc' | 'created-desc' | 'due-asc' | 'manual';
+
+
 export interface Task {
   id: string;
   title: string;
@@ -26,4 +29,6 @@ export type TasksState = {
   clearAllTasks: () => void;
   hasSeenTutorial: boolean;
   completeTutorial: () => void;
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
 };

@@ -4,7 +4,7 @@ import Board from './components/Board';
 import NewTaskModal from './components/NewTaskModal';
 import FloatingSidebar from './components/FloatingSidebar';
 import { ConfigProvider, theme } from 'antd';
-import type { Task } from './types';
+import type { Task, SortOption } from './types';
 import { useMediaQuery } from './hooks/useMediaQuery';
 import { useTaskStore } from './store/useTaskStore'; // Import Store
 import OnboardingOverlay from './components/OnboardingOverlay'; // Import Overlay
@@ -19,6 +19,7 @@ function App() {
   const [filterFavorite, setFilterFavorite] = useState<boolean>(false);
   const [filterHideDone, setFilterHideDone] = useState<boolean>(false);
   const [searchScope, setSearchScope] = useState<string>('title'); // 'all', 'title', 'tag'
+  const [sortOption, setSortOption] = useState<SortOption>('priority-asc'); // Default sort
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -67,17 +68,27 @@ function App() {
 
   // Tutorial Logic
   const hasSeenTutorial = useTaskStore((state) => state.hasSeenTutorial);
+  const isDarkMode = useTaskStore((state) => state.isDarkMode);
+
+  // Apply Dark Mode Class to Body
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   return (
     <ConfigProvider
       theme={{
-        algorithm: theme.defaultAlgorithm,
+        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
           fontFamily: 'Inter, sans-serif',
           colorPrimary: '#8ec5fc', // Pastel Blue
-          colorBgContainer: 'rgba(255, 255, 255, 0.6)',
-          colorText: '#2c3e50',
-          colorTextHeading: '#1e272e',
+          colorBgContainer: isDarkMode ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.6)',
+          colorText: isDarkMode ? '#ecf0f1' : '#2c3e50',
+          colorTextHeading: isDarkMode ? '#ffffff' : '#1e272e',
         },
       }}
     >
@@ -104,6 +115,7 @@ function App() {
             filterHideDone={filterHideDone}
             onFilterHideDone={setFilterHideDone}
             searchScope={searchScope}
+            sortOption={sortOption}
             onEditTask={handleEditTask}
           />
 
@@ -122,6 +134,8 @@ function App() {
           onFilterDate={setFilterDate}
           onFilterFavorite={setFilterFavorite}
           onSearchScope={setSearchScope}
+          sortOption={sortOption}
+          onSortChange={setSortOption}
           onCollapse={setIsSidebarCollapsed}
         />
       </div>

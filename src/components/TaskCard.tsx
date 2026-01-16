@@ -2,25 +2,27 @@ import React from 'react';
 import { Card, Tag, Typography, Button, Dropdown, Modal } from 'antd';
 import { Draggable } from '@hello-pangea/dnd';
 import { Clock, MoreVertical, Trash2, Edit, Calendar, Star } from 'lucide-react';
-import type { Task, TaskStatus } from '../types';
+import type { Task } from '../types';
 import { useTaskStore } from '../store/useTaskStore';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const { Paragraph } = Typography;
+import { ChevronUp, ChevronDown, X, GripVertical } from 'lucide-react';
 
 interface TaskCardProps {
     task: Task;
     index: number;
     onEditTask: (task: Task) => void;
+    onMoveTask?: (task: Task, direction: 'up' | 'down') => void;
     searchQuery?: string;
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuery }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
     const toggleFavorite = useTaskStore((state) => state.toggleFavorite);
-    const moveTask = useTaskStore((state) => state.moveTask);
 
     const [isHovered, setIsHovered] = React.useState(false);
+    const [isReordering, setIsReordering] = React.useState(false);
     const isMobile = useMediaQuery('(max-width: 768px)');
 
     // Highlight Text Helper
@@ -109,53 +111,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
     const handleSwipe = (direction: 'left' | 'right') => {
         if (!isMobile) return;
 
-        const statusFlow: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
-        const currentIndex = statusFlow.indexOf(task.status);
-        if (currentIndex === -1) return;
-
-        let nextIndex;
         if (direction === 'right') {
-            // Right Swipe: Move to Next (TODO -> IN_PROGRESS -> DONE -> TODO Loop)
-            // But usually Swipe Right means moving content to the right? 
-            // Wait, if I swipe my finger right -> I am pulling content to the right. 
-            // This usually reveals left content or goes to "Previous" page visually.
-            // But User Requirement: "Task card move right -> InProgress". 
-            // Does this mean visually drag it? Or swipe gesture? 
-            // "Mobile mode from todo task card right swipe -> move to inprogress"
-            // Let's assume standard carousel logic: Swipe LEFT (finger moves right to left) goes to NEXT item. 
-            // Swipe RIGHT (finger moves left to right) goes to PREV item.
-            // BUT User says: "Task Card Right Swipe -> InProgress".
-            // Left Swipe -> Done.
-            // Todo is Leftmost. InProgress is Middle. Done is Rightmost.
-            // If I am in Todo, and I "Swipe Right" (Finger moves L->R), that feels like pushing it to the Right (In Progress).
-            // Let's stick to the direction variable: 'right' means finger went L -> R. 'left' means R -> L.
-
-            // User: "Todo task card right swipe -> InProgress".
-            // So distance < 0 (Right Swipe) -> InProgress.
-
-            // Re-reading logic in handleSwipe:
-            // current logic: distance = start - end.
-            // If start=10, end=100 (Right movement), distance = -90.
-            // distance > 0 ? 'left' : 'right'. So -90 is 'right'.
-
-            // Logic check:
-            // TODO (Right Swipe) -> IN_PROGRESS.
-            // IN_PROGRESS (Right Swipe) -> DONE.
-            // DONE (Right Swipe) -> TODO.
-
-            // TODO (Left Swipe) -> DONE.
-            // IN_PROGRESS (Left Swipe) -> TODO.
-            // DONE (Left Swipe) -> IN_PROGRESS.
-
-            nextIndex = (currentIndex + 1) % statusFlow.length;
+            // Right Swipe (Left -> Right): Edit
+            onEditTask(task);
+            // Optionally close swipe state if we had one, or visual feedback
         } else {
-            // Left Swipe
-            nextIndex = (currentIndex - 1 + statusFlow.length) % statusFlow.length;
+            // Left Swipe (Right -> Left): Delete
+            handleDelete();
         }
-
-        const nextStatus = statusFlow[nextIndex];
-        moveTask(task.id, nextStatus);
-        setIsHovered(false); // Close details on move
+        setIsHovered(false);
     };
 
     const handleClick = () => {
@@ -215,21 +179,20 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                     onTouchStart={onTouchStart}
                     onTouchEnd={onTouchEnd}
                     onClick={handleClick}
+                    onDoubleClick={() => setIsReordering(true)}
                 >
                     <Card
-                        onTouchStart={isMobile ? onTouchStart : undefined}
-                        onTouchEnd={isMobile ? onTouchEnd : undefined}
                         className={`glass-panel task-card-inner ${snapshot.isDragging ? 'is-dragging' : ''}`}
                         style={{
                             // Inner Card Styles
                             cursor: 'grab', // Restore grab cursor
-                            border: snapshot.isDragging ? '1px solid #74b9ff' : '1px solid rgba(255, 255, 255, 0.6)',
+                            border: snapshot.isDragging ? '1px solid #74b9ff' : 'var(--card-border)',
                             // Conditional Background Logic
                             background: isDone
-                                ? 'rgba(235, 235, 235, 0.7)' // Light gray for DONE (dimmed but visible)
+                                ? 'var(--card-bg-done)'
                                 : isUrgent
-                                    ? 'rgba(255, 230, 230, 0.9)' // Reddish tint for URGENT (<= 1 day)
-                                    : 'rgba(255, 255, 255, 0.6)', // Default glass
+                                    ? 'var(--card-bg-urgent)'
+                                    : 'var(--card-bg)',
                             // Shadow is handled by CSS now for hover, but kept for drag/static for specific states if needed
                             // We can let CSS handle hover shadow override.
                             boxShadow: snapshot.isDragging
@@ -277,7 +240,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
 
                         <Paragraph
                             strong
-                            style={{ fontSize: '16px', marginBottom: '4px', color: '#2c3e50', margin: 0 }}
+                            style={{ fontSize: '16px', marginBottom: '4px', color: 'var(--text-primary)', margin: 0 }}
                             ellipsis={isHovered ? false : { rows: 2, tooltip: task.title }}
                         >
                             {highlightText(task.title, searchQuery)}
@@ -290,8 +253,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                                         key={tag}
                                         style={{
                                             fontSize: '11px',
-                                            color: '#7f8c8d',
-                                            background: 'rgba(0,0,0,0.04)',
+                                            color: 'var(--tag-text)',
+                                            background: 'var(--tag-bg)',
                                             borderRadius: '4px',
                                             margin: 0,
                                             padding: '0 6px',
@@ -315,7 +278,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                         }}>
                             {task.description && (
                                 <Paragraph
-                                    style={{ fontSize: '13px', color: '#596275', marginTop: '8px' }}
+                                    style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '8px' }}
                                 >
                                     {highlightText(task.description, searchQuery)}
                                 </Paragraph>
@@ -323,7 +286,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: isHovered ? '0' : '8px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', color: '#bdc3c7', fontSize: '12px', fontWeight: 500 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 500 }}>
                                 <Clock size={12} style={{ marginRight: '4px' }} />
                                 {task.updatedAt ? (
                                     <span>{formatDate(task.updatedAt)} (수정)</span>
@@ -344,6 +307,63 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                                 </div>
                             )}
                         </div>
+
+                        {/* Reorder Mode Overlay */}
+                        {isReordering && (
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    zIndex: 10,
+                                    borderRadius: '16px',
+                                    backdropFilter: 'blur(4px)',
+                                    animation: 'fadeIn 0.2s ease-out'
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
+                                    <Button
+                                        shape="circle"
+                                        size="large"
+                                        icon={<ChevronUp size={24} />}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onMoveTask?.(task, 'up');
+                                        }}
+                                        style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    />
+                                    <Button
+                                        shape="circle"
+                                        size="large"
+                                        icon={<ChevronDown size={24} />}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onMoveTask?.(task, 'down');
+                                        }}
+                                        style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    />
+                                </div>
+                                <Button
+                                    type="text"
+                                    icon={<X size={20} />}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsReordering(false);
+                                    }}
+                                    style={{ color: '#596275' }}
+                                >
+                                    닫기
+                                </Button>
+                            </div>
+                        )}
                     </Card>
                 </div>
             )}

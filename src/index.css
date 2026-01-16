@@ -22,6 +22,43 @@
   --col-todo: #ff9f43;
   --col-progress: #54a0ff;
   --col-done: #1dd1a1;
+
+  /* Card Colors - Light */
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --card-bg-done: rgba(235, 235, 235, 0.7);
+  --card-bg-urgent: rgba(255, 230, 230, 0.9);
+  --card-border: 1px solid rgba(255, 255, 255, 0.6);
+
+  /* Tag Colors */
+  --tag-bg: rgba(0, 0, 0, 0.04);
+  --tag-text: #7f8c8d;
+}
+
+/* Dark Mode Variables */
+.dark {
+  /* Main Background: Deep Space / Midnight */
+  --main-bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+
+  /* Glassmorphism - Dark Mode */
+  --glass-bg: rgba(16, 20, 24, 0.7);
+  --glass-bg-hover: rgba(26, 30, 34, 0.85);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+
+  /* Text */
+  --text-primary: #ecf0f1;
+  --text-secondary: #bdc3c7;
+  --text-white: #ffffff;
+
+  /* Card Colors - Dark */
+  --card-bg: rgba(30, 35, 40, 0.6);
+  --card-bg-done: rgba(20, 25, 30, 0.4);
+  --card-bg-urgent: rgba(60, 20, 20, 0.6);
+  --card-border: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* Tag Colors - Dark */
+  --tag-bg: rgba(255, 255, 255, 0.1);
+  --tag-text: #bdc3c7;
 }
 
 body {
@@ -85,17 +122,17 @@ code {
 }
 
 .glass-modal .ant-modal-content {
-  background: rgba(255, 255, 255, 0.85) !important;
+  background: var(--glass-bg-hover) !important;
   backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  border: var(--glass-border) !important;
   color: var(--text-primary);
   border-radius: 16px !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
 }
 
 .glass-modal .ant-modal-header {
   background: transparent !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.1) !important;
 }
 
 .glass-modal .ant-modal-title {

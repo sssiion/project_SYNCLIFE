@@ -23,8 +23,8 @@ const StatisticsPanel: React.FC = () => {
     // Ant Design Progress format
     const format = (percent?: number) => (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2c3e50' }}>{percent}%</span>
-            <span style={{ fontSize: '10px', color: '#7f8c8d' }}>Complete</span>
+            <span style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text-primary)' }}>{percent}%</span>
+            <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Complete</span>
         </div>
     );
 
@@ -54,7 +54,7 @@ const StatisticsPanel: React.FC = () => {
                         width: '100%',
                         height: '100%',
                         borderRadius: '24px',
-                        background: 'rgba(255, 255, 255, 0.45)',
+                        background: 'var(--glass-bg)',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '16px',
@@ -71,7 +71,7 @@ const StatisticsPanel: React.FC = () => {
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <h3 style={{ margin: 0, padding: '10px 0 0 10px', fontSize: '14px', fontWeight: 600, color: '#34495e' }}>Activity</h3>
+                        <h3 style={{ margin: 0, padding: '10px 0 0 10px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Activity</h3>
                         <span style={{ fontSize: '20px', padding: '10px 10px 0 0' }}>📊</span>
                     </div>
 
@@ -90,12 +90,12 @@ const StatisticsPanel: React.FC = () => {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
                         <Tooltip title="Total Tasks">
                             <div style={{
-                                background: 'rgba(255,255,255,0.5)', padding: '8px', borderRadius: '12px',
+                                background: 'var(--glass-bg-hover)', padding: '8px', borderRadius: '12px',
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
                             }}>
-                                <ListTodo size={16} color="#34495e" />
-                                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>{totalTasks}</span>
-                                <span style={{ fontSize: '9px', color: '#7f8c8d' }}>TOTAL</span>
+                                <ListTodo size={16} color="var(--text-primary)" />
+                                <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-primary)' }}>{totalTasks}</span>
+                                <span style={{ fontSize: '9px', color: 'var(--text-secondary)' }}>TOTAL</span>
                             </div>
                         </Tooltip>
                         <Tooltip title="In Progress">
@@ -129,7 +129,7 @@ const StatisticsPanel: React.FC = () => {
                         width: '100%',
                         height: '100%',
                         borderRadius: '24px',
-                        background: 'rgba(255, 255, 255, 0.45)',
+                        background: 'var(--glass-bg)',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '20px',

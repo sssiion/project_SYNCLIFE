@@ -4,6 +4,7 @@ import { Search, X, Star } from 'lucide-react';
 
 import { useTaskStore } from '../store/useTaskStore';
 
+
 const { Option } = Select;
 
 export interface SearchBarProps {
@@ -13,6 +14,7 @@ export interface SearchBarProps {
     onFilterDate?: (date: string) => void;
     onFilterFavorite?: (isFav: boolean) => void;
     onSearchScope?: (scope: string) => void;
+
 
     simple?: boolean;
 }
@@ -24,6 +26,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     onFilterDate,
     onFilterFavorite,
     onSearchScope,
+
     simple
 }) => {
     const [isFavActive, setIsFavActive] = useState(false);
@@ -99,8 +102,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         borderRadius: '12px', // Fully rounded for simple mode? Or keep consistent.
                         userSelect: 'none',
                         WebkitUserSelect: 'none',
-                        border: '1px solid rgba(255,255,255,0.8)',
-                        background: 'rgba(255,255,255,0.6)',
+                        border: 'var(--glass-border)',
+                        background: 'var(--glass-bg)',
                         padding: '0 12px',
                         backdropFilter: 'blur(10px)',
                         height: '40px',
@@ -120,7 +123,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             flex: 1,
                             background: 'transparent',
                             padding: '4px 0',
-                            color: '#2c3e50'
+                            color: 'var(--text-primary)',
+                            userSelect: 'text',
+                            WebkitUserSelect: 'text'
                         }}
                     />
                     {!simple && onFilterFavorite && (
@@ -165,7 +170,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         maxTagCount="responsive"
                         // @ts-ignore
                         styles={{
-                            popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' } }
+                            popup: { root: { background: 'var(--glass-bg-hover)', backdropFilter: 'blur(10px)' } }
                         }}
                     >
                         {Array.from(new Set(tasks.flatMap(t => t.tags || []))).map(tag => (
@@ -194,7 +199,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                 variant="borderless"
                                 dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
                                 // @ts-ignore
-                                styles={{ popup: { minWidth: '140px', fontSize: '11px', background: 'rgba(255, 255, 255, 0.9)' } }}
+                                styles={{ popup: { minWidth: '140px', fontSize: '11px', background: 'var(--glass-bg-hover)' } }}
                                 options={[
                                     { value: 'HIGH', label: 'High' },
                                     { value: 'MEDIUM', label: 'Medium' },
@@ -217,7 +222,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                     dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
                                     // @ts-ignore
                                     styles={{
-                                        popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '10px' } }
+                                        popup: { root: { background: 'var(--glass-bg-hover)', backdropFilter: 'blur(10px)', fontSize: '10px' } }
                                     }}
                                     options={[
                                         { value: 'all', label: '모두' },
@@ -246,7 +251,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                     variant="borderless"
                                     dropdownStyle={{ minWidth: '100px', fontSize: '11px' }}
                                     // @ts-ignore
-                                    styles={{ popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '11px' } } }}
+                                    styles={{ popup: { root: { background: 'var(--glass-bg-hover)', backdropFilter: 'blur(10px)', fontSize: '11px' } } }}
                                     options={[
 
                                         { value: 'title', label: '제목' },
@@ -278,14 +283,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                 cursor: 'pointer',
                                 borderRadius: '16px',
                                 border: 'none',
-                                background: 'rgba(255, 255, 255, 0.5)',
+                                background: 'var(--tag-bg)',
                                 backdropFilter: 'blur(4px)',
                                 padding: '4px 12px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '4px',
                                 fontSize: '12px',
-                                color: '#596275',
+                                color: 'var(--tag-text)',
                                 boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                                 transition: 'all 0.2s'
                             }}
@@ -295,6 +300,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     ))}
                 </div>
             )}
+
+
+
         </div>
     );
 };
