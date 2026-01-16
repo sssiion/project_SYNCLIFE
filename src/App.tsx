@@ -15,6 +15,7 @@ function App() {
   const [filterTags, setFilterTags] = useState<string[]>([]);
   const [filterDate, setFilterDate] = useState<string>('all'); // 'all', 'today', 'week', 'overdue'
   const [filterFavorite, setFilterFavorite] = useState<boolean>(false);
+  const [filterHideDone, setFilterHideDone] = useState<boolean>(false);
   const [searchScope, setSearchScope] = useState<string>('all'); // 'all', 'title', 'tag'
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -60,6 +61,8 @@ function App() {
             filterTags={filterTags}
             filterDate={filterDate}
             filterFavorite={filterFavorite}
+            filterHideDone={filterHideDone}
+            onFilterHideDone={setFilterHideDone}
             searchScope={searchScope}
             onEditTask={handleEditTask}
           />
@@ -78,6 +81,8 @@ function App() {
           onFilterTags={setFilterTags}
           onFilterDate={setFilterDate}
           onFilterFavorite={setFilterFavorite}
+          onFilterHideDone={setFilterHideDone}
+          filterHideDone={filterHideDone}
           onSearchScope={setSearchScope}
           onCollapse={setIsSidebarCollapsed}
         />

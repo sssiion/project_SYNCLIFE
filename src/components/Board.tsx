@@ -9,13 +9,16 @@ interface BoardProps {
     searchQuery: string;
     filterPriority: string[];
     filterTags: string[];
-    filterDate?: string; // 'all' | 'today' | 'week' | 'overdue'
+    filterDate?: string; // 'all' | 'today' | 'week' | 'overdue' | 'no-deadline' | 'recent'
     filterFavorite?: boolean;
+    filterHideDone?: boolean;
+    onFilterHideDone?: (hide: boolean) => void;
     searchScope?: string; // 'all' | 'title' | 'tag'
     onEditTask: (task: Task) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, filterDate = 'all', filterFavorite = false, searchScope = 'all', onEditTask }) => {
+const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, filterDate = 'all', filterFavorite = false, filterHideDone = false, onFilterHideDone, searchScope = 'all', onEditTask }) => {
+
     const tasks = useTaskStore((state) => state.tasks);
     const moveTask = useTaskStore((state) => state.moveTask);
     const updateTaskOrder = useTaskStore((state) => state.updateTaskOrder);
@@ -49,25 +52,26 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
             const matchesFavorite = !filterFavorite || (filterFavorite && t.isFavorite);
             // AND Condition: Task must have ALL selected tags
             const matchesTags = filterTags.length === 0 || filterTags.every(tag => t.tags && t.tags.includes(tag));
+
+            // Hide Done Filter
+            const matchesHideDone = !filterHideDone || t.status !== 'DONE';
+
             // Date Filter Logic
             let matchesDate = true;
             if (filterDate && filterDate !== 'all') {
                 const now = new Date();
                 const todayValues = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
-                if (filterDate === 'overdue') {
+                if (filterDate === 'no-deadline') {
+                    matchesDate = !t.dueDate;
+                } else if (filterDate === 'recent') {
+                    // Created within last 24 hours
+                    const oneDay = 24 * 60 * 60 * 1000;
+                    matchesDate = t.createdAt >= Date.now() - oneDay;
+                } else if (filterDate === 'overdue') {
                     if (t.dueDate) {
                         const deadlineDate = new Date(t.dueDate).getTime();
-                        if (filterDate === 'overdue') matchesDate = deadlineDate < todayValues && t.status !== 'DONE';
-                        else if (filterDate === 'today') {
-                            const d = new Date(t.dueDate);
-                            matchesDate = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
-                        }
-                        else if (filterDate === 'week') {
-                            const nextWeek = new Date(todayValues + 7 * 24 * 60 * 60 * 1000).getTime();
-                            const deadline = new Date(t.dueDate).getTime();
-                            matchesDate = deadline >= todayValues && deadline <= nextWeek;
-                        }
+                        matchesDate = deadlineDate < todayValues && t.status !== 'DONE';
                     } else {
                         matchesDate = false;
                     }
@@ -87,9 +91,9 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                 }
             }
 
-            return matchesSearch && matchesPriority && matchesTags && matchesDate && matchesFavorite;
+            return matchesSearch && matchesPriority && matchesTags && matchesDate && matchesFavorite && matchesHideDone;
         });
-    }, [tasks, searchQuery, filterPriority, filterTags, searchScope, filterDate, filterFavorite]);
+    }, [tasks, searchQuery, filterPriority, filterTags, searchScope, filterDate, filterFavorite, filterHideDone]);
 
     const columns = useMemo(() => {
         // Priority weights for sorting: LOW (top) -> MEDIUM -> HIGH (bottom)
@@ -240,6 +244,8 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                     color="var(--col-done)"
                     onEditTask={onEditTask}
                     searchQuery={searchQuery}
+                    onToggleHideDone={onFilterHideDone ? () => onFilterHideDone(!filterHideDone) : undefined}
+                    isHideDone={filterHideDone}
                 />
             </div>
         </DragDropContext>

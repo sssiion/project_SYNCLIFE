@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import { Typography, Badge } from 'antd';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import type { Task, TaskStatus } from '../types';
 import TaskCard from './TaskCard';
 import { useMediaQuery } from '../hooks/useMediaQuery';
@@ -15,9 +15,11 @@ interface ColumnProps {
     color: string;
     onEditTask: (task: Task) => void;
     searchQuery?: string;
+    onToggleHideDone?: () => void;
+    isHideDone?: boolean;
 }
 
-const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask, searchQuery }) => {
+const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask, searchQuery, onToggleHideDone, isHideDone }) => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -66,14 +68,39 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                     <Title level={5} style={{ margin: 0, color: '#2c3e50', fontWeight: 600 }}>
                         {title}
                     </Title>
-                    <Badge
-                        count={tasks.length}
-                        style={{
-                            backgroundColor: 'rgba(0,0,0,0.06)',
-                            color: '#596275',
-                            boxShadow: 'none'
-                        }}
-                    />
+                    {status === 'DONE' && onToggleHideDone ? (
+                        <div
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleHideDone();
+                            }}
+                            style={{
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '4px',
+                                borderRadius: '50%',
+                                transition: 'background 0.2s',
+                            }}
+                            title={isHideDone ? "완료된 태스크 보이기" : "완료된 태스크 숨기기"}
+                        >
+                            {isHideDone ? (
+                                <EyeOff size={16} color="#95a5a6" />
+                            ) : (
+                                <Eye size={16} color="#95a5a6" />
+                            )}
+                        </div>
+                    ) : (
+                        <Badge
+                            count={tasks.length}
+                            style={{
+                                backgroundColor: 'rgba(0,0,0,0.06)',
+                                color: '#596275',
+                                boxShadow: 'none'
+                            }}
+                        />
+                    )}
                 </div>
             </div>
 

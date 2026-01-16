@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select, Tag } from 'antd';
 import { Search, X, Star } from 'lucide-react';
+
 import { useTaskStore } from '../store/useTaskStore';
 
 const { Option } = Select;
@@ -12,10 +13,19 @@ export interface SearchBarProps {
     onFilterDate?: (date: string) => void;
     onFilterFavorite?: (isFav: boolean) => void;
     onSearchScope?: (scope: string) => void;
+
     simple?: boolean;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFilterTags, onFilterDate, onFilterFavorite, onSearchScope, simple }) => {
+const SearchBar: React.FC<SearchBarProps> = ({
+    onSearch,
+    onFilterPriority,
+    onFilterTags,
+    onFilterDate,
+    onFilterFavorite,
+    onSearchScope,
+    simple
+}) => {
     const [isFavActive, setIsFavActive] = useState(false);
     const tasks = useTaskStore((state) => state.tasks);
     const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -209,13 +219,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterPriority, onFil
                                         popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '10px' } }
                                     }}
                                     options={[
-                                        { value: 'all', label: 'ALL' },
+                                        { value: 'all', label: '모두' },
                                         { value: 'today', label: '오늘' },
                                         { value: 'week', label: '이번주' },
                                         { value: 'overdue', label: '지남' },
+                                        { value: 'no-deadline', label: '마감일 없음' },
+                                        { value: 'recent', label: '최근 생성됨' },
                                     ]}
                                 />
                             )}
+
+
 
                             {onSearchScope && (
                                 <Select
