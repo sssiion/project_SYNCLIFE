@@ -9,11 +9,16 @@ const OnboardingOverlay: React.FC = () => {
     const [step, setStep] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
 
-    // Check for mobile view for Step 8 (Settings)
+    // Check for mobile view (Phone)
     const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+    // Check for tablet view (Pad)
+    const [isTabletView, setIsTabletView] = useState(window.innerWidth >= 768 && window.innerWidth <= 1024);
 
     useEffect(() => {
-        const handleResize = () => setIsMobileView(window.innerWidth < 768);
+        const handleResize = () => {
+            setIsMobileView(window.innerWidth < 768);
+            setIsTabletView(window.innerWidth >= 768 && window.innerWidth <= 1024);
+        };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
@@ -22,7 +27,7 @@ const OnboardingOverlay: React.FC = () => {
     const [typingTitle, setTypingTitle] = useState('');
     const fullTitle = 'SyncLife 개발 완료하기';
 
-    const stepList = isMobileView
+    const stepList = (isMobileView || isTabletView)
         ? [0, 1, 2, 3, 4, 5, 6, 7, 8]
         : [0, 1, 2, 4, 5, 6, 7, 8, 9];
     const currentStepIndex = stepList.indexOf(step);
@@ -59,13 +64,13 @@ const OnboardingOverlay: React.FC = () => {
         e?.stopPropagation();
         let next = step + 1;
 
-        // Skip precision move (Step 3) on desktop
-        if (!isMobileView && next === 3) {
+        // Skip precision move (Step 3) on desktop ONLY (Tablet sees Swipe Actions in Step 3)
+        if (!isMobileView && !isTabletView && next === 3) {
             next = 4;
         }
 
-        // Skip keyboard shortcuts on mobile
-        if (isMobileView && next === 9) {
+        // Skip keyboard shortcuts on mobile & tablet
+        if ((isMobileView || isTabletView) && next === 9) {
             handleComplete();
             return;
         }
@@ -85,7 +90,7 @@ const OnboardingOverlay: React.FC = () => {
         let prev = step - 1;
 
         // Skip precision move (Step 3) on desktop if coming back
-        if (!isMobileView && prev === 3) {
+        if (!isMobileView && !isTabletView && prev === 3) {
             prev = 2;
         }
 
@@ -298,8 +303,8 @@ const OnboardingOverlay: React.FC = () => {
                 </div>
             )}
 
-            {/* Step 3: Reordering (Double Click) */}
-            {step === 3 && (
+            {/* Step 3: Precision Move (Mobile & Tablet) */}
+            {step === 3 && (isMobileView || isTabletView) && (
                 <div className="animate-slide-up" style={{ textAlign: 'center', maxWidth: '400px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ background: isDarkMode ? '#2d3436' : '#f8f9fa', borderRadius: '24px', height: '220px', padding: '24px', marginBottom: '24px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
                         <div style={{ position: 'relative', width: '100%', maxWidth: '280px', height: '120px' }}>
@@ -328,11 +333,14 @@ const OnboardingOverlay: React.FC = () => {
                             <div style={{ position: 'absolute', inset: 0, border: '3px solid #07D950', borderRadius: '16px', zIndex: 10, animation: 'ping 1.5s infinite' }}></div>
                         </div>
                     </div>
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>정밀 이동 (Double Click)</h2>
-                    <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72' }}>카드를 <strong>두 번 클릭</strong>하면<br />위아래로 순서를 정밀하게 옮길 수 있습니다.</p>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>정밀 이동 (Double Tap)</h2>
+                    <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72' }}>카드를 <strong>두 번 탭(터치)</strong>하면<br />위아래로 순서를 정밀하게 옮길 수 있습니다.</p>
                     <NavigationButtons />
                 </div>
             )}
+
+            {/* Step 3 (Desktop): Skipped by stepList logic, ensuring it doesn't appear for Desktop */}
+            {step === 3 && !isMobileView && !isTabletView && null}
 
             {/* Step 4: Search & Favorites */}
             {step === 4 && (
@@ -794,6 +802,21 @@ const OnboardingOverlay: React.FC = () => {
 }
 .animate-fade-in { animation: fadeIn 0.5s ease-out; }
 .animate-slide-up { animation: slideUp 0.5s ease-out; }
+@keyframes swipeActionDemo {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(40px); } /* Right swipe (Edit) */
+    50% { transform: translateX(0); }
+    70% { transform: translateX(-40px); } /* Left swipe (Delete) */
+}
+@keyframes handSwipeAction {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0; }
+    10% { transform: translate(-50%, 0); opacity: 1; }
+    20% { transform: translate(0, 0); opacity: 1; } /* Move Right */
+    40% { transform: translate(-50%, 0); opacity: 0; }
+    60% { transform: translate(-50%, 0); opacity: 1; }
+    70% { transform: translate(-100%, 0); opacity: 1; } /* Move Left */
+    90% { transform: translate(-50%, 0); opacity: 0; }
+}
 `}</style>
         </div >
     );

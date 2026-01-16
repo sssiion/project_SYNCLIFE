@@ -22,6 +22,7 @@ interface ColumnProps {
 
 const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask, searchQuery, onToggleHideDone, isHideDone }) => {
     const isMobile = useMediaQuery('(max-width: 768px)');
+    const isTablet = useMediaQuery('(min-width: 769px) and (max-width: 1200px)');
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const toggleCollapse = () => {
@@ -70,9 +71,9 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
-                // User Request: Fix width issues on desktop
-                width: isMobile ? '100%' : '350px',
-                flexShrink: isMobile ? 1 : 0,
+                // User Request: Fix width issues on desktop/tablet
+                width: isMobile ? '100%' : (isTablet ? 'auto' : '350px'),
+                flex: isMobile ? 'none' : (isTablet ? '1 1 0' : '0 0 350px'),
                 transition: 'all 0.3s ease',
                 // User Request: White background when collapsed
                 borderRadius: (isMobile && isCollapsed) ? '12px' : '0',

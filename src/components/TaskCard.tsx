@@ -23,7 +23,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
 
     const [isHovered, setIsHovered] = React.useState(false);
     const [isReordering, setIsReordering] = React.useState(false);
-    const isMobile = useMediaQuery('(max-width: 768px)');
+    const isMobile = useMediaQuery('(max-width: 1024px)');
 
     // Highlight Text Helper
     const highlightText = (text: string, query?: string) => {
@@ -240,7 +240,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
 
                         <Paragraph
                             strong
-                            style={{ fontSize: '16px', marginBottom: '4px', color: 'var(--text-primary)', margin: 0 }}
+                            style={{ fontSize: '16px', marginBottom: '4px', marginTop: 0, color: 'var(--text-primary)' }}
                             ellipsis={isHovered ? false : { rows: 2, tooltip: task.title }}
                         >
                             {highlightText(task.title, searchQuery)}
