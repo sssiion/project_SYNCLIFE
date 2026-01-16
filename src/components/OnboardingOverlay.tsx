@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Hand, ArrowUp, ArrowDown, Clock, Star, MoreVertical, X, Search, ChevronDown, MousePointer2, Calendar, Moon, HelpCircle, LayoutGrid, CheckCircle2, ChevronLeft, ArrowRight, Repeat, Eye } from 'lucide-react';
+import { Hand, Clock, Star, MoreVertical, X, Search, ChevronDown, MousePointer2, Calendar, Moon, HelpCircle, LayoutGrid, CheckCircle2, ChevronLeft, ArrowRight, Repeat, Eye } from 'lucide-react';
 import { useTaskStore } from '../store/useTaskStore';
 
 const OnboardingOverlay: React.FC = () => {
@@ -303,7 +303,7 @@ const OnboardingOverlay: React.FC = () => {
                 </div>
             )}
 
-            {/* Step 3: Precision Move (Mobile & Tablet) */}
+            {/* Step 3: Quick Status Move (Mobile & Tablet) */}
             {step === 3 && (isMobileView || isTabletView) && (
                 <div className="animate-slide-up" style={{ textAlign: 'center', maxWidth: '400px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ background: isDarkMode ? '#2d3436' : '#f8f9fa', borderRadius: '24px', height: '220px', padding: '24px', marginBottom: '24px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
@@ -317,24 +317,23 @@ const OnboardingOverlay: React.FC = () => {
                                     backdropFilter: 'blur(2px)',
                                     animation: 'fadeIn 0.3s'
                                 }}>
-                                    <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
-                                        <div style={{ width: '40px', height: '40px', background: isDarkMode ? '#3a4042' : 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isDarkMode ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)' }}>
-                                            <ArrowUp size={20} color={isDarkMode ? '#e2e8f0' : '#2d3436'} />
-                                        </div>
-                                        <div style={{ width: '40px', height: '40px', background: isDarkMode ? '#3a4042' : 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isDarkMode ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)' }}>
-                                            <ArrowDown size={20} color={isDarkMode ? '#e2e8f0' : '#2d3436'} />
-                                        </div>
+                                    <div style={{ fontSize: '13px', fontWeight: 700, color: isDarkMode ? '#e2e8f0' : '#2d3436', marginBottom: '8px' }}>
+                                        어디로 이동할까요?
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: isDarkMode ? '#e2e8f0' : '#2d3436', fontWeight: 600 }}>
-                                        <X size={14} /> 닫기
+                                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                                        <div style={{ padding: '6px 12px', background: 'white', borderRadius: '20px', fontSize: '12px', fontWeight: 700, color: '#6c5ce7', border: '1px solid #6c5ce7', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>To Do</div>
+                                        <div style={{ padding: '6px 12px', background: 'white', borderRadius: '20px', fontSize: '12px', fontWeight: 700, color: '#00b894', border: '1px solid #00b894', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>Done</div>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: isDarkMode ? '#e2e8f0' : '#2d3436', fontWeight: 600 }}>
+                                        <X size={12} /> 닫기
                                     </div>
                                 </div>
                             } />
                             <div style={{ position: 'absolute', inset: 0, border: '3px solid #07D950', borderRadius: '16px', zIndex: 10, animation: 'ping 1.5s infinite' }}></div>
                         </div>
                     </div>
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>정밀 이동 (Double Tap)</h2>
-                    <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72' }}>카드를 <strong>두 번 탭(터치)</strong>하면<br />위아래로 순서를 정밀하게 옮길 수 있습니다.</p>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>빠른 상태 변경 (Double Tap)</h2>
+                    <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72' }}>카드를 <strong>두 번 탭(터치)</strong>하여<br />다른 컬럼으로 빠르게 이동하세요.</p>
                     <NavigationButtons />
                 </div>
             )}

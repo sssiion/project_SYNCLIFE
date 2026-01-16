@@ -7,7 +7,7 @@ import { useTaskStore } from '../store/useTaskStore';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const { Paragraph } = Typography;
-import { ChevronUp, ChevronDown, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface TaskCardProps {
     task: Task;
@@ -308,7 +308,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
                             )}
                         </div>
 
-                        {/* Reorder Mode Overlay */}
+                        {/* Quick Move Overlay (Double Click/Tap) */}
                         {isReordering && (
                             <div
                                 style={{
@@ -317,7 +317,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
                                     left: 0,
                                     right: 0,
                                     bottom: 0,
-                                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'center',
@@ -329,27 +329,55 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
                                 }}
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
-                                    <Button
-                                        shape="circle"
-                                        size="large"
-                                        icon={<ChevronUp size={24} />}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onMoveTask?.(task, 'up');
-                                        }}
-                                        style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                                    />
-                                    <Button
-                                        shape="circle"
-                                        size="large"
-                                        icon={<ChevronDown size={24} />}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onMoveTask?.(task, 'down');
-                                        }}
-                                        style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                                    />
+                                <div style={{ fontSize: '14px', fontWeight: 700, color: '#2d3436', marginBottom: '12px' }}>
+                                    어디로 이동할까요?
+                                </div>
+                                <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                                    {task.status !== 'todo' && (
+                                        <Button
+                                            type="default"
+                                            shape="round"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                const moveTask = useTaskStore.getState().moveTask;
+                                                moveTask(task.id, 'todo');
+                                                setIsReordering(false);
+                                            }}
+                                            style={{ borderColor: 'var(--col-todo)', color: 'var(--col-todo)', fontWeight: 600 }}
+                                        >
+                                            To Do
+                                        </Button>
+                                    )}
+                                    {task.status !== 'in-progress' && (
+                                        <Button
+                                            type="default"
+                                            shape="round"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                const moveTask = useTaskStore.getState().moveTask;
+                                                moveTask(task.id, 'in-progress');
+                                                setIsReordering(false);
+                                            }}
+                                            style={{ borderColor: 'var(--col-progress)', color: 'var(--col-progress)', fontWeight: 600 }}
+                                        >
+                                            In Prog
+                                        </Button>
+                                    )}
+                                    {task.status !== 'done' && (
+                                        <Button
+                                            type="default"
+                                            shape="round"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                const moveTask = useTaskStore.getState().moveTask;
+                                                moveTask(task.id, 'done');
+                                                setIsReordering(false);
+                                            }}
+                                            style={{ borderColor: 'var(--col-done)', color: 'var(--col-done)', fontWeight: 600 }}
+                                        >
+                                            Done
+                                        </Button>
+                                    )}
                                 </div>
                                 <Button
                                     type="text"
