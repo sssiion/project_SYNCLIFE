@@ -19,6 +19,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
     const updateTask = useTaskStore((state) => state.updateTask);
 
     // Manage priority state manually since header is outside Form context
+    const isDarkMode = useTaskStore((state) => state.isDarkMode);
     const [priority, setPriority] = useState<Priority | undefined>(undefined);
 
     React.useEffect(() => {
@@ -64,16 +65,15 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
 
     const modalTitle = (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <span>{taskToEdit ? "Edit Task" : "Create New Task"}</span>
+            <span style={{ color: 'var(--text-primary)' }}>{taskToEdit ? "업무 수정" : "새로운 업무"}</span>
             <div style={{ marginRight: '20px' }}>
                 <Select
                     value={priority}
                     onChange={(value: Priority) => setPriority(value)}
                     placeholder="priority"
                     style={{ width: 100 }}
+                    variant="borderless"
                     // @ts-ignore - fixing deprecated warning
-                    styles={{ popup: { root: { background: '#ffffff' } } }}
-                    bordered={false}
                     className="priority-select"
                 >
                     <Option value="HIGH">
@@ -107,15 +107,22 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
             >
                 <Form.Item
                     name="title"
-                    label={<span style={{ color: '#2c3e50' }}>Title</span>}
+                    label={<span style={{ color: 'var(--text-primary)' }}>Title</span>}
                     rules={[{ required: true, message: 'Please enter a task title' }]}
                 >
-                    <Input placeholder="업무명을 입력해주세요." style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(0,0,0,0.1)', color: '#2c3e50' }} />
+                    <Input
+                        placeholder="업무명을 입력해주세요."
+                        style={{
+                            background: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.5)',
+                            border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+                            color: 'var(--text-primary)'
+                        }}
+                    />
                 </Form.Item>
 
                 <Form.Item
                     name="tags"
-                    label={<span style={{ color: '#2c3e50' }}>Tags (Max 3)</span>}
+                    label={<span style={{ color: 'var(--text-primary)' }}>Tags (Max 3)</span>}
                     rules={[
                         {
                             validator: (_, value) => {
@@ -129,44 +136,57 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                 >
                     <Select
                         mode="tags"
-                        style={{ width: '100%' }}
+                        style={{
+                            width: '100%',
+                            background: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.5)',
+                            border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+                            borderRadius: '8px',
+                            color: 'var(--text-primary)'
+                        }}
                         placeholder="태그를 입력하세요 (최대 3개)"
                         maxCount={3}
-                        // @ts-ignore
-                        styles={{ selector: { background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(0,0,0,0.1)' } }}
                     />
                 </Form.Item>
 
                 <div style={{ display: 'flex', gap: '16px' }}>
                     <Form.Item
                         name="dueDate"
-                        label={<span style={{ color: '#2c3e50' }}>Deadline (Optional)</span>}
+                        label={<span style={{ color: 'var(--text-primary)' }}>Deadline (Optional)</span>}
                         style={{ flex: 1 }}
                     >
                         <DatePicker
-                            style={{ width: '100%', background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(0,0,0,0.1)' }}
-                            placeholder="Select date"
+                            style={{
+                                width: '100%',
+                                background: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.5)',
+                                border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+                                color: 'var(--text-primary)'
+                            }}
+                            placeholder="마감일을 선택해주세요."
                         />
                     </Form.Item>
                 </div>
 
                 <Form.Item
                     name="description"
-                    label={<span style={{ color: '#2c3e50' }}>Description (Optional)</span>}
+                    label={<span style={{ color: 'var(--text-primary)' }}>Description (Optional)</span>}
                 >
                     <TextArea
                         rows={4}
                         placeholder="상세 내용을 입력해주세요."
-                        style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(0,0,0,0.1)', color: '#2c3e50' }}
+                        style={{
+                            background: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.5)',
+                            border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+                            color: 'var(--text-primary)'
+                        }}
                     />
                 </Form.Item>
 
                 <Form.Item style={{ marginBottom: 0, marginTop: 24, textAlign: 'right' }}>
-                    <Button onClick={onClose} style={{ marginRight: 8, background: 'transparent', color: '#596275', border: '1px solid rgba(0,0,0,0.1)' }}>
-                        Cancel
+                    <Button onClick={onClose} style={{ marginRight: 8, background: 'transparent', color: 'var(--text-secondary)', border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)' }}>
+                        취소
                     </Button>
-                    <Button type="primary" htmlType="submit" style={{ background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)', border: 'none', color: '#2c3e50', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                        {taskToEdit ? "Update Task" : "Create Task"}
+                    <Button type="primary" htmlType="submit" style={{ background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)', border: 'none', color: '#2c3e50', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', fontWeight: 600 }}>
+                        {taskToEdit ? "수정" : "생성"}
                     </Button>
                 </Form.Item>
             </Form>

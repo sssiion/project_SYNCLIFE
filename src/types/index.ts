@@ -31,4 +31,5 @@ export type TasksState = {
   completeTutorial: () => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  resetTutorial: () => void;
 };

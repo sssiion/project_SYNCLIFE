@@ -58,6 +58,7 @@ export const useTaskStore = create<TasksState>()(
             // Tutorial State
             hasSeenTutorial: false,
             completeTutorial: () => set({ hasSeenTutorial: true }),
+            resetTutorial: () => set({ hasSeenTutorial: false }),
             // Dark Mode State
             isDarkMode: false,
             toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),

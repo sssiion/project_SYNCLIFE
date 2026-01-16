@@ -75,29 +75,39 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                 flexShrink: isMobile ? 1 : 0,
                 transition: 'all 0.3s ease',
                 // User Request: White background when collapsed
-                background: (isMobile && isCollapsed) ? 'rgba(255, 255, 255, 0.4)' : 'transparent',
                 borderRadius: (isMobile && isCollapsed) ? '12px' : '0',
             }}>
             <div
-                onClick={toggleCollapse}
                 style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     marginBottom: '16px',
-                    padding: '12px', // Increased padding for better clickability
-                    cursor: 'pointer', // Make it feel clickable always (even if only mobile collapses, consistent UI)
+                    padding: '4px 0', // Reduced vertical padding on container
                     userSelect: 'none',
                     WebkitUserSelect: 'none',
                     outline: 'none',
-                    WebkitTapHighlightColor: 'transparent', // Remove mobile tap highlight
-                    borderRadius: '8px', // Visual feedback helper
-                    transition: 'background 0.2s',
+
+                    WebkitTapHighlightColor: 'transparent',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                    onClick={toggleCollapse}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 12px',
+                        borderRadius: '10px',
+                        cursor: 'pointer',
+                        background: (isMobile && isCollapsed) ? 'rgba(255, 255, 255, 0.4)' : 'transparent',
+
+                        transition: 'background 0.2s ease',
+                        width: 'fit-content',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
                     {isMobile && (
                         <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)' }}>
                             {isCollapsed ? <ChevronRight size={20} /> : <ChevronDown size={20} />}
@@ -162,6 +172,7 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                                 border: snapshot.isDraggingOver ? '1px dashed rgba(0,0,0,0.1)' : '1px solid transparent',
                                 overflowY: isMobile ? 'visible' : 'auto', // Use visible on mobile to allow Page Scroll to handle it
                                 overflowX: 'hidden',
+
                                 // Fix for iOS scrolling issues with DnD
                                 WebkitOverflowScrolling: 'touch',
                             }}
@@ -175,6 +186,7 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                                     color: '#b2bec3',
                                     fontSize: '14px',
                                     textAlign: 'center',
+
                                     userSelect: 'none'
                                 }}>
                                     등록된 태스크가 없습니다.

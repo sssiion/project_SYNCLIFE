@@ -46,9 +46,9 @@
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 
   /* Text */
-  --text-primary: #ecf0f1;
-  --text-secondary: #bdc3c7;
-  --text-white: #ffffff;
+  --text-primary: rgba(236, 240, 241, 0.5);
+  --text-secondary: rgba(189, 195, 199, 0.35);
+  --text-white: rgba(255, 255, 255, 0.25);
 
   /* Card Colors - Dark */
   --card-bg: rgba(30, 35, 40, 0.6);
@@ -223,6 +223,27 @@ code {
   50% {
     opacity: 1;
   }
+}
+
+@keyframes vibrant-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4);
+  }
+
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 20px 10px rgba(108, 92, 231, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(108, 92, 231, 0);
+  }
+}
+
+.pulse-animation {
+  animation: vibrant-pulse 2s infinite ease-in-out;
 }
 
 .swipe-hand-animation {

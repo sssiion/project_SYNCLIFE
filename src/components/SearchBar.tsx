@@ -31,6 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
     const [isFavActive, setIsFavActive] = useState(false);
     const tasks = useTaskStore((state) => state.tasks);
+    const isDarkMode = useTaskStore((state) => state.isDarkMode);
     const [recentSearches, setRecentSearches] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
 
@@ -108,8 +109,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         backdropFilter: 'blur(10px)',
                         height: '40px',
                     }}
+                    id="ui-search-bar" // For Onboarding Spotlight
                 >
-                    <Search size={16} color="rgba(0, 0, 0, 0.45)" style={{ marginRight: '8px' }} />
+                    <Search size={16} color={isDarkMode ? "rgba(255, 255, 255, 0.45)" : "rgba(0, 0, 0, 0.45)"} style={{ marginRight: '8px' }} />
                     <Input
                         id="global-search-input"
                         placeholder="검색어를 입력하세요."
@@ -144,7 +146,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             <Star
                                 size={18}
                                 fill={isFavActive ? "#f1c40f" : "none"}
-                                color={isFavActive ? "#f1c40f" : "rgba(0,0,0,0.45)"}
+                                color={isFavActive ? "#f1c40f" : (isDarkMode ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)")}
                             />
                         </div>
                     )}

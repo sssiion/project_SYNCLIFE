@@ -1,7 +1,7 @@
 import React from 'react';
 import { Progress, Tooltip } from 'antd';
 import { useTaskStore } from '../store/useTaskStore';
-import { CheckCircle2, Circle, ListTodo } from 'lucide-react';
+import { CheckCircle2, Circle, ListTodo, Repeat } from 'lucide-react';
 
 const StatisticsPanel: React.FC = () => {
     const tasks = useTaskStore((state) => state.tasks);
@@ -12,10 +12,12 @@ const StatisticsPanel: React.FC = () => {
     const doneTasks = tasks.filter((t) => t.status === 'DONE').length;
     const inProgressTasks = tasks.filter((t) => t.status === 'IN_PROGRESS').length;
 
-    // Back Stats (Priority)
-    const highPriority = tasks.filter((t) => t.priority === 'HIGH').length;
-    const mediumPriority = tasks.filter((t) => t.priority === 'MEDIUM').length;
-    const lowPriority = tasks.filter((t) => t.priority === 'LOW').length;
+    // Back Stats (Priority) - Exclude DONE tasks
+    const activeTasks = tasks.filter((t) => t.status !== 'DONE');
+    const highPriority = activeTasks.filter((t) => t.priority === 'HIGH').length;
+    const mediumPriority = activeTasks.filter((t) => t.priority === 'MEDIUM').length;
+    const lowPriority = activeTasks.filter((t) => t.priority === 'LOW').length;
+    const totalActive = activeTasks.length;
 
     // Calculate percentages
     const donePercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
@@ -58,7 +60,6 @@ const StatisticsPanel: React.FC = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '16px',
-                        paddingBottom: '16px',
                         userSelect: 'none',
                         WebkitUserSelect: 'none',
                         backfaceVisibility: 'hidden',
@@ -71,8 +72,8 @@ const StatisticsPanel: React.FC = () => {
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <h3 style={{ margin: 0, padding: '10px 0 0 10px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Activity</h3>
-                        <span style={{ fontSize: '20px', padding: '10px 10px 0 0' }}>📊</span>
+                        <h3 style={{ margin: 0, padding: '20px 0 0 20px', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Activity</h3>
+                        <span style={{ fontSize: '20px', padding: '20px 20px 0 0' }}>📊</span>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
@@ -90,7 +91,8 @@ const StatisticsPanel: React.FC = () => {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
                         <Tooltip title="Total Tasks">
                             <div style={{
-                                background: 'var(--glass-bg-hover)', padding: '8px', borderRadius: '12px',
+                                padding: '8px', borderRadius: '12px',
+                                marginBottom: '8px',
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
                             }}>
                                 <ListTodo size={16} color="var(--text-primary)" />
@@ -100,7 +102,8 @@ const StatisticsPanel: React.FC = () => {
                         </Tooltip>
                         <Tooltip title="In Progress">
                             <div style={{
-                                background: 'var(--glass-bg-hover)', padding: '8px', borderRadius: '12px',
+                                padding: '8px', borderRadius: '12px',
+                                marginBottom: '8px',
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
                             }}>
                                 <Circle size={16} color="#f1c40f" fill="#f1c40f" fillOpacity={0.2} />
@@ -110,7 +113,8 @@ const StatisticsPanel: React.FC = () => {
                         </Tooltip>
                         <Tooltip title="Completed">
                             <div style={{
-                                background: 'var(--glass-bg-hover)', padding: '8px', borderRadius: '12px',
+                                padding: '8px', borderRadius: '12px',
+                                marginBottom: '8px',
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
                             }}>
                                 <CheckCircle2 size={16} color="#2ecc71" fill="#2ecc71" fillOpacity={0.2} />
@@ -147,7 +151,7 @@ const StatisticsPanel: React.FC = () => {
                 >   <div style={{ padding: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Priority</h3>
-                            <span style={{ fontSize: '16px', color: 'var(--text-secondary)' }}>↩</span>
+                            <span style={{ fontSize: '16px', color: 'var(--text-secondary)' }}><Repeat size={14} color="#2d3436" style={{ opacity: 0.4 }} /></span>
                         </div>
                         <div style={{ width: '100%', height: "50px" }} ></div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>
@@ -157,7 +161,7 @@ const StatisticsPanel: React.FC = () => {
                                     <span>High</span>
                                     <span>{highPriority}</span>
                                 </div>
-                                <Progress percent={totalTasks ? (highPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#e17055" railColor="rgba(255,255,255,0.5)" size="small" />
+                                <Progress percent={totalActive ? (highPriority / totalActive) * 100 : 0} showInfo={false} strokeColor="#e17055" railColor="rgba(255,255,255,0.5)" size="small" />
                             </div>
                             {/* Medium */}
                             <div>
@@ -165,7 +169,7 @@ const StatisticsPanel: React.FC = () => {
                                     <span>Medium</span>
                                     <span>{mediumPriority}</span>
                                 </div>
-                                <Progress percent={totalTasks ? (mediumPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#fdcb6e" railColor="rgba(255,255,255,0.5)" size="small" />
+                                <Progress percent={totalActive ? (mediumPriority / totalActive) * 100 : 0} showInfo={false} strokeColor="#fdcb6e" railColor="rgba(255,255,255,0.5)" size="small" />
                             </div>
                             {/* Low */}
                             <div>
@@ -173,7 +177,7 @@ const StatisticsPanel: React.FC = () => {
                                     <span>Low</span>
                                     <span>{lowPriority}</span>
                                 </div>
-                                <Progress percent={totalTasks ? (lowPriority / totalTasks) * 100 : 0} showInfo={false} strokeColor="#00b894" railColor="rgba(255,255,255,0.5)" size="small" />
+                                <Progress percent={totalActive ? (lowPriority / totalActive) * 100 : 0} showInfo={false} strokeColor="#00b894" railColor="rgba(255,255,255,0.5)" size="small" />
                             </div>
                         </div>
                     </div>
