@@ -295,7 +295,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
                                 )}
                             </div>
 
-                            {task.dueDate && task.status !== 'DONE' && (
+                            {task.dueDate && task.status !== 'done' && (
                                 <div style={{
                                     display: 'flex',
                                     alignItems: 'center',
