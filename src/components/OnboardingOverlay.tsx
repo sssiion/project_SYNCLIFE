@@ -599,12 +599,12 @@ const OnboardingOverlay: React.FC = () => {
                                 background: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'white', borderRadius: '20px',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.02)', position: 'relative',
                                 transformStyle: 'preserve-3d',
-                                animation: 'cardFlip 6s infinite ease-in-out'
+                                animation: 'cardFlip 6s infinite ease-in-out',
                             }}>
-                                <div style={{ backfaceVisibility: 'hidden', padding: '20px' }}>
+                                <div style={{ backfaceVisibility: 'hidden', padding: '0px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                        <span style={{ fontSize: '14px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>Activity</span>
-                                        <div style={{ fontSize: '16px' }}>📊</div>
+                                        <span style={{ fontSize: '14px', padding: '20px 0 0 20px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>Activity</span>
+                                        <div style={{ fontSize: '16px', padding: '20px 20px 0 0' }}>📊</div>
                                     </div>
 
                                     {/* Donut Chart Mockup */}
@@ -625,7 +625,7 @@ const OnboardingOverlay: React.FC = () => {
                                             { label: 'ACTIVE', val: 3, icon: <div style={{ width: 8, height: 8, border: '2px solid #fdcb6e', borderRadius: '50%' }} />, color: '#fdcb6e' },
                                             { label: 'DONE', val: 3, icon: <CheckCircle2 size={12} />, color: '#79d7a2' }
                                         ].map((s, i) => (
-                                            <div key={i} style={{ flex: 1, background: isDarkMode ? 'rgba(255,255,255,0.03)' : '#f8fafc', padding: '10px 4px', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                                            <div key={i} style={{ flex: 1, padding: '10px 4px', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                                                 <div style={{ color: s.color }}>{s.icon}</div>
                                                 <div style={{ fontSize: '14px', fontWeight: 900, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>{s.val}</div>
                                                 <div style={{ fontSize: '8px', fontWeight: 800, color: isDarkMode ? '#94a3b8' : '#94a3b8' }}>{s.label}</div>

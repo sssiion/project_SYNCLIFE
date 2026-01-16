@@ -385,23 +385,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                         {view === 'menu' ? (
                             <>
-                                <div style={{
-                                    width: '28px',
-                                    height: '28px',
-                                    background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-                                    borderRadius: '8px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontWeight: 'bold',
-                                    color: '#021859',
-                                    fontSize: '14px',
-                                    boxShadow: '0 4px 12px rgba(161, 196, 253, 0.4)',
-                                    userSelect: 'none',
-                                    WebkitUserSelect: 'none'
-                                }}>
-                                    K
-                                </div>
+
                                 <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)', fontWeight: 700, userSelect: 'none', WebkitUserSelect: 'none', opacity: '0.5' }}>Task Manager</h2>
                             </>
                         ) : (

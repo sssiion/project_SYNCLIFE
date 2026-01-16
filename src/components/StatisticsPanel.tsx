@@ -69,6 +69,7 @@ const StatisticsPanel: React.FC = () => {
                         opacity: isFlipped ? 0 : 1,
                         visibility: isFlipped ? 'hidden' : 'visible',
                         transition: 'opacity 0s linear 0.15s, visibility 0s linear 0.15s', // Swap at 90deg (approx)
+                        paddingBottom: '20px',
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
