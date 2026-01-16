@@ -7,7 +7,7 @@ import { useTaskStore } from '../store/useTaskStore';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const { Paragraph } = Typography;
-import { ChevronUp, ChevronDown, X, GripVertical } from 'lucide-react';
+import { ChevronUp, ChevronDown, X } from 'lucide-react';
 
 interface TaskCardProps {
     task: Task;
@@ -17,7 +17,7 @@ interface TaskCardProps {
     searchQuery?: string;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuery }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask, searchQuery }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
     const toggleFavorite = useTaskStore((state) => state.toggleFavorite);
 

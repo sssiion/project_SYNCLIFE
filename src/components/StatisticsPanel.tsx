@@ -100,22 +100,22 @@ const StatisticsPanel: React.FC = () => {
                         </Tooltip>
                         <Tooltip title="In Progress">
                             <div style={{
-                                background: 'rgba(255,255,255,0.5)', padding: '8px', borderRadius: '12px',
+                                background: 'var(--glass-bg-hover)', padding: '8px', borderRadius: '12px',
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
                             }}>
                                 <Circle size={16} color="#f1c40f" fill="#f1c40f" fillOpacity={0.2} />
-                                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>{inProgressTasks}</span>
-                                <span style={{ fontSize: '9px', color: '#7f8c8d' }}>ACTIVE</span>
+                                <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-primary)' }}>{inProgressTasks}</span>
+                                <span style={{ fontSize: '9px', color: 'var(--text-secondary)' }}>ACTIVE</span>
                             </div>
                         </Tooltip>
                         <Tooltip title="Completed">
                             <div style={{
-                                background: 'rgba(255,255,255,0.5)', padding: '8px', borderRadius: '12px',
+                                background: 'var(--glass-bg-hover)', padding: '8px', borderRadius: '12px',
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
                             }}>
                                 <CheckCircle2 size={16} color="#2ecc71" fill="#2ecc71" fillOpacity={0.2} />
-                                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>{doneTasks}</span>
-                                <span style={{ fontSize: '9px', color: '#7f8c8d' }}>DONE</span>
+                                <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-primary)' }}>{doneTasks}</span>
+                                <span style={{ fontSize: '9px', color: 'var(--text-secondary)' }}>DONE</span>
                             </div>
                         </Tooltip>
                     </div>
@@ -146,8 +146,8 @@ const StatisticsPanel: React.FC = () => {
                     }}
                 >   <div style={{ padding: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#34495e' }}>Priority</h3>
-                            <span style={{ fontSize: '16px', color: '#7f8c8d' }}>↩</span>
+                            <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Priority</h3>
+                            <span style={{ fontSize: '16px', color: 'var(--text-secondary)' }}>↩</span>
                         </div>
                         <div style={{ width: '100%', height: "50px" }} ></div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>

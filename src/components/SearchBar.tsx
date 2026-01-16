@@ -197,9 +197,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                     color: '#000',
                                 }}
                                 variant="borderless"
-                                dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
                                 // @ts-ignore
-                                styles={{ popup: { minWidth: '140px', fontSize: '11px', background: 'var(--glass-bg-hover)' } }}
+                                styles={{ popup: { minWidth: '90px', fontSize: '11px', background: 'var(--glass-bg-hover)' } }}
                                 options={[
                                     { value: 'HIGH', label: 'High' },
                                     { value: 'MEDIUM', label: 'Medium' },
@@ -219,10 +218,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                         fontSize: '11px',
                                     }}
                                     variant="borderless"
-                                    dropdownStyle={{ minWidth: '90px', fontSize: '11px' }}
                                     // @ts-ignore
                                     styles={{
-                                        popup: { root: { background: 'var(--glass-bg-hover)', backdropFilter: 'blur(10px)', fontSize: '10px' } }
+                                        popup: { root: { background: 'var(--glass-bg-hover)', backdropFilter: 'blur(10px)', fontSize: '10px', minWidth: '90px' } }
                                     }}
                                     options={[
                                         { value: 'all', label: '모두' },
@@ -249,9 +247,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                         fontSize: '11px',
                                     }}
                                     variant="borderless"
-                                    dropdownStyle={{ minWidth: '100px', fontSize: '11px' }}
                                     // @ts-ignore
-                                    styles={{ popup: { root: { background: 'var(--glass-bg-hover)', backdropFilter: 'blur(10px)', fontSize: '11px' } } }}
+                                    styles={{ popup: { root: { background: 'var(--glass-bg-hover)', backdropFilter: 'blur(10px)', fontSize: '11px', minWidth: '100px' } } }}
                                     options={[
 
                                         { value: 'title', label: '제목' },
@@ -278,7 +275,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             }}
                             onClick={() => handleTagClick(term)}
                             closeIcon={<X size={12} style={{ verticalAlign: 'middle' }} />}
-                            bordered={false}
+                            // bordered={false} deprecated
                             style={{
                                 cursor: 'pointer',
                                 borderRadius: '16px',

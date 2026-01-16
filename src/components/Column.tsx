@@ -99,12 +99,12 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
             >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     {isMobile && (
-                        <div style={{ display: 'flex', alignItems: 'center', color: '#596275' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)' }}>
                             {isCollapsed ? <ChevronRight size={20} /> : <ChevronDown size={20} />}
                         </div>
                     )}
                     <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: color }} />
-                    <Title level={5} style={{ margin: 0, color: '#2c3e50', fontWeight: 600 }}>
+                    <Title level={5} style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 600 }}>
                         {title}
                     </Title>
                     {status === 'DONE' && onToggleHideDone ? (
@@ -135,7 +135,7 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                             count={tasks.length}
                             style={{
                                 backgroundColor: 'rgba(0,0,0,0.06)',
-                                color: '#596275',
+                                color: 'var(--text-secondary)',
                                 boxShadow: 'none'
                             }}
                         />

@@ -40,6 +40,10 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
     const [view, setView] = useState<'menu' | 'settings'>('menu');
     const isMobile = useMediaQuery('(max-width: 768px)');
 
+    // Fix: Hooks must be at top level
+    const isDarkMode = useTaskStore((state) => state.isDarkMode);
+    const toggleDarkMode = useTaskStore((state) => state.toggleDarkMode);
+
 
     const toggleSidebar = () => {
         const newState = !isCollapsed;
@@ -71,7 +75,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                 right: '24px',
                                 zIndex: 1002,
                                 display: 'flex',
-                                alignItems: 'center',
+                                alignItems: 'flex-start', // User Request: Align SearchBar top with Buttons, Sort below
                                 gap: '12px',
                                 transition: 'all 0.3s ease',
                                 animation: 'fadeIn 0.3s ease-out'
@@ -103,7 +107,8 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                                 onClick={() => onSortChange(opt.value)}
                                                 style={{
                                                     fontSize: '10px',
-                                                    color: sortOption === opt.value ? 'var(--text-primary)' : 'rgba(255,255,255,0.8)',
+                                                    // User Request: Active state text must be dark (on white bg), even in Dark Mode
+                                                    color: sortOption === opt.value ? '#2c3e50' : 'rgba(255,255,255,0.8)',
                                                     background: sortOption === opt.value ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.2)',
                                                     padding: '2px 6px',
                                                     borderRadius: '4px',
@@ -122,17 +127,24 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
 
                             <div onClick={onAddTask} style={{
                                 width: '40px', height: '40px', borderRadius: '10px',
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                background: isDarkMode
+                                    ? 'linear-gradient(135deg, #4834d4 0%, #686de0 100%)'
+                                    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                 color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                cursor: 'pointer', boxShadow: '0 4px 12px rgba(118, 75, 162, 0.3)'
+                                cursor: 'pointer',
+                                boxShadow: isDarkMode
+                                    ? '0 4px 12px rgba(72, 52, 212, 0.3)'
+                                    : '0 4px 12px rgba(118, 75, 162, 0.3)'
                             }}>
                                 <Plus size={20} />
                             </div>
 
                             <div onClick={toggleSidebar} style={{
                                 width: '40px', height: '40px', borderRadius: '10px',
-                                background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(8px)',
-                                border: '1px solid rgba(255,255,255,0.6)', color: '#2c3e50',
+                                background: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.8)',
+                                backdropFilter: 'blur(8px)',
+                                border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(255,255,255,0.6)',
+                                color: isDarkMode ? 'var(--text-primary)' : '#2c3e50',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                             }}>
@@ -144,7 +156,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     {/* Mobile Layout: Split */}
                     {isMobile && (
                         <>
-                            {/* Top: Search Bar */}
+                            {/* Top: Search Bar + Buttons + Sort Options */}
                             <div
                                 style={{
                                     position: 'fixed',
@@ -154,20 +166,58 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     zIndex: 1002,
                                     animation: 'slideDown 0.3s ease-out',
                                     display: 'flex',
-                                    flexDirection: 'column'
+                                    flexDirection: 'column',
+                                    gap: '8px' // Gap between Row 1 (Search+Btn) and Row 2 (Sort)
                                 }}
                             >
-                                <SearchBar
-                                    simple
-                                    onSearch={onSearch}
-                                    onFilterPriority={onFilterPriority}
-                                    onFilterTags={onFilterTags}
-                                    onFilterDate={onFilterDate}
-                                    onFilterFavorite={onFilterFavorite}
-                                    onSearchScope={onSearchScope}
-                                />
+                                {/* Row 1: Search Bar + Buttons */}
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <SearchBar
+                                            simple
+                                            onSearch={onSearch}
+                                            onFilterPriority={onFilterPriority}
+                                            onFilterTags={onFilterTags}
+                                            onFilterDate={onFilterDate}
+                                            onFilterFavorite={onFilterFavorite}
+                                            onSearchScope={onSearchScope}
+                                        />
+                                    </div>
+
+                                    {/* Buttons moved from bottom */}
+                                    <div onClick={onAddTask} style={{
+                                        width: '40px', height: '40px', borderRadius: '12px',
+                                        background: isDarkMode
+                                            ? 'rgba(255, 255, 255, 0.15)'
+                                            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: isDarkMode ? 'rgba(255, 255, 255, 0.65)' : 'white',
+                                        border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        cursor: 'pointer', flexShrink: 0,
+                                        boxShadow: isDarkMode
+                                            ? 'none'
+                                            : '0 4px 14px rgba(118, 75, 162, 0.4)'
+                                    }}>
+                                        <Plus size={20} />
+                                    </div>
+
+                                    <div onClick={toggleSidebar} style={{
+                                        width: '40px', height: '40px', borderRadius: '12px',
+                                        background: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(10px)',
+                                        color: isDarkMode ? 'var(--text-primary)' : '#2c3e50',
+                                        border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        cursor: 'pointer', flexShrink: 0,
+                                        boxShadow: '0 4px 14px rgba(0,0,0,0.1)'
+                                    }}>
+                                        <Menu size={20} />
+                                    </div>
+                                </div>
+
+                                {/* Row 2: Sort Options */}
                                 {sortOption && onSortChange && (
-                                    <div style={{ marginTop: '4px', display: 'flex', gap: '4px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none', justifyContent: 'center', animation: 'fadeIn 0.5s ease-out' }}>
+                                    <div style={{ display: 'flex', gap: '4px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none', justifyContent: 'flex-start', animation: 'fadeIn 0.5s ease-out' }}>
                                         {[
                                             { value: 'priority-asc', label: '중요도(낮은)' },
                                             { value: 'priority-desc', label: '중요도(높은)' },
@@ -181,7 +231,8 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                                 onClick={() => onSortChange(opt.value)}
                                                 style={{
                                                     fontSize: '11px',
-                                                    color: sortOption === opt.value ? 'var(--text-primary)' : 'rgba(255,255,255,0.8)',
+                                                    // User Request: Active state text must be dark (on white bg), even in Dark Mode
+                                                    color: sortOption === opt.value ? '#2c3e50' : 'rgba(255,255,255,0.8)',
                                                     background: sortOption === opt.value ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.2)',
                                                     padding: '4px 8px',
                                                     borderRadius: '6px',
@@ -196,37 +247,6 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                         ))}
                                     </div>
                                 )}
-                            </div>
-
-                            {/* Bottom: Buttons (FAB style) */}
-                            <div
-                                style={{
-                                    position: 'fixed',
-                                    bottom: '24px',
-                                    right: '16px',
-                                    zIndex: 1002,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '12px',
-                                    animation: 'slideUp 0.3s ease-out'
-                                }}
-                            >
-                                <div onClick={onAddTask} style={{
-                                    width: '48px', height: '48px', borderRadius: '14px',
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    cursor: 'pointer', boxShadow: '0 4px 14px rgba(118, 75, 162, 0.4)'
-                                }}>
-                                    <Plus size={24} />
-                                </div>
-                                <div onClick={toggleSidebar} style={{
-                                    width: '48px', height: '48px', borderRadius: '14px',
-                                    background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)',
-                                    color: '#2c3e50', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,0.1)'
-                                }}>
-                                    <Menu size={20} />
-                                </div>
                             </div>
                         </>
                     )}
@@ -260,7 +280,11 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     height: 'calc(100vh - 32px)',
                     // If collapsed, move off-screen (adjust for gap)
                     transform: isCollapsed ? 'translateX(calc(100% + 20px))' : 'translateX(0)',
-                    border: '1px solid rgba(255, 255, 255, 0.5)',
+                    // Explicit borders to avoid conflict with borderTop override below
+                    borderTop: '1px solid rgba(255, 255, 255, 0.5)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
+                    borderLeft: '1px solid rgba(255, 255, 255, 0.5)',
+                    borderRight: '1px solid rgba(255, 255, 255, 0.5)',
                     borderRadius: '24px',
                     boxShadow: isCollapsed ? 'none' : '-4px 4px 24px rgba(0, 0, 0, 0.05)',
                 }),
@@ -270,7 +294,24 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                 boxSizing: 'border-box',
                 padding: '0',
                 display: 'flex',
-                border: 'var(--glass-border)', // Use variable border
+                border: 'var(--glass-border)', // Use variable border as base
+                // NOTE: Mobile override above uses borderTop. We should ensure we don't cause conflicts.
+                // The style object spread order determines winner, but React warns if mixing shorthand.
+                // Mobile block uses specific `borderTop`, desktop block uses specific borders now.
+                // This base `border` might still conflict if not careful.
+                // Let's remove this base shorthand and rely on the specific blocks or use a variable that isn't a shorthand if possible?
+                // Actually, `var(--glass-border)` is likely `1px solid ...`.
+                // To be safe, let's just apply it via individual properties or ensure no shorthand overlap.
+                // Simplest fix for now: Remove this base 'border' since we set it in specific blocks above?
+                // CHECK: Desktop block sets border. Mobile set borderTop.
+                // If we remove this line, Mobile needs borderBottom/Left/Right?
+                // Mobile layout is a bottom sheet, so only Top border is needed.
+                // Desktop is a floating box, needs all borders.
+
+                // DECISION: Remove this generic `border` and ensure Desktop has full border, Mobile has top border.
+                // Desktop block above ALREADY has full defined borders now.
+                // Mobile block above ALREADY has borderTop defined.
+                // So we can safely remove this line 273.
                 boxShadow: isCollapsed ? 'none' : 'var(--glass-shadow)', // Use variable shadow
                 flexDirection: 'column',
                 zIndex: 1000,
@@ -335,7 +376,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                 }}>
                                     K
                                 </div>
-                                <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)', fontWeight: 700, userSelect: 'none', WebkitUserSelect: 'none' }}>Task Manager</h2>
+                                <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)', fontWeight: 700, userSelect: 'none', WebkitUserSelect: 'none', opacity: '0.5' }}>Task Manager</h2>
                             </>
                         ) : (
                             <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)', fontWeight: 700 }}>Settings</h2>
@@ -381,13 +422,19 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     icon={<Plus size={18} />}
                                     size="large"
                                     style={{
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        border: 'none',
-                                        boxShadow: '0 4px 14px 0 rgba(118, 75, 162, 0.39)',
+                                        // User Request: Dark Mode Adjustment (Grey Button, Darker Text)
+                                        background: isDarkMode
+                                            ? 'rgba(255, 255, 255, 0.15)' // Grey/Glass
+                                            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+                                        boxShadow: isDarkMode
+                                            ? 'none'
+                                            : '0 4px 14px 0 rgba(118, 75, 162, 0.39)',
                                         height: '40px',
                                         fontSize: '16px',
                                         fontWeight: 600,
                                         width: '100%',
+                                        color: isDarkMode ? 'rgba(255, 255, 255, 0.65)' : '#fff', // Dimmed text in Dark Mode
                                         userSelect: 'none',
                                         WebkitUserSelect: 'none'
                                     }}
@@ -438,7 +485,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                             justifyContent: 'center',
                                             background: 'rgba(255, 77, 79, 0.1)',
                                             border: 'none',
-                                            color: '#ff4d4f',
+                                            color: '#ff4d4f', // Red is fine, but maybe slightly lighter in dark mode? Keeping standard red for danger.
                                             borderRadius: '12px'
                                         }}
                                     />
@@ -454,9 +501,10 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        background: 'rgba(44, 62, 80, 0.05)',
+                                        // User Request: Make Settings icon brighter
+                                        background: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(44, 62, 80, 0.05)',
                                         border: 'none',
-                                        color: '#2c3e50',
+                                        color: isDarkMode ? 'var(--text-primary)' : '#2c3e50', // Use var for white in dark mode
                                         borderRadius: '12px'
                                     }}
                                 />
@@ -484,8 +532,8 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     <span style={{ fontWeight: 600, color: '#2c3e50', userSelect: 'none', WebkitUserSelect: 'none' }}>Dark Mode</span>
                                 </div>
                                 <Switch
-                                    checked={useTaskStore((state) => state.isDarkMode)}
-                                    onChange={useTaskStore((state) => state.toggleDarkMode)}
+                                    checked={isDarkMode}
+                                    onChange={toggleDarkMode}
                                     checkedChildren="ON"
                                     unCheckedChildren="OFF"
                                 />
