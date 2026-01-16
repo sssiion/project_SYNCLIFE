@@ -76,7 +76,6 @@ code {
   border: var(--glass-border);
   box-shadow: var(--glass-shadow);
   border-radius: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   animation: fadeIn 0.5s ease-out;
 }
 
@@ -118,6 +117,22 @@ code {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Task Card Animations */
+.task-card-inner {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.task-card-inner:hover:not(.is-dragging) {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  /* Optional: slightly brighter bg handled in JSX or here */
+}
+
+.is-dragging {
+  cursor: grabbing !important;
+  /* Visuals handled in JSX mostly but can be enforced here */
 }
 
 @keyframes slideIn {

@@ -207,14 +207,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                         outline: 'none',
                         // Maintain original z-index logic
                         zIndex: snapshot.isDragging ? 9999 : 1,
-                        // Ensure positioning is handled by dnd, but allow transform override for hover effect
-                        // IMPORTANT: 'provided.draggableProps.style' contains the critical position/transform for dragging.
-                        // We must merge carefully.
-                        transform: snapshot.isDragging ? provided.draggableProps.style?.transform :
-                            (isHovered ? 'translateY(-4px) scale(1.02)' : 'none'),
-                        transition: snapshot.isDragging ? 'none' : 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                         // CRITICAL: Allow native browser scrolling (pan-y)
-                        // 'hello-pangea/dnd' will still detect long-press for drag if scroll doesn't happen first.
                         touchAction: 'manipulation',
                     }}
                     onMouseEnter={() => !isMobile && setIsHovered(true)}
@@ -226,7 +219,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                     <Card
                         onTouchStart={isMobile ? onTouchStart : undefined}
                         onTouchEnd={isMobile ? onTouchEnd : undefined}
-                        className={`glass-panel ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                        className={`glass-panel task-card-inner ${snapshot.isDragging ? 'is-dragging' : ''}`}
                         style={{
                             // Inner Card Styles
                             cursor: 'grab', // Restore grab cursor
@@ -237,12 +230,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                                 : isUrgent
                                     ? 'rgba(255, 230, 230, 0.9)' // Reddish tint for URGENT (<= 1 day)
                                     : 'rgba(255, 255, 255, 0.6)', // Default glass
-                            boxShadow: isHovered
-                                ? '0 10px 25px rgba(0,0,0,0.08)'
-                                : snapshot.isDragging
-                                    ? '0 20px 40px rgba(116, 185, 255, 0.4)'
-                                    : '0 4px 12px rgba(0,0,0,0.02)',
-                            // Remove duplicate transform/transition from here
+                            // Shadow is handled by CSS now for hover, but kept for drag/static for specific states if needed
+                            // We can let CSS handle hover shadow override.
+                            boxShadow: snapshot.isDragging
+                                ? '0 20px 40px rgba(116, 185, 255, 0.4)'
+                                : '0 4px 12px rgba(0,0,0,0.02)', // Base shadow
                             opacity: snapshot.isDragging ? 0.9 : 1,
                             userSelect: 'none',
                             WebkitUserSelect: 'none',

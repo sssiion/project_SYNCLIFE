@@ -14,8 +14,6 @@ interface FloatingSidebarProps {
     onFilterTags: (tags: string[]) => void;
     onFilterDate?: (date: string) => void;
     onFilterFavorite?: (isFav: boolean) => void;
-    onFilterHideDone?: (hide: boolean) => void;
-    filterHideDone?: boolean;
     onSearchScope?: (scope: string) => void;
     onCollapse?: (collapsed: boolean) => void;
 }
@@ -27,8 +25,6 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
     onFilterTags,
     onFilterDate,
     onFilterFavorite,
-    onFilterHideDone,
-    filterHideDone,
     onSearchScope,
     onCollapse
 }) => {

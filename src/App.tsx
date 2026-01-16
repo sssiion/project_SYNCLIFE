@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from './components/Layout';
 import Board from './components/Board';
 import NewTaskModal from './components/NewTaskModal';
@@ -16,10 +16,42 @@ function App() {
   const [filterDate, setFilterDate] = useState<string>('all'); // 'all', 'today', 'week', 'overdue'
   const [filterFavorite, setFilterFavorite] = useState<boolean>(false);
   const [filterHideDone, setFilterHideDone] = useState<boolean>(false);
-  const [searchScope, setSearchScope] = useState<string>('all'); // 'all', 'title', 'tag'
+  const [searchScope, setSearchScope] = useState<string>('title'); // 'all', 'title', 'tag'
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const isMobile = useMediaQuery('(max-width: 768px)');
+
+  // Global Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if input/textarea is focused
+      if (
+        document.activeElement instanceof HTMLInputElement ||
+        document.activeElement instanceof HTMLTextAreaElement ||
+        (document.activeElement as HTMLElement).isContentEditable
+      ) {
+        return;
+      }
+
+      // 'N' for New Task
+      if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        setIsModalVisible(true);
+      }
+
+      // 'S' for Search
+      if (e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        const searchInput = document.getElementById('global-search-input');
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleEditTask = (task: Task) => {
     setEditingTask(task);
@@ -81,8 +113,6 @@ function App() {
           onFilterTags={setFilterTags}
           onFilterDate={setFilterDate}
           onFilterFavorite={setFilterFavorite}
-          onFilterHideDone={setFilterHideDone}
-          filterHideDone={filterHideDone}
           onSearchScope={setSearchScope}
           onCollapse={setIsSidebarCollapsed}
         />

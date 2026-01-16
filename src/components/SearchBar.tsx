@@ -108,6 +108,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 >
                     <Search size={16} color="rgba(0, 0, 0, 0.45)" style={{ marginRight: '8px' }} />
                     <Input
+                        id="global-search-input"
                         placeholder="검색어를 입력하세요."
                         value={inputValue}
                         onChange={handleSearchChange}
@@ -180,7 +181,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         <div style={{ gap: '4px', display: 'flex', width: '100%' }}>
                             <Select
                                 showSearch={false}
-                                placeholder="Priority"
+                                placeholder="우선순위"
                                 onChange={onFilterPriority}
                                 className="glass-panel"
                                 style={{
@@ -203,7 +204,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
                             {onFilterDate && (
                                 <Select
-                                    placeholder="Date"
+                                    placeholder="마감일"
                                     onChange={onFilterDate}
                                     className="glass-panel"
                                     style={{
@@ -223,8 +224,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                         { value: 'today', label: '오늘' },
                                         { value: 'week', label: '이번주' },
                                         { value: 'overdue', label: '지남' },
-                                        { value: 'no-deadline', label: '마감일 없음' },
-                                        { value: 'recent', label: '최근 생성됨' },
+                                        { value: 'no-deadline', label: '없음' },
+
                                     ]}
                                 />
                             )}
@@ -233,7 +234,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
                             {onSearchScope && (
                                 <Select
-                                    placeholder="제목+내용"
+                                    placeholder="제목"
                                     onChange={onSearchScope}
                                     className="glass-panel"
                                     style={{
@@ -247,9 +248,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                     // @ts-ignore
                                     styles={{ popup: { root: { background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', fontSize: '11px' } } }}
                                     options={[
-                                        { value: 'all', label: '제목+내용' },
+
                                         { value: 'title', label: '제목' },
                                         { value: 'description', label: '내용' },
+                                        { value: 'all', label: '제목+내용' },
+
                                     ]}
                                 />
                             )}
