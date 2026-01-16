@@ -117,7 +117,7 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                     <Title level={5} style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 600 }}>
                         {title}
                     </Title>
-                    {status === 'DONE' && onToggleHideDone ? (
+                    {status === 'done' && onToggleHideDone ? (
                         <div
                             onClick={(e) => {
                                 e.stopPropagation();

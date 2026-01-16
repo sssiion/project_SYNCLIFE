@@ -1,5 +1,5 @@
-export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
-export type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
+export type TaskStatus = 'todo' | 'in-progress' | 'done';
+export type Priority = 'high' | 'medium' | 'low';
 
 export type SortOption = 'priority-asc' | 'priority-desc' | 'created-desc' | 'due-asc' | 'manual';
 
@@ -11,8 +11,9 @@ export interface Task {
   status: TaskStatus;
   priority: Priority;
   createdAt: number; // timestamp
-  updatedAt?: number; // timestamp of last update
+  updatedAt: number; // timestamp of last update (Required now)
   dueDate?: number; // timestamp for deadline
+  assignee?: string; // Optional assignee
   isFavorite?: boolean; // favorite status
   tags?: string[]; // tags for the task
   order?: number;
@@ -33,3 +34,4 @@ export type TasksState = {
   toggleDarkMode: () => void;
   resetTutorial: () => void;
 };
+

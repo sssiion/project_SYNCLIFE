@@ -9,14 +9,14 @@ const StatisticsPanel: React.FC = () => {
 
     // Front Stats
     const totalTasks = tasks.length;
-    const doneTasks = tasks.filter((t) => t.status === 'DONE').length;
-    const inProgressTasks = tasks.filter((t) => t.status === 'IN_PROGRESS').length;
+    const doneTasks = tasks.filter((t) => t.status === 'done').length;
+    const inProgressTasks = tasks.filter((t) => t.status === 'in-progress').length;
 
     // Back Stats (Priority) - Exclude DONE tasks
-    const activeTasks = tasks.filter((t) => t.status !== 'DONE');
-    const highPriority = activeTasks.filter((t) => t.priority === 'HIGH').length;
-    const mediumPriority = activeTasks.filter((t) => t.priority === 'MEDIUM').length;
-    const lowPriority = activeTasks.filter((t) => t.priority === 'LOW').length;
+    const activeTasks = tasks.filter((t) => t.status !== 'done');
+    const highPriority = activeTasks.filter((t) => t.priority === 'high').length;
+    const mediumPriority = activeTasks.filter((t) => t.priority === 'medium').length;
+    const lowPriority = activeTasks.filter((t) => t.priority === 'low').length;
     const totalActive = activeTasks.length;
 
     // Calculate percentages
@@ -80,7 +80,7 @@ const StatisticsPanel: React.FC = () => {
                         <Progress
                             type="circle"
                             percent={donePercent}
-                            strokeColor={{ '0%': '#a1c4fd', '100%': '#c2e9fb' }}
+                            strokeColor={{ '0%': '#021859', '100%': '#07D950' }}
                             railColor="rgba(255,255,255,0.6)"
                             format={format}
                             size={120}
@@ -117,7 +117,7 @@ const StatisticsPanel: React.FC = () => {
                                 marginBottom: '8px',
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
                             }}>
-                                <CheckCircle2 size={16} color="#2ecc71" fill="#2ecc71" fillOpacity={0.2} />
+                                <CheckCircle2 size={16} color="#07D950" fill="#07D950" fillOpacity={0.2} />
                                 <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-primary)' }}>{doneTasks}</span>
                                 <span style={{ fontSize: '9px', color: 'var(--text-secondary)' }}>DONE</span>
                             </div>
@@ -150,7 +150,7 @@ const StatisticsPanel: React.FC = () => {
                     }}
                 >   <div style={{ padding: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Priority</h3>
+                            <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}><span style={{ color: '#ff4d4f', marginRight: '4px' }}>*</span>Priority</h3>
                             <span style={{ fontSize: '16px', color: 'var(--text-secondary)' }}><Repeat size={14} color="#2d3436" style={{ opacity: 0.4 }} /></span>
                         </div>
                         <div style={{ width: '100%', height: "50px" }} ></div>

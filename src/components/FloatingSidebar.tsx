@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Popconfirm, Switch } from 'antd';
-import { Plus, Settings, ChevronRight, ChevronDown, Menu, ArrowLeft, Trash2, Moon, ChevronLeft } from 'lucide-react';
-import { MousePointer2, LayoutGrid, CheckCircle2, ArrowRight, X } from 'lucide-react';
+import { Plus, Settings, ChevronRight, ChevronDown, Menu, ArrowLeft, Trash2, Moon } from 'lucide-react';
 import StatisticsPanel from './StatisticsPanel';
 import SearchBar from './SearchBar';
 import { useTaskStore } from '../store/useTaskStore';
@@ -103,8 +102,11 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
             const sidebarContent = document.querySelector('[data-sidebar-content]');
             const extractedToolbar = document.querySelector('[data-extracted-toolbar]');
 
-            if (sidebarContent && !sidebarContent.contains(target) &&
-                extractedToolbar && !extractedToolbar.contains(target)) {
+            if (sidebarContent && !sidebarContent.contains(target)) {
+                // If toolbar exists (it shouldn't when open, but just in case), check it too
+                if (extractedToolbar && extractedToolbar.contains(target)) {
+                    return;
+                }
                 toggleSidebar();
             }
         };
@@ -170,10 +172,10 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                         ].map((opt) => (
                                             <div
                                                 key={opt.value}
-                                                onClick={() => onSortChange(opt.value)}
+                                                onClick={() => onSortChange(opt.value as SortOption)}
                                                 style={{
                                                     fontSize: '10px',
-                                                    color: sortOption === opt.value ? '#2c3e50' : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)'),
+                                                    color: sortOption === opt.value ? '#021859' : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)'),
                                                     background: sortOption === opt.value ? (isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.9)') : (isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
                                                     padding: '2px 6px',
                                                     borderRadius: '4px',
@@ -199,7 +201,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     width: '40px', height: '40px', borderRadius: '10px',
                                     background: isDarkMode
                                         ? 'linear-gradient(135deg, #4834d4 0%, #686de0 100%)'
-                                        : 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)',
+                                        : 'linear-gradient(135deg, #07D950 0%, #021859 100%)',
                                     color: 'var(--text-white)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     cursor: 'pointer',
                                     boxShadow: isDarkMode
@@ -217,7 +219,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     background: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.8)',
                                     backdropFilter: 'blur(8px)',
                                     border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(255,255,255,0.6)',
-                                    color: isDarkMode ? 'var(--text-primary)' : '#2c3e50',
+                                    color: isDarkMode ? 'var(--text-primary)' : '#021859',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                                 }}>
@@ -265,10 +267,10 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                             ].map((opt) => (
                                                 <div
                                                     key={opt.value}
-                                                    onClick={() => onSortChange(opt.value)}
+                                                    onClick={() => onSortChange(opt.value as SortOption)}
                                                     style={{
                                                         fontSize: '11px',
-                                                        color: sortOption === opt.value ? '#2c3e50' : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)'),
+                                                        color: sortOption === opt.value ? '#021859' : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)'),
                                                         background: sortOption === opt.value ? (isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.9)') : (isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
                                                         padding: '4px 8px',
                                                         borderRadius: '6px',
@@ -294,7 +296,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                         width: '40px', height: '40px', borderRadius: '12px',
                                         background: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.9)',
                                         backdropFilter: 'blur(10px)',
-                                        color: isDarkMode ? 'var(--text-primary)' : '#2c3e50',
+                                        color: isDarkMode ? 'var(--text-primary)' : '#021859',
                                         border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         cursor: 'pointer', flexShrink: 0,
@@ -306,7 +308,8 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                         </div>
                     )}
                 </>
-            )}
+            )
+            }
 
             {/* Sidebar Content */}
             <div data-sidebar-content style={{
@@ -391,7 +394,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     fontWeight: 'bold',
-                                    color: '#2c3e50',
+                                    color: '#021859',
                                     fontSize: '14px',
                                     boxShadow: '0 4px 12px rgba(161, 196, 253, 0.4)',
                                     userSelect: 'none',
@@ -441,7 +444,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     style={{
                                         background: isDarkMode
                                             ? 'rgba(255, 255, 255, 0.15)'
-                                            : 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)',
+                                            : 'linear-gradient(135deg, #07D950 0%, #021859 100%)',
                                         border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
                                         boxShadow: isDarkMode ? 'none' : '0 4px 14px 0 rgba(118, 75, 162, 0.39)',
                                         height: '40px',
@@ -513,7 +516,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                         justifyContent: 'center',
                                         background: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(44, 62, 80, 0.05)',
                                         border: 'none',
-                                        color: isDarkMode ? 'var(--text-primary)' : '#2c3e50',
+                                        color: isDarkMode ? 'var(--text-primary)' : '#021859',
                                         borderRadius: '12px'
                                     }}
                                 />
@@ -574,36 +577,38 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                 </div>
             </div>
 
-            {isMobile && isCollapsed && (
-                <div
-                    id="ui-add-fab"
-                    onClick={onAddTask}
-                    className="pulse-animation"
-                    style={{
-                        position: 'fixed',
-                        bottom: '32px',
-                        right: '32px',
-                        width: '60px',
-                        height: '60px',
-                        borderRadius: '30px',
-                        background: isDarkMode
-                            ? 'linear-gradient(135deg, #4834d4 0%, #686de0 100%)'
-                            : 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)',
-                        color: 'var(--text-white)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        zIndex: 1001,
-                        boxShadow: '0 8px 24px rgba(108, 92, 231, 0.4)',
-                        transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                >
-                    <Plus size={30} strokeWidth={3} />
-                </div>
-            )}
+            {
+                isMobile && isCollapsed && (
+                    <div
+                        id="ui-add-fab"
+                        onClick={onAddTask}
+                        className="pulse-animation"
+                        style={{
+                            position: 'fixed',
+                            bottom: '32px',
+                            right: '32px',
+                            width: '60px',
+                            height: '60px',
+                            borderRadius: '30px',
+                            background: isDarkMode
+                                ? 'linear-gradient(135deg, #4834d4 0%, #686de0 100%)'
+                                : 'linear-gradient(135deg, #07D950 0%, #021859 100%)',
+                            color: 'var(--text-white)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            zIndex: 1001,
+                            boxShadow: '0 8px 24px rgba(108, 92, 231, 0.4)',
+                            transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                        <Plus size={30} strokeWidth={3} />
+                    </div>
+                )
+            }
         </>
     );
 };

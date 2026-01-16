@@ -49,13 +49,16 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                 }
             }
 
-            const matchesPriority = filterPriority.length === 0 || filterPriority.includes(t.priority);
+            // Priority Filter: Normalize comparison
+            const matchesPriority = filterPriority.length === 0 || filterPriority.includes(t.priority.toLowerCase());
             const matchesFavorite = !filterFavorite || (filterFavorite && t.isFavorite);
             // AND Condition: Task must have ALL selected tags
             const matchesTags = filterTags.length === 0 || filterTags.every(tag => t.tags && t.tags.includes(tag));
 
             // Hide Done Filter
-            const matchesHideDone = !filterHideDone || t.status !== 'DONE';
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const matchesHideDone = !filterHideDone || t.status.toLowerCase() !== 'done';
 
             // Date Filter Logic
             let matchesDate = true;
@@ -72,7 +75,9 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                 } else if (filterDate === 'overdue') {
                     if (t.dueDate) {
                         const deadlineDate = new Date(t.dueDate).getTime();
-                        matchesDate = deadlineDate < todayValues && t.status !== 'DONE';
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        matchesDate = deadlineDate < todayValues && t.status.toLowerCase() !== 'done';
                     } else {
                         matchesDate = false;
                     }
@@ -97,11 +102,11 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
     }, [tasks, searchQuery, filterPriority, filterTags, searchScope, filterDate, filterFavorite, filterHideDone]);
 
     const columns = useMemo(() => {
-        // Priority weights for sorting: LOW (top) -> MEDIUM -> HIGH (bottom)
+        // Priority weights for sorting: low (top) -> medium -> high (bottom)
         const priorityWeight: Record<Priority, number> = {
-            LOW: 1,
-            MEDIUM: 2,
-            HIGH: 3,
+            low: 1,
+            medium: 2,
+            high: 3,
         };
 
         const sortTasks = (tasksToSort: typeof tasks) => {
@@ -144,9 +149,9 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
         };
 
         const cols: Record<TaskStatus, typeof tasks> = {
-            TODO: sortTasks(filteredTasks.filter((t) => t.status === 'TODO')),
-            IN_PROGRESS: sortTasks(filteredTasks.filter((t) => t.status === 'IN_PROGRESS')),
-            DONE: sortTasks(filteredTasks.filter((t) => t.status === 'DONE')),
+            'todo': sortTasks(filteredTasks.filter((t) => t.status === 'todo')),
+            'in-progress': sortTasks(filteredTasks.filter((t) => t.status === 'in-progress')),
+            'done': sortTasks(filteredTasks.filter((t) => t.status === 'done')),
         };
         return cols;
     }, [filteredTasks, sortOption]);
@@ -242,24 +247,24 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                 }}>
                 <Column
                     title="To Do"
-                    status="TODO"
-                    tasks={columns.TODO}
+                    status="todo"
+                    tasks={columns.todo}
                     color="var(--col-todo)"
                     onEditTask={onEditTask}
                     searchQuery={searchQuery}
                 />
                 <Column
                     title="In Progress"
-                    status="IN_PROGRESS"
-                    tasks={columns.IN_PROGRESS}
+                    status="in-progress"
+                    tasks={columns['in-progress']}
                     color="var(--col-progress)"
                     onEditTask={onEditTask}
                     searchQuery={searchQuery}
                 />
                 <Column
                     title="Done"
-                    status="DONE"
-                    tasks={columns.DONE}
+                    status="done"
+                    tasks={columns.done}
                     color="var(--col-done)"
                     onEditTask={onEditTask}
                     searchQuery={searchQuery}

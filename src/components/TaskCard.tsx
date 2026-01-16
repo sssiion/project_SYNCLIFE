@@ -49,9 +49,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
     // Helper Functions
     const getPriorityColor = (priority: string) => {
         switch (priority) {
-            case 'HIGH': return 'error';
-            case 'MEDIUM': return 'warning';
-            case 'LOW': return 'success';
+            case 'high': return 'error';
+            case 'medium': return 'warning';
+            case 'low': return 'success';
             default: return 'default';
         }
     };
@@ -155,8 +155,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, onMoveTask
         diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     }
 
-    const isUrgent = task.status !== 'DONE' && task.dueDate && diffDays <= 1;
-    const isDone = task.status === 'DONE';
+    const isUrgent = task.status !== 'done' && task.dueDate && diffDays <= 1;
+    const isDone = task.status === 'done';
 
     return (
         <Draggable draggableId={task.id} index={index}>

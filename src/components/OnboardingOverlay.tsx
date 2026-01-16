@@ -22,6 +22,11 @@ const OnboardingOverlay: React.FC = () => {
     const [typingTitle, setTypingTitle] = useState('');
     const fullTitle = 'SyncLife 개발 완료하기';
 
+    const stepList = isMobileView
+        ? [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        : [0, 1, 2, 4, 5, 6, 7, 8, 9];
+    const currentStepIndex = stepList.indexOf(step);
+
     useEffect(() => {
         let interval: any;
         if (step === 7) {
@@ -41,6 +46,14 @@ const OnboardingOverlay: React.FC = () => {
 
     // If already seen, don't render (unless reset)
     if (hasSeenTutorial) return null;
+
+    const handleComplete = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setIsExiting(true);
+        setTimeout(() => {
+            completeTutorial();
+        }, 500);
+    };
 
     const handleNext = (e?: React.MouseEvent) => {
         e?.stopPropagation();
@@ -65,17 +78,18 @@ const OnboardingOverlay: React.FC = () => {
         }
     };
 
-    const stepList = isMobileView
-        ? [0, 1, 2, 3, 4, 5, 6, 7, 8]
-        : [0, 1, 2, 4, 5, 6, 7, 8, 9];
-    const currentStepIndex = stepList.indexOf(step);
-
-    const handleComplete = (e?: React.MouseEvent) => {
+    const handlePrev = (e?: React.MouseEvent) => {
         e?.stopPropagation();
-        setIsExiting(true);
-        setTimeout(() => {
-            completeTutorial();
-        }, 500);
+        if (step === 0) return;
+
+        let prev = step - 1;
+
+        // Skip precision move (Step 3) on desktop if coming back
+        if (!isMobileView && prev === 3) {
+            prev = 2;
+        }
+
+        setStep(prev);
     };
 
     // Card Mock Component for reuse
@@ -132,24 +146,45 @@ const OnboardingOverlay: React.FC = () => {
         </div>
     );
 
-    // Reusable Next Button
-    const NextButton = () => (
-        <button
-            onClick={handleNext}
-            style={{
-                marginTop: '32px',
-                background: 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)',
-                color: 'white', border: 'none', padding: '12px 32px', borderRadius: '12px',
-                fontSize: '16px', fontWeight: 700, cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(61, 220, 132, 0.3)',
-                transition: 'transform 0.2s',
-            }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-        >
-            다음
-        </button>
-    );
+    // Unified Navigation Control
+    const NavigationButtons = () => {
+        const isLastStep = currentStepIndex === stepList.length - 1;
+        const isFirstStep = currentStepIndex === 0;
+
+        return (
+            <div style={{ marginTop: '32px', display: 'flex', gap: '12px' }}>
+                {!isFirstStep && (
+                    <button
+                        onClick={handlePrev}
+                        className="hover-scale"
+                        style={{
+                            background: isDarkMode ? 'rgba(255,255,255,0.1)' : 'white',
+                            color: isDarkMode ? '#e2e8f0' : '#636e72',
+                            border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #dfe6e9',
+                            padding: '12px 24px', borderRadius: '12px',
+                            fontSize: '16px', fontWeight: 700, cursor: 'pointer',
+                            transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        }}
+                    >
+                        이전
+                    </button>
+                )}
+                <button
+                    onClick={isLastStep ? handleComplete : handleNext}
+                    className="hover-scale"
+                    style={{
+                        background: 'linear-gradient(135deg, #07D950 0%, #021859 100%)',
+                        color: 'white', border: 'none', padding: '12px 32px', borderRadius: '12px',
+                        fontSize: '16px', fontWeight: 700, cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(61, 220, 132, 0.3)',
+                        transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    }}
+                >
+                    {isLastStep ? '시작' : '다음'}
+                </button>
+            </div>
+        );
+    };
 
     return (
         <div
@@ -159,23 +194,21 @@ const OnboardingOverlay: React.FC = () => {
                 display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                 opacity: isExiting ? 0 : 1, transition: 'opacity 0.5s ease',
                 padding: '20px', boxSizing: 'border-box',
-                cursor: (step === 9 || (isMobileView && step === 8)) ? 'pointer' : 'default'
+                cursor: 'default',
+                userSelect: 'none',
+                WebkitUserSelect: 'none'
             }}
-            onClick={(e) => {
-                // Close if clicking the background (not the content)
-                if (e.target === e.currentTarget) {
-                    handleComplete();
-                } else if (step === 9 || (isMobileView && step === 8)) {
-                    handleComplete();
-                }
-            }}
+            // Prevent sidebar from closing by stopping mousedown propagation
+            onMouseDown={(e) => e.stopPropagation()}
+        // Remove onClick background close
+        // onClick={(e) => { ... }}
         >
             {/* Progress Indicator */}
             <div style={{ position: 'absolute', top: '40px', display: 'flex', gap: '8px' }}>
                 {stepList.map((s, idx) => (
                     <div key={s} style={{
                         width: '8px', height: '8px', borderRadius: '50%',
-                        background: idx === currentStepIndex ? '#3ddc84' : (isDarkMode ? '#4a4a4a' : '#dfe6e9'),
+                        background: idx === currentStepIndex ? '#07D950' : (isDarkMode ? '#4a4a4a' : '#dfe6e9'),
                         transition: 'all 0.3s'
                     }} />
                 ))}
@@ -185,9 +218,9 @@ const OnboardingOverlay: React.FC = () => {
             {step === 0 && (
                 <div className="animate-fade-in" style={{ textAlign: 'center', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ fontSize: '48px', marginBottom: '16px' }}>👋</div>
-                    <h1 style={{ fontSize: '28px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', marginBottom: '12px', fontWeight: 800 }}>Welcome to SyncLife</h1>
+                    <h1 style={{ fontSize: '28px', color: isDarkMode ? '#e2e8f0' : '#021859', marginBottom: '12px', fontWeight: 800 }}>Welcome to SyncLife</h1>
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.6' }}>간단하고 강력한 태스크 관리,<br />SyncLife 사용 방법을 알려드릴게요.</p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -196,12 +229,12 @@ const OnboardingOverlay: React.FC = () => {
                 <div className="animate-slide-up" style={{ textAlign: 'center', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ background: isDarkMode ? '#2d3436' : '#f1f2f6', borderRadius: '24px', padding: '32px', marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
                         <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: isDarkMode ? '#3a4042' : '#fff', boxShadow: isDarkMode ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <div style={{ width: '20px', height: '2px', background: isDarkMode ? '#e2e8f0' : '#2c3e50', boxShadow: isDarkMode ? '0 6px 0 #e2e8f0, 0 -6px 0 #e2e8f0' : '0 6px 0 #2c3e50, 0 -6px 0 #2c3e50' }}></div>
+                            <div style={{ width: '20px', height: '2px', background: isDarkMode ? '#e2e8f0' : '#021859', boxShadow: isDarkMode ? '0 6px 0 #e2e8f0, 0 -6px 0 #e2e8f0' : '0 6px 0 #021859, 0 -6px 0 #021859' }}></div>
                         </div>
                     </div>
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>메뉴 & 사이드바</h2>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>메뉴 & 사이드바</h2>
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72' }}>우측 상단 <strong>메뉴 버튼</strong>을 눌러<br />사이드바를 열 수 있습니다.</p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -211,7 +244,7 @@ const OnboardingOverlay: React.FC = () => {
                     {isMobileView ? (
                         // Mobile View: Swipe Action
                         <div style={{ background: isDarkMode ? '#2d3436' : '#f8f9fa', borderRadius: '24px', height: '220px', padding: '24px', marginBottom: '24px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-                            <div style={{ position: 'relative', width: '140px', height: '90px' }}>
+                            <div style={{ position: 'relative', width: '160px', height: '120px' }}>
                                 <div style={{ animation: 'swipeDemo 4s infinite ease-in-out', position: 'absolute', inset: 0, zIndex: 2 }}>
                                     <MockCard />
                                 </div>
@@ -236,9 +269,9 @@ const OnboardingOverlay: React.FC = () => {
                             {/* The Animated Card */}
                             <div style={{
                                 position: 'absolute',
-                                top: '64px',
-                                left: '30px',
-                                width: '170px',
+                                top: '66px',
+                                left: '35px',
+                                width: '157px',
                                 height: '120px',
                                 animation: 'desktopDragPersistent 5s infinite ease-in-out',
                                 zIndex: 10
@@ -251,7 +284,7 @@ const OnboardingOverlay: React.FC = () => {
                         </div>
                     )}
 
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>
                         {isMobileView ? '스와이프로 이동' : '카드를 들어서 이동'}
                     </h2>
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.6' }}>
@@ -261,7 +294,7 @@ const OnboardingOverlay: React.FC = () => {
                             <>카드를 <strong>클릭하여 길게 누르거나 드래그</strong>하면<br />공중에 들어 올린 듯한 모습으로 자유롭게 이동할 수 있습니다.</>
                         )}
                     </p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -269,7 +302,7 @@ const OnboardingOverlay: React.FC = () => {
             {step === 3 && (
                 <div className="animate-slide-up" style={{ textAlign: 'center', maxWidth: '400px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ background: isDarkMode ? '#2d3436' : '#f8f9fa', borderRadius: '24px', height: '220px', padding: '24px', marginBottom: '24px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-                        <div style={{ position: 'relative', width: '100%', maxWidth: '280px', height: '100px' }}>
+                        <div style={{ position: 'relative', width: '100%', maxWidth: '280px', height: '120px' }}>
                             <MockCard overlay={
                                 <div style={{
                                     position: 'absolute', inset: 0,
@@ -292,12 +325,12 @@ const OnboardingOverlay: React.FC = () => {
                                     </div>
                                 </div>
                             } />
-                            <div style={{ position: 'absolute', inset: 0, border: '3px solid #3ddc84', borderRadius: '16px', zIndex: 10, animation: 'ping 1.5s infinite' }}></div>
+                            <div style={{ position: 'absolute', inset: 0, border: '3px solid #07D950', borderRadius: '16px', zIndex: 10, animation: 'ping 1.5s infinite' }}></div>
                         </div>
                     </div>
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>정밀 이동 (Double Click)</h2>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>정밀 이동 (Double Click)</h2>
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72' }}>카드를 <strong>두 번 클릭</strong>하면<br />위아래로 순서를 정밀하게 옮길 수 있습니다.</p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -317,13 +350,13 @@ const OnboardingOverlay: React.FC = () => {
                                 <Search size={18} color="#94a3b8" />
                                 <div style={{ fontSize: '15px', color: '#94a3b8' }}>검색어를 입력하세요.</div>
                             </div>
-                            <Star size={20} color="#3ddc84" fill="#3ddc84" />
+                            <Star size={20} color="#07D950" fill="#07D950" />
                         </div>
 
                         {/* Favorite Tooltip */}
                         <div style={{
                             position: 'absolute', top: '45px', right: '10px',
-                            background: '#3ddc84', color: 'white',
+                            background: '#07D950', color: 'white',
                             padding: '8px 16px', borderRadius: '15px',
                             fontSize: '13px', fontWeight: 800,
                             boxShadow: '0 6px 16px rgba(61, 220, 132, 0.3)',
@@ -360,7 +393,7 @@ const OnboardingOverlay: React.FC = () => {
 
                     {/* Filter Section Container with Bounce Animation */}
                     <div style={{
-                        border: '2px solid #3ddc84',
+                        border: '2px solid #07D950',
                         borderRadius: '24px',
                         padding: '12px',
                         display: 'flex',
@@ -383,12 +416,12 @@ const OnboardingOverlay: React.FC = () => {
                         ))}
                     </div>
 
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, margin: '32px 0 12px' }}>검색 & 정렬 필터</h2>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, margin: '32px 0 12px' }}>검색 & 정렬 필터</h2>
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.7' }}>
                         검색바의 <strong>별표</strong>를 눌러 즐겨찾기 항목만 보거나,<br />
                         <strong>태그</strong>와 <strong>우선순위, 날짜, 제목순</strong>으로 업무를 빠르게 정리하세요!
                     </p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -409,7 +442,7 @@ const OnboardingOverlay: React.FC = () => {
 
                     {/* Sort Options Container with Bounce */}
                     <div style={{
-                        border: '2px solid #3ddc84',
+                        border: '2px solid #07D950',
                         borderRadius: '16px',
                         padding: '8px',
                         display: 'flex',
@@ -430,7 +463,7 @@ const OnboardingOverlay: React.FC = () => {
                         ].map((opt, i) => (
                             <div key={i} style={{
                                 fontSize: '10px',
-                                color: opt.active ? '#2c3e50' : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)'),
+                                color: opt.active ? '#021859' : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)'),
                                 background: opt.active ? (isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.9)') : (isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
                                 padding: '4px 8px',
                                 borderRadius: '6px',
@@ -443,12 +476,12 @@ const OnboardingOverlay: React.FC = () => {
                         ))}
                     </div>
 
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>카드 정렬</h2>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>카드 정렬</h2>
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.7' }}>
                         검색바 아래 <strong>정렬 옵션</strong>을 선택하여<br />
                         업무 카드를 원하는 순서로 빠르게 정리할 수 있습니다!
                     </p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -463,13 +496,13 @@ const OnboardingOverlay: React.FC = () => {
                     }}>
                         <ChevronDown size={22} color={isDarkMode ? '#94a3b8' : '#64748b'} />
                         <div style={{ width: '14px', height: '14px', background: '#79d7a2', borderRadius: '50%' }} />
-                        <span style={{ fontSize: '20px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#2c3e50' }}>Done</span>
+                        <span style={{ fontSize: '20px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#021859' }}>Done</span>
 
                         {/* Highlighting circular border around Eye icon */}
                         <div style={{
                             marginLeft: 'auto',
                             width: '44px', height: '44px',
-                            border: '2px solid #3ddc84',
+                            border: '2px solid #07D950',
                             borderRadius: '50%',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             animation: 'bounce 2s infinite'
@@ -478,12 +511,12 @@ const OnboardingOverlay: React.FC = () => {
                         </div>
                     </div>
 
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>컬럼 최적화</h2>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>컬럼 최적화</h2>
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.7' }}>
                         보드 상단의 <strong>눈 아이콘</strong>을 클릭하여<br />
-                        필요 없는 업무 컬럼을 숨기거나 순서를 빠르게 변경해 보세요!
+                        필요 없는 업무 컬럼을 숨겨보세요!
                     </p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -495,7 +528,7 @@ const OnboardingOverlay: React.FC = () => {
                             <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>새로운 업무</h3>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: isDarkMode ? '#94a3b8' : '#b2bec3', fontSize: '12px' }}>
-                                    priority <ChevronDown size={12} />
+                                    <span style={{ color: '#ff4d4f' }}>*</span>priority <ChevronDown size={12} />
                                 </div>
                                 <X size={16} color={isDarkMode ? '#94a3b8' : '#b2bec3'} />
                             </div>
@@ -505,12 +538,12 @@ const OnboardingOverlay: React.FC = () => {
                             <div style={{ fontSize: '12px', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '6px' }}>
                                 <span style={{ color: '#ff7675' }}>*</span> Title
                             </div>
-                            <div style={{ width: '100%', height: '36px', border: '2px solid #3ddc84', borderRadius: '10px', padding: '0 12px', display: 'flex', alignItems: 'center', color: isDarkMode ? '#e2e8f0' : '#2d3436', fontWeight: 600, fontSize: '13px', position: 'relative', boxSizing: 'border-box' }}>
+                            <div style={{ width: '100%', height: '36px', border: '2px solid #07D950', borderRadius: '10px', padding: '0 12px', display: 'flex', alignItems: 'center', color: isDarkMode ? '#e2e8f0' : '#2d3436', fontWeight: 600, fontSize: '13px', position: 'relative', boxSizing: 'border-box' }}>
                                 {typingTitle}
-                                <div style={{ width: '2px', height: '16px', background: '#3ddc84', marginLeft: '2px', animation: 'blink 0.8s infinite' }} />
+                                <div style={{ width: '2px', height: '16px', background: '#07D950', marginLeft: '2px', animation: 'blink 0.8s infinite' }} />
                                 {/* Visual Arrow pointing to title */}
                                 <div style={{ position: 'absolute', right: '-15px', top: '10px', animation: 'arrowMove 1.5s infinite' }}>
-                                    <MousePointer2 size={24} color="#3ddc84" fill="#3ddc84" />
+                                    <MousePointer2 size={24} color="#07D950" fill="#07D950" />
                                 </div>
                             </div>
                         </div>
@@ -536,12 +569,12 @@ const OnboardingOverlay: React.FC = () => {
 
                         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                             <div style={{ width: '60px', height: '36px', borderRadius: '10px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #dfe6e9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', fontSize: '13px' }}>취소</div>
-                            <div style={{ width: '60px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#2c3e50', boxShadow: '0 4px 12px rgba(161, 196, 253, 0.4)', fontSize: '13px' }}>생성</div>
+                            <div style={{ width: '60px', height: '36px', borderRadius: '10px', background: 'var(--bg-gradient-sky)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#ffffffff', boxShadow: '0 4px 12px rgba(2, 24, 89, 0.2)', fontSize: '13px' }}>생성</div>
                         </div>
                     </div>
-                    <h2 style={{ fontSize: '20px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, margin: '20px 0 8px' }}>새 할일 상세 설정</h2>
+                    <h2 style={{ fontSize: '20px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, margin: '20px 0 8px' }}>새 할일 상세 설정</h2>
                     <p style={{ fontSize: '14px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.6' }}>우선순위, 업무명, 태그, 마감일, 상세내용을<br />자유롭게 입력하여 할일을 꼼꼼하게 관리하세요!</p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -578,7 +611,7 @@ const OnboardingOverlay: React.FC = () => {
                                     <div style={{ width: '100px', height: '100px', margin: '0 auto 20px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <svg viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
                                             <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke={isDarkMode ? "rgba(255,255,255,0.05)" : "#f1f2f6"} strokeWidth="3" />
-                                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#3ddc84" strokeWidth="3" strokeDasharray="25, 100" />
+                                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#07D950" strokeWidth="3" strokeDasharray="25, 100" />
                                         </svg>
                                         <div style={{ position: 'absolute', textAlign: 'center' }}>
                                             <div style={{ fontSize: '18px', fontWeight: 900, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>25%</div>
@@ -611,7 +644,7 @@ const OnboardingOverlay: React.FC = () => {
                                     boxSizing: 'border-box'
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                        <span style={{ fontSize: '14px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>Priority</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}><span style={{ color: '#ff4d4f', marginRight: '4px' }}>*</span>Priority</span>
                                         <Repeat size={14} color={isDarkMode ? "#e2e8f0" : "#2d3436"} style={{ opacity: 0.4 }} />
                                     </div>
 
@@ -657,26 +690,26 @@ const OnboardingOverlay: React.FC = () => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             boxShadow: isDarkMode ? '0 8px 24px rgba(0,0,0,0.2)' : '0 8px 20px rgba(61, 220, 132, 0.15)',
-                            border: isDarkMode ? '2px solid #3ddc84' : '2px solid #3ddc84',
+                            border: isDarkMode ? '2px solid #07D950' : '2px solid #07D950',
                             animation: 'pulse 1.5s infinite',
                             width: '100%',
                             boxSizing: 'border-box'
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <div style={{ width: '32px', height: '32px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-                                    <HelpCircle size={18} color="#3ddc84" />
+                                    <HelpCircle size={18} color="#07D950" />
                                 </div>
                                 <span style={{ fontWeight: 800, fontSize: '14px', color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>App Guide</span>
                             </div>
-                            <div style={{ fontSize: '11px', fontWeight: 900, color: '#3ddc84', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', padding: '4px 10px', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>View Again</div>
+                            <div style={{ fontSize: '11px', fontWeight: 900, color: '#07D950', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', padding: '4px 10px', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>View Again</div>
                         </div>
                     </div>
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, margin: '24px 0 10px' }}>설정 & 통계</h2>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, margin: '24px 0 10px' }}>설정 & 통계</h2>
                     <p style={{ fontSize: '15px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.7' }}>
                         메뉴의 <strong>설정</strong>에서는 업무 통계를 한눈에 확인하고,<br />
                         다크 모드 설정 및 가이드를 언제든 다시 볼 수 있습니다!
                     </p>
-                    <NextButton />
+                    <NavigationButtons />
                 </div>
             )}
 
@@ -690,20 +723,20 @@ const OnboardingOverlay: React.FC = () => {
                             { key: 'S', desc: '검색 포커스' }
                         ].map(k => (
                             <div key={k.key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                                <div style={{ width: '60px', height: '60px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', borderRadius: '16px', boxShadow: isDarkMode ? '0 8px 24px rgba(0,0,0,0.3)' : '0 8px 24px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 800, color: '#3ddc84', border: '2px solid #3ddc84' }}>{k.key}</div>
+                                <div style={{ width: '60px', height: '60px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', borderRadius: '16px', boxShadow: isDarkMode ? '0 8px 24px rgba(0,0,0,0.3)' : '0 8px 24px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 800, color: '#07D950', border: '2px solid #07D950' }}>{k.key}</div>
                                 <span style={{ fontSize: '14px', fontWeight: 600, color: isDarkMode ? '#a0aec0' : '#636e72' }}>{k.desc}</span>
                             </div>
                         ))}
                     </div>
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>키보드 단축키</h2>
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#021859', fontWeight: 700, marginBottom: '12px' }}>키보드 단축키</h2>
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '32px' }}>데스크탑 사용자라면 단축키를 이용해<br />더욱 빠르게 작업할 수 있습니다.</p>
                     <button
                         onClick={handleNext}
-                        style={{ background: 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)', color: 'white', border: 'none', padding: '16px 40px', borderRadius: '14px', fontSize: '18px', fontWeight: 700, boxShadow: '0 8px 20px rgba(61, 220, 132, 0.3)', cursor: 'pointer', pointerEvents: 'auto' }}
+                        style={{ background: 'linear-gradient(135deg, #07D950 0%, #021859 100%)', color: 'white', border: 'none', padding: '16px 40px', borderRadius: '14px', fontSize: '18px', fontWeight: 700, boxShadow: '0 8px 20px rgba(61, 220, 132, 0.3)', cursor: 'pointer', pointerEvents: 'auto' }}
                     >
                         시작하기
                     </button>
-                    <p style={{ marginTop: '16px', fontSize: '14px', color: '#3ddc84', fontWeight: 700, animation: 'pulse 1.5s infinite' }}>화면 아무 곳이나 클릭하여 가이드를 종료하세요!</p>
+                    {/* <p style={{ marginTop: '16px', fontSize: '14px', color: '#07D950', fontWeight: 700, animation: 'pulse 1.5s infinite' }}>화면 아무 곳이나 클릭하여 가이드를 종료하세요!</p> */}
                 </div>
             )}
 

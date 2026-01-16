@@ -87,7 +87,7 @@ function App() {
           fontFamily: 'Inter, sans-serif',
           colorPrimary: '#8ec5fc', // Pastel Blue
           colorBgContainer: isDarkMode ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.6)',
-          colorText: isDarkMode ? 'rgba(236, 240, 241, 0.55)' : '#2c3e50',
+          colorText: isDarkMode ? 'rgba(236, 240, 241, 0.55)' : '#021859',
           colorTextHeading: isDarkMode ? 'rgba(255, 255, 255, 0.65)' : '#1e272e',
         },
       }}

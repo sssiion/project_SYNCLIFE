@@ -40,12 +40,23 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
     }, [visible, taskToEdit, form]);
 
     const handleSubmit = (values: any) => {
+        if (!priority) {
+            // Using antd message to show error since Select is outside Form
+            Modal.error({
+                title: '필수 항목 누락',
+                content: '우선순위(Priority)를 선택해주세요.',
+                centered: true,
+            });
+            return;
+        }
+
         const payload: any = {
             title: values.title,
             description: values.description,
-            priority: priority || 'MEDIUM', // Default to MEDIUM if not selected
+            priority: priority,
             dueDate: values.dueDate ? values.dueDate.valueOf() : undefined,
             tags: values.tags,
+            // assignee: values.assignee // Add if form has assignee input
         };
 
         if (taskToEdit) {
@@ -53,7 +64,8 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
         } else {
             const newTask: Omit<Task, 'id' | 'createdAt'> = {
                 ...payload,
-                status: 'TODO',
+                status: 'todo',
+                updatedAt: Date.now(),
             };
             addTask(newTask);
         }
@@ -70,19 +82,23 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                 <Select
                     value={priority}
                     onChange={(value: Priority) => setPriority(value)}
-                    placeholder="priority"
-                    style={{ width: 100 }}
+                    placeholder={
+                        <span style={{ color: 'var(--text-primary)' }}>
+                            <span style={{ color: '#ff4d4f', marginRight: '4px' }}>*</span>Priority
+                        </span>
+                    }
+                    style={{ width: 110 }}
                     variant="borderless"
                     // @ts-ignore - fixing deprecated warning
                     className="priority-select"
                 >
-                    <Option value="HIGH">
+                    <Option value="high">
                         <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>High</span>
                     </Option>
-                    <Option value="MEDIUM">
+                    <Option value="medium">
                         <span style={{ color: '#faad14', fontWeight: 'bold' }}>Medium</span>
                     </Option>
-                    <Option value="LOW">
+                    <Option value="low">
                         <span style={{ color: '#52c41a', fontWeight: 'bold' }}>Low</span>
                     </Option>
                 </Select>
@@ -185,7 +201,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
                     <Button onClick={onClose} style={{ marginRight: 8, background: 'transparent', color: 'var(--text-secondary)', border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)' }}>
                         취소
                     </Button>
-                    <Button type="primary" htmlType="submit" style={{ background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)', border: 'none', color: '#2c3e50', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', fontWeight: 600 }}>
+                    <Button type="primary" htmlType="submit" style={{ background: 'var(--bg-gradient-sky)', border: 'none', color: '#ffffffff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', fontWeight: 600 }}>
                         {taskToEdit ? "수정" : "생성"}
                     </Button>
                 </Form.Item>
