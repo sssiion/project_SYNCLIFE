@@ -23,6 +23,7 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const isTablet = useMediaQuery('(min-width: 769px) and (max-width: 1200px)');
 
   // Global Keyboard Shortcuts
   useEffect(() => {
@@ -93,7 +94,7 @@ function App() {
       }}
     >
       <div style={{
-        paddingRight: isMobile ? 0 : (isSidebarCollapsed ? 0 : '320px'),
+        paddingRight: (isMobile || isTablet) ? 0 : (isSidebarCollapsed ? 0 : '320px'),
         paddingBottom: isMobile ? '60px' : 0, // Space for bottom sidebar toggle
         transition: 'all 0.3s ease'
       }}>
