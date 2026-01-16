@@ -58,6 +58,13 @@ export const useTaskStore = create<TasksState>()(
         }),
         {
             name: 'task-storage',
+            merge: (persistedState, currentState) => {
+                const merged = { ...currentState, ...(persistedState as object) };
+                if (!merged.tasks || !Array.isArray(merged.tasks)) {
+                    merged.tasks = INITIAL_TASKS;
+                }
+                return merged;
+            },
         }
     )
 );
