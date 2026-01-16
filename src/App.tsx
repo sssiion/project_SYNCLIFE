@@ -6,6 +6,8 @@ import FloatingSidebar from './components/FloatingSidebar';
 import { ConfigProvider, theme } from 'antd';
 import type { Task } from './types';
 import { useMediaQuery } from './hooks/useMediaQuery';
+import { useTaskStore } from './store/useTaskStore'; // Import Store
+import OnboardingOverlay from './components/OnboardingOverlay'; // Import Overlay
 
 
 function App() {
@@ -63,6 +65,9 @@ function App() {
     setEditingTask(null);
   };
 
+  // Tutorial Logic
+  const hasSeenTutorial = useTaskStore((state) => state.hasSeenTutorial);
+
   return (
     <ConfigProvider
       theme={{
@@ -81,6 +86,9 @@ function App() {
         paddingBottom: isMobile ? '60px' : 0, // Space for bottom sidebar toggle
         transition: 'all 0.3s ease'
       }}>
+        {/* Onboarding Overlay */}
+        {!hasSeenTutorial && <OnboardingOverlay />}
+
         <Layout>
           {/* Main Content Area */}
           <div style={{ marginBottom: 24, display: 'none' }}>

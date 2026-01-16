@@ -147,6 +147,55 @@ code {
   }
 }
 
+/* Onboarding Animations */
+@keyframes swipeHand {
+
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+
+  25% {
+    transform: translateX(-40px) rotate(-10deg);
+  }
+
+  75% {
+    transform: translateX(40px) rotate(10deg);
+  }
+}
+
+@keyframes dragMouse {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(30px, -30px) scale(0.9);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.swipe-hand-animation {
+  animation: swipeHand 2s ease-in-out infinite;
+}
+
+.drag-mouse-animation {
+  animation: dragMouse 2s ease-in-out infinite;
+}
+
 /* Responsive Polish */
 @media (max-width: 768px) {
   .ant-layout-header {

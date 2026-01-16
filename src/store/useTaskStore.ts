@@ -55,6 +55,9 @@ export const useTaskStore = create<TasksState>()(
                 };
             }),
             clearAllTasks: () => set({ tasks: [] }),
+            // Tutorial State
+            hasSeenTutorial: false,
+            completeTutorial: () => set({ hasSeenTutorial: true }),
         }),
         {
             name: 'task-storage',

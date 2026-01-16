@@ -24,4 +24,6 @@ export type TasksState = {
   deleteTask: (id: string) => void;
   toggleFavorite: (id: string) => void;
   clearAllTasks: () => void;
+  hasSeenTutorial: boolean;
+  completeTutorial: () => void;
 };
