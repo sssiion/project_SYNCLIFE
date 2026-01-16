@@ -36,15 +36,14 @@ Glassmorphism(유리 아키텍처) 디자인을 적용하여 심미적으로 우
 
 ### 4. 배포 (준비 완료)
 - GitHub Pages 배포 설정 완료
-- `npm run deploy` 명령어로 자동 배포 가능
+- `main` 브랜치 푸시 시 자동 배포 (GitHub Actions)
 
 ## 🚀 배포 가이드 (Deployment Guide)
 사용자분의 의견을 반영하여 **GitHub Actions**를 통한 자동 배포 방식으로 설정을 변경했습니다. 이제 로컬에서 빌드 명령어를 실행할 필요가 없습니다.
 
 1. **설정 확인**:
    - GitHub 저장소의 `Settings` > `Pages`로 이동합니다.
-   - **Source**를 `GitHub Actions`로 변경합니다 (베타 기능일 수 있으나 권장됨).
-   - 혹은 Source가 `Deploy from a branch`라면, Actions가 자동으로 생성해 줄 `gh-pages` 브랜치를 선택하세요.
+   - **Source**를 `GitHub Actions`로 변경합니다.
 
 2. **코드 푸시**:
    작업한 코드를 GitHub `main` 브랜치에 푸시하면 자동으로 배포가 시작됩니다.
