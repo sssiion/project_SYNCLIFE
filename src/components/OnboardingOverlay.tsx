@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Hand, ArrowUp, ArrowDown, Clock, Star, MoreVertical, X, Search, ChevronDown, MousePointer2, Calendar, Moon, HelpCircle, LayoutGrid, CheckCircle2, ChevronLeft, ArrowRight, Repeat } from 'lucide-react';
+import { Hand, ArrowUp, ArrowDown, Clock, Star, MoreVertical, X, Search, ChevronDown, MousePointer2, Calendar, Moon, HelpCircle, LayoutGrid, CheckCircle2, ChevronLeft, ArrowRight, Repeat, Eye } from 'lucide-react';
 import { useTaskStore } from '../store/useTaskStore';
 
 const OnboardingOverlay: React.FC = () => {
@@ -57,7 +57,7 @@ const OnboardingOverlay: React.FC = () => {
             return;
         }
 
-        // Max step is 9 now (Welcome, Menu, Drag, Reorder, Search, Filter, Column, Create, Settings, Shortcuts)
+        // Max step is 9 now (Welcome, Menu, Drag, Reorder, Search, Sort, Column, Create, Settings, Shortcuts)
         if (next > 9) {
             handleComplete();
         } else {
@@ -107,8 +107,21 @@ const OnboardingOverlay: React.FC = () => {
                 </div>
             </div>
 
-            <div style={{ fontSize: '14px', fontWeight: 700, color: isDarkMode ? '#e2e8f0' : '#1e293b', textAlign: 'left', marginTop: '4px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: isDarkMode ? '#e2e8f0' : '#1e293b', textAlign: 'left', marginTop: '4px', }}>
                 API 명세서 검토
+            </div>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px', marginBottom: '4px' }}>
+                <div style={{
+                    fontSize: '10px',
+                    background: isDarkMode ? 'rgba(255,255,255,0.1)' : '#f1f2f6',
+                    color: isDarkMode ? '#e2e8f0' : '#64748b',
+                    padding: '5px 8px',
+                    borderRadius: '4px',
+                    fontWeight: 600
+                }}>
+                    #기획
+                </div>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: isDarkMode ? '#94a3b8' : '#64748b' }}>
@@ -125,10 +138,10 @@ const OnboardingOverlay: React.FC = () => {
             onClick={handleNext}
             style={{
                 marginTop: '32px',
-                background: 'linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)',
+                background: 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)',
                 color: 'white', border: 'none', padding: '12px 32px', borderRadius: '12px',
                 fontSize: '16px', fontWeight: 700, cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(108, 92, 231, 0.2)',
+                boxShadow: '0 4px 12px rgba(61, 220, 132, 0.3)',
                 transition: 'transform 0.2s',
             }}
             onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
@@ -148,14 +161,21 @@ const OnboardingOverlay: React.FC = () => {
                 padding: '20px', boxSizing: 'border-box',
                 cursor: (step === 9 || (isMobileView && step === 8)) ? 'pointer' : 'default'
             }}
-            onClick={(step === 9 || (isMobileView && step === 8)) ? () => handleComplete() : undefined}
+            onClick={(e) => {
+                // Close if clicking the background (not the content)
+                if (e.target === e.currentTarget) {
+                    handleComplete();
+                } else if (step === 9 || (isMobileView && step === 8)) {
+                    handleComplete();
+                }
+            }}
         >
             {/* Progress Indicator */}
             <div style={{ position: 'absolute', top: '40px', display: 'flex', gap: '8px' }}>
                 {stepList.map((s, idx) => (
                     <div key={s} style={{
                         width: '8px', height: '8px', borderRadius: '50%',
-                        background: idx === currentStepIndex ? '#6c5ce7' : (isDarkMode ? '#4a4a4a' : '#dfe6e9'),
+                        background: idx === currentStepIndex ? '#3ddc84' : (isDarkMode ? '#4a4a4a' : '#dfe6e9'),
                         transition: 'all 0.3s'
                     }} />
                 ))}
@@ -196,7 +216,7 @@ const OnboardingOverlay: React.FC = () => {
                                     <MockCard />
                                 </div>
                                 <div style={{ position: 'absolute', top: '45px', left: '50%', animation: 'handSwipeDemo 4s infinite ease-in-out', zIndex: 10 }}>
-                                    <Hand size={40} fill="#ffeaa7" color="#fffddbff" />
+                                    <Hand size={40} fill="#ffeaa7" color="#ffd557ff" />
                                 </div>
                             </div>
                         </div>
@@ -209,7 +229,7 @@ const OnboardingOverlay: React.FC = () => {
                                         <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: idx === 0 ? '#6c5ce7' : idx === 1 ? '#fd9644' : '#2bcbba' }} />
                                         <span style={{ fontSize: '12px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>{col}</span>
                                     </div>
-                                    {idx === 1 && <div style={{ opacity: 0.3, height: '100px' }}><MockCard /></div>}
+                                    {idx === 1 && <div style={{ opacity: 0.3, height: '120px' }}><MockCard /></div>}
                                 </div>
                             ))}
 
@@ -219,13 +239,13 @@ const OnboardingOverlay: React.FC = () => {
                                 top: '64px',
                                 left: '30px',
                                 width: '170px',
-                                height: '100px',
+                                height: '120px',
                                 animation: 'desktopDragPersistent 5s infinite ease-in-out',
                                 zIndex: 10
                             }}>
                                 <MockCard />
                                 <div style={{ position: 'absolute', top: '50px', left: '50%', transform: 'translate(-50%, 0)', zIndex: 11, animation: 'handGesturePersistent 5s infinite ease-in-out' }}>
-                                    <Hand size={32} fill="#ffeaa7" color="#fffddbff" />
+                                    <Hand size={32} fill="#ffeaa7" color="#ffd557ff" />
                                 </div>
                             </div>
                         </div>
@@ -272,7 +292,7 @@ const OnboardingOverlay: React.FC = () => {
                                     </div>
                                 </div>
                             } />
-                            <div style={{ position: 'absolute', inset: 0, border: '3px solid #6c5ce7', borderRadius: '16px', zIndex: 10, animation: 'ping 1.5s infinite' }}></div>
+                            <div style={{ position: 'absolute', inset: 0, border: '3px solid #3ddc84', borderRadius: '16px', zIndex: 10, animation: 'ping 1.5s infinite' }}></div>
                         </div>
                     </div>
                     <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>정밀 이동 (Double Click)</h2>
@@ -284,40 +304,184 @@ const OnboardingOverlay: React.FC = () => {
             {/* Step 4: Search & Favorites */}
             {step === 4 && (
                 <div className="animate-slide-up" style={{ textAlign: 'center', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div style={{
-                        background: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'white', borderRadius: '16px', padding: '10px 16px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        boxShadow: isDarkMode ? '0 4px 20px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.02)', position: 'relative'
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Search size={16} color={isDarkMode ? "rgba(255,255,255,0.4)" : "#94a3b8"} />
-                            <div style={{ fontSize: '13px', color: isDarkMode ? "rgba(255,255,255,0.4)" : "#94a3b8" }}>검색어를 입력하세요.</div>
-                        </div>
-                        <div style={{ position: 'relative' }}>
-                            <Star size={16} color="#6c5ce7" fill="#6c5ce7" style={{ animation: 'pulse 1.5s infinite' }} />
-                            <div style={{
-                                position: 'absolute', top: '18px', right: '-15px',
-                                background: '#6c5ce7', color: 'white',
-                                padding: '4px 10px', borderRadius: '8px',
-                                fontSize: '10px', whiteSpace: 'nowrap',
-                                fontWeight: 700, zIndex: 10,
-                                boxShadow: '0 4px 12px rgba(108, 92, 231, 0.3)'
-                            }}>
-                                즐겨찾기 모드
+                    <div style={{ position: 'relative', marginBottom: '12px' }}>
+                        {/* Mock Search Bar */}
+                        <div style={{
+                            background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
+                            borderRadius: '30px', padding: '12px 24px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            width: '320px',
+                            boxShadow: isDarkMode ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 32px rgba(0,0,0,0.05)',
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <Search size={18} color="#94a3b8" />
+                                <div style={{ fontSize: '15px', color: '#94a3b8' }}>검색어를 입력하세요.</div>
                             </div>
+                            <Star size={20} color="#3ddc84" fill="#3ddc84" />
+                        </div>
+
+                        {/* Favorite Tooltip */}
+                        <div style={{
+                            position: 'absolute', top: '45px', right: '10px',
+                            background: '#3ddc84', color: 'white',
+                            padding: '8px 16px', borderRadius: '15px',
+                            fontSize: '13px', fontWeight: 800,
+                            boxShadow: '0 6px 16px rgba(61, 220, 132, 0.3)',
+                            zIndex: 2,
+                            animation: 'bounce 2s infinite'
+                        }}>
+                            즐겨찾기 모드
                         </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '8px', opacity: isDarkMode ? 0.3 : 0.5, marginTop: '12px' }}>
+
+                    {/* Tag Filter Mock */}
+                    <div style={{
+                        background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
+                        borderRadius: '30px', padding: '8px 20px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        width: '320px', marginBottom: '32px',
+                        boxShadow: isDarkMode ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 32px rgba(0,0,0,0.05)',
+                    }}>
+                        {/* Bouncing Dummy Tag */}
+                        <div style={{
+                            background: isDarkMode ? 'rgba(255,255,255,0.1)' : '#f1f2f6',
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            animation: 'bounce 2s infinite'
+                        }}>
+                            <span style={{ fontSize: '14px', color: isDarkMode ? '#e2e8f0' : '#4a5568', fontWeight: 700 }}>#태그</span>
+                            <X size={14} color={isDarkMode ? '#94a3b8' : '#b2bec3'} />
+                        </div>
+                        <ChevronDown size={18} color="#94a3b8" />
+                    </div>
+
+                    {/* Filter Section Container with Bounce Animation */}
+                    <div style={{
+                        border: '2px solid #3ddc84',
+                        borderRadius: '24px',
+                        padding: '12px',
+                        display: 'flex',
+                        gap: '8px',
+                        animation: 'bounce 2s infinite',
+                        boxShadow: '0 8px 24px rgba(61, 220, 132, 0.1)',
+                        background: 'transparent'
+                    }}>
                         {[{ label: '우선순위' }, { label: '마감일' }, { label: '제목' }].map((f, i) => (
-                            <div key={i} style={{ flex: 1, background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', borderRadius: '12px', padding: '8px 4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px' }}>
-                                <span style={{ fontSize: '10px', color: isDarkMode ? '#e2e8f0' : '#94a3b8', fontWeight: 600 }}>{f.label}</span>
-                                <ChevronDown size={10} color={isDarkMode ? '#e2e8f0' : '#94a3b8'} />
+                            <div key={i} style={{
+                                flex: 1, background: isDarkMode ? 'rgba(255,255,255,0.05)' : '#f8fbfc',
+                                borderRadius: '16px', padding: '10px 8px',
+                                width: '100px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                                border: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid #edf2f7'
+                            }}>
+                                <span style={{ fontSize: '13px', color: isDarkMode ? '#e2e8f0' : '#4a5568', fontWeight: 600 }}>{f.label}</span>
+                                <ChevronDown size={14} color={isDarkMode ? '#d5dde8ff' : '#112133ff'} />
                             </div>
                         ))}
                     </div>
-                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, margin: '24px 0 12px' }}>검색 & 즐겨찾기</h2>
-                    <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.6' }}>
-                        검색바의 <strong>별표 아이콘</strong>을 눌러<br />즐겨찾기한 할일만 모아볼 수 있습니다.
+
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, margin: '32px 0 12px' }}>검색 & 정렬 필터</h2>
+                    <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.7' }}>
+                        검색바의 <strong>별표</strong>를 눌러 즐겨찾기 항목만 보거나,<br />
+                        <strong>태그</strong>와 <strong>우선순위, 날짜, 제목순</strong>으로 업무를 빠르게 정리하세요!
+                    </p>
+                    <NextButton />
+                </div>
+            )}
+
+            {/* Step 5: Task Sorting */}
+            {step === 5 && (
+                <div className="animate-slide-up" style={{ textAlign: 'center', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    {/* Mock Search Bar */}
+                    <div style={{
+                        background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
+                        borderRadius: '12px', padding: '8px 12px',
+                        display: 'flex', alignItems: 'center',
+                        width: '320px', marginBottom: '12px',
+                        boxShadow: isDarkMode ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 32px rgba(0,0,0,0.05)',
+                    }}>
+                        <Search size={16} color="#94a3b8" style={{ marginRight: '8px' }} />
+                        <div style={{ fontSize: '14px', color: '#94a3b8', flex: 1 }}>검색어를 입력하세요.</div>
+                    </div>
+
+                    {/* Sort Options Container with Bounce */}
+                    <div style={{
+                        border: '2px solid #3ddc84',
+                        borderRadius: '16px',
+                        padding: '8px',
+                        display: 'flex',
+                        gap: '4px',
+                        animation: 'bounce 2s infinite',
+                        boxShadow: '0 8px 24px rgba(61, 220, 132, 0.1)',
+                        background: 'transparent',
+                        marginBottom: '32px',
+                        overflowX: 'auto',
+                        width: '320px'
+                    }}>
+                        {[
+                            { label: '중요도(낮은)' },
+                            { label: '중요도(높은)' },
+                            { label: '최신순', active: true },
+                            { label: '마감일' },
+                            { label: '자유(직접)' }
+                        ].map((opt, i) => (
+                            <div key={i} style={{
+                                fontSize: '10px',
+                                color: opt.active ? '#2c3e50' : (isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)'),
+                                background: opt.active ? (isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.9)') : (isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
+                                padding: '4px 8px',
+                                borderRadius: '6px',
+                                whiteSpace: 'nowrap',
+                                boxShadow: opt.active ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
+                                fontWeight: opt.active ? 700 : 400
+                            }}>
+                                {opt.label}
+                            </div>
+                        ))}
+                    </div>
+
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>카드 정렬</h2>
+                    <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.7' }}>
+                        검색바 아래 <strong>정렬 옵션</strong>을 선택하여<br />
+                        업무 카드를 원하는 순서로 빠르게 정리할 수 있습니다!
+                    </p>
+                    <NextButton />
+                </div>
+            )}
+
+            {/* Step 6: Column Management */}
+            {step === 6 && (
+                <div className="animate-slide-up" style={{ textAlign: 'center', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{
+                        background: isDarkMode ? '#2d3436' : '#f0f7ff',
+                        borderRadius: '24px', padding: '16px 24px', marginBottom: '24px',
+                        display: 'flex', alignItems: 'center', gap: '12px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                    }}>
+                        <ChevronDown size={22} color={isDarkMode ? '#94a3b8' : '#64748b'} />
+                        <div style={{ width: '14px', height: '14px', background: '#79d7a2', borderRadius: '50%' }} />
+                        <span style={{ fontSize: '20px', fontWeight: 800, color: isDarkMode ? '#e2e8f0' : '#2c3e50' }}>Done</span>
+
+                        {/* Highlighting circular border around Eye icon */}
+                        <div style={{
+                            marginLeft: 'auto',
+                            width: '44px', height: '44px',
+                            border: '2px solid #3ddc84',
+                            borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            animation: 'bounce 2s infinite'
+                        }}>
+                            <Eye size={22} color={isDarkMode ? '#94a3b8' : '#64748b'} />
+                        </div>
+                    </div>
+
+                    <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, marginBottom: '12px' }}>컬럼 최적화</h2>
+                    <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', lineHeight: '1.7' }}>
+                        보드 상단의 <strong>눈 아이콘</strong>을 클릭하여<br />
+                        필요 없는 업무 컬럼을 숨기거나 순서를 빠르게 변경해 보세요!
                     </p>
                     <NextButton />
                 </div>
@@ -341,12 +505,12 @@ const OnboardingOverlay: React.FC = () => {
                             <div style={{ fontSize: '12px', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '6px' }}>
                                 <span style={{ color: '#ff7675' }}>*</span> Title
                             </div>
-                            <div style={{ width: '100%', height: '36px', border: '2px solid #6c5ce7', borderRadius: '10px', padding: '0 12px', display: 'flex', alignItems: 'center', color: isDarkMode ? '#e2e8f0' : '#2d3436', fontWeight: 600, fontSize: '13px', position: 'relative', boxSizing: 'border-box' }}>
+                            <div style={{ width: '100%', height: '36px', border: '2px solid #3ddc84', borderRadius: '10px', padding: '0 12px', display: 'flex', alignItems: 'center', color: isDarkMode ? '#e2e8f0' : '#2d3436', fontWeight: 600, fontSize: '13px', position: 'relative', boxSizing: 'border-box' }}>
                                 {typingTitle}
-                                <div style={{ width: '2px', height: '16px', background: '#6c5ce7', marginLeft: '2px', animation: 'blink 0.8s infinite' }} />
+                                <div style={{ width: '2px', height: '16px', background: '#3ddc84', marginLeft: '2px', animation: 'blink 0.8s infinite' }} />
                                 {/* Visual Arrow pointing to title */}
                                 <div style={{ position: 'absolute', right: '-15px', top: '10px', animation: 'arrowMove 1.5s infinite' }}>
-                                    <MousePointer2 size={24} color="#6c5ce7" fill="#6c5ce7" />
+                                    <MousePointer2 size={24} color="#3ddc84" fill="#3ddc84" />
                                 </div>
                             </div>
                         </div>
@@ -414,7 +578,7 @@ const OnboardingOverlay: React.FC = () => {
                                     <div style={{ width: '100px', height: '100px', margin: '0 auto 20px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <svg viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
                                             <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke={isDarkMode ? "rgba(255,255,255,0.05)" : "#f1f2f6"} strokeWidth="3" />
-                                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#a29bfe" strokeWidth="3" strokeDasharray="25, 100" />
+                                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#3ddc84" strokeWidth="3" strokeDasharray="25, 100" />
                                         </svg>
                                         <div style={{ position: 'absolute', textAlign: 'center' }}>
                                             <div style={{ fontSize: '18px', fontWeight: 900, color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>25%</div>
@@ -486,25 +650,25 @@ const OnboardingOverlay: React.FC = () => {
                         </div>
 
                         <div style={{
-                            background: isDarkMode ? 'rgba(108, 92, 231, 0.1)' : '#f8faff',
+                            background: isDarkMode ? 'rgba(61, 220, 132, 0.1)' : '#f8faff',
                             borderRadius: '16px',
                             padding: '12px 16px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            boxShadow: isDarkMode ? '0 8px 24px rgba(0,0,0,0.2)' : '0 8px 20px rgba(108, 92, 231, 0.15)',
-                            border: isDarkMode ? '2px solid #6c5ce7' : '2px solid #6c5ce7',
+                            boxShadow: isDarkMode ? '0 8px 24px rgba(0,0,0,0.2)' : '0 8px 20px rgba(61, 220, 132, 0.15)',
+                            border: isDarkMode ? '2px solid #3ddc84' : '2px solid #3ddc84',
                             animation: 'pulse 1.5s infinite',
                             width: '100%',
                             boxSizing: 'border-box'
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <div style={{ width: '32px', height: '32px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-                                    <HelpCircle size={18} color="#6c5ce7" />
+                                    <HelpCircle size={18} color="#3ddc84" />
                                 </div>
                                 <span style={{ fontWeight: 800, fontSize: '14px', color: isDarkMode ? '#e2e8f0' : '#2d3436' }}>App Guide</span>
                             </div>
-                            <div style={{ fontSize: '11px', fontWeight: 900, color: '#6c5ce7', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', padding: '4px 10px', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>View Again</div>
+                            <div style={{ fontSize: '11px', fontWeight: 900, color: '#3ddc84', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', padding: '4px 10px', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>View Again</div>
                         </div>
                     </div>
                     <h2 style={{ fontSize: '24px', color: isDarkMode ? '#e2e8f0' : '#2c3e50', fontWeight: 700, margin: '24px 0 10px' }}>설정 & 통계</h2>
@@ -526,7 +690,7 @@ const OnboardingOverlay: React.FC = () => {
                             { key: 'S', desc: '검색 포커스' }
                         ].map(k => (
                             <div key={k.key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                                <div style={{ width: '60px', height: '60px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', borderRadius: '16px', boxShadow: isDarkMode ? '0 8px 24px rgba(0,0,0,0.3)' : '0 8px 24px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 800, color: '#6c5ce7', border: '2px solid #6c5ce7' }}>{k.key}</div>
+                                <div style={{ width: '60px', height: '60px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white', borderRadius: '16px', boxShadow: isDarkMode ? '0 8px 24px rgba(0,0,0,0.3)' : '0 8px 24px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 800, color: '#3ddc84', border: '2px solid #3ddc84' }}>{k.key}</div>
                                 <span style={{ fontSize: '14px', fontWeight: 600, color: isDarkMode ? '#a0aec0' : '#636e72' }}>{k.desc}</span>
                             </div>
                         ))}
@@ -535,11 +699,11 @@ const OnboardingOverlay: React.FC = () => {
                     <p style={{ fontSize: '16px', color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '32px' }}>데스크탑 사용자라면 단축키를 이용해<br />더욱 빠르게 작업할 수 있습니다.</p>
                     <button
                         onClick={handleNext}
-                        style={{ background: 'linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)', color: 'white', border: 'none', padding: '16px 40px', borderRadius: '14px', fontSize: '18px', fontWeight: 700, boxShadow: '0 8px 20px rgba(108, 92, 231, 0.3)', cursor: 'pointer', pointerEvents: 'auto' }}
+                        style={{ background: 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)', color: 'white', border: 'none', padding: '16px 40px', borderRadius: '14px', fontSize: '18px', fontWeight: 700, boxShadow: '0 8px 20px rgba(61, 220, 132, 0.3)', cursor: 'pointer', pointerEvents: 'auto' }}
                     >
                         시작하기
                     </button>
-                    <p style={{ marginTop: '16px', fontSize: '14px', color: '#6c5ce7', fontWeight: 700, animation: 'pulse 1.5s infinite' }}>화면 아무 곳이나 클릭하여 가이드를 종료하세요!</p>
+                    <p style={{ marginTop: '16px', fontSize: '14px', color: '#3ddc84', fontWeight: 700, animation: 'pulse 1.5s infinite' }}>화면 아무 곳이나 클릭하여 가이드를 종료하세요!</p>
                 </div>
             )}
 

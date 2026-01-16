@@ -93,6 +93,33 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
         }
     };
 
+    // Click outside to close sidebar
+    React.useEffect(() => {
+        if (isCollapsed) return;
+
+        const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            // Check if click is outside the sidebar content
+            const sidebarContent = document.querySelector('[data-sidebar-content]');
+            const extractedToolbar = document.querySelector('[data-extracted-toolbar]');
+
+            if (sidebarContent && !sidebarContent.contains(target) &&
+                extractedToolbar && !extractedToolbar.contains(target)) {
+                toggleSidebar();
+            }
+        };
+
+        // Small delay to prevent immediate closure when opening
+        const timer = setTimeout(() => {
+            document.addEventListener('mousedown', handleClickOutside);
+        }, 100);
+
+        return () => {
+            clearTimeout(timer);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isCollapsed]);
+
     const handleOpenSettings = () => {
         setView('settings');
     };
@@ -109,6 +136,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     {/* Desktop Layout: All Top Right, Row */}
                     {!isMobile && (
                         <div
+                            data-extracted-toolbar
                             style={{
                                 position: 'fixed',
                                 top: '24px',
@@ -171,7 +199,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     width: '40px', height: '40px', borderRadius: '10px',
                                     background: isDarkMode
                                         ? 'linear-gradient(135deg, #4834d4 0%, #686de0 100%)'
-                                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        : 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)',
                                     color: 'var(--text-white)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     cursor: 'pointer',
                                     boxShadow: isDarkMode
@@ -201,6 +229,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                     {/* Mobile Layout: Split */}
                     {isMobile && (
                         <div
+                            data-extracted-toolbar
                             style={{
                                 position: 'fixed',
                                 top: '12px',
@@ -280,7 +309,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
             )}
 
             {/* Sidebar Content */}
-            <div style={{
+            <div data-sidebar-content style={{
                 position: 'fixed',
                 ...(isMobile ? {
                     bottom: 0,
@@ -412,7 +441,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                     style={{
                                         background: isDarkMode
                                             ? 'rgba(255, 255, 255, 0.15)'
-                                            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                            : 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)',
                                         border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
                                         boxShadow: isDarkMode ? 'none' : '0 4px 14px 0 rgba(118, 75, 162, 0.39)',
                                         height: '40px',
@@ -559,7 +588,7 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                         borderRadius: '30px',
                         background: isDarkMode
                             ? 'linear-gradient(135deg, #4834d4 0%, #686de0 100%)'
-                            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            : 'linear-gradient(135deg, #3ddc84 0%, #1a2332 100%)',
                         color: 'var(--text-white)',
                         display: 'flex',
                         alignItems: 'center',
