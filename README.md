@@ -1,5 +1,15 @@
 # 프론트엔드 개발자 채용 과제 - SYNCLIFE Task Manager Report
 
+배포 URL : https://sssiion.github.io/project_SYNCLIFE
+
+프로젝트 실행 방법 : 
+1. `npm install` (의존성 설치)
+2. `npm run dev` (로컬 개발 서버 실행)
+3. 브라우저에서 `http://localhost:5173` 접속 
+
+개발기간 : 26.01.15~ 26.01.17 
+
+
 1. AI 도구 사용 정책 (AI Tools Policy)
 
 본 프로젝트는 개발 생산성 향상과 효율적인 문제 해결을 위해 Gemini 2.0 (Google DeepMind) 에이전트와 협업하여 개발되었습니다.
