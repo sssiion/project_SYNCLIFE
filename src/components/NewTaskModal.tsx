@@ -116,7 +116,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ visible, onClose, taskToEdi
             className="glass-modal"
             centered
             zIndex={2000}
-            destroyOnClose={true}
+            destroyOnHidden={true}
             maskClosable={true}
         >
             <Form
