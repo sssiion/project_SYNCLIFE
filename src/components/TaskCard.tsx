@@ -26,7 +26,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
     const [isReordering, setIsReordering] = React.useState(false);
     const isMobile = useMediaQuery('(max-width: 1024px)');
 
-    const isDarkMode = useTaskStore((state) => state.isDarkMode);
+
 
     // Highlight text function
     const highlightText = (text: string, highlight?: string) => {
