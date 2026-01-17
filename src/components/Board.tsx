@@ -252,6 +252,8 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                     color="var(--col-todo)"
                     onEditTask={onEditTask}
                     searchQuery={searchQuery}
+                    filterTags={filterTags}
+                    searchScope={searchScope}
                 />
                 <Column
                     title="In Progress"
@@ -260,6 +262,8 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                     color="var(--col-progress)"
                     onEditTask={onEditTask}
                     searchQuery={searchQuery}
+                    filterTags={filterTags}
+                    searchScope={searchScope}
                 />
                 <Column
                     title="Done"
@@ -270,6 +274,8 @@ const Board: React.FC<BoardProps> = ({ searchQuery, filterPriority, filterTags, 
                     searchQuery={searchQuery}
                     onToggleHideDone={onFilterHideDone ? () => onFilterHideDone(!filterHideDone) : undefined}
                     isHideDone={filterHideDone}
+                    filterTags={filterTags}
+                    searchScope={searchScope}
                 />
             </div>
         </DragDropContext>

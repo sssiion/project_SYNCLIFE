@@ -18,9 +18,11 @@ interface ColumnProps {
     searchQuery?: string;
     onToggleHideDone?: () => void;
     isHideDone?: boolean;
+    filterTags?: string[];
+    searchScope?: string;
 }
 
-const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask, searchQuery, onToggleHideDone, isHideDone }) => {
+const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask, searchQuery, onToggleHideDone, isHideDone, filterTags, searchScope }) => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const isTablet = useMediaQuery('(min-width: 769px) and (max-width: 1200px)');
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -170,8 +172,9 @@ const Column: React.FC<ColumnProps> = ({ title, status, tasks, color, onEditTask
                                     task={task}
                                     index={index}
                                     onEditTask={onEditTask}
-
                                     searchQuery={searchQuery}
+                                    filterTags={filterTags}
+                                    searchScope={searchScope}
                                 />
                             ))}
                             {provided.placeholder}

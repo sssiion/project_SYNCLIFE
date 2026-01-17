@@ -14,9 +14,11 @@ interface TaskCardProps {
     index: number;
     onEditTask: (task: Task) => void;
     searchQuery?: string;
+    filterTags?: string[];
+    searchScope?: string; // New Prop
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuery }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuery, filterTags, searchScope = 'all' }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
     const toggleFavorite = useTaskStore((state) => state.toggleFavorite);
 
@@ -24,20 +26,25 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
     const [isReordering, setIsReordering] = React.useState(false);
     const isMobile = useMediaQuery('(max-width: 1024px)');
 
-    // Highlight Text Helper
-    const highlightText = (text: string, query?: string) => {
-        if (!query || !text) return text;
-        const parts = text.split(new RegExp(`(${query})`, 'gi'));
-        return (
-            <span>
-                {parts.map((part, i) =>
-                    part.toLowerCase() === query.toLowerCase() ? (
-                        <span key={i} style={{ backgroundColor: '#fff700', borderRadius: '2px', color: 'black' }}>{part}</span>
-                    ) : (
-                        part
-                    )
-                )}
-            </span>
+    const isDarkMode = useTaskStore((state) => state.isDarkMode);
+
+    // Highlight text function
+    const highlightText = (text: string, highlight?: string) => {
+        if (!highlight || !text) return text;
+
+        // Remove Highlighting for Tags from this function's typical usage logic if needed, 
+        // but here we just use it for Title/Description.
+        // The user specifically asked to NOT use it for Tags.
+
+        const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+        return parts.map((part, i) =>
+            part.toLowerCase() === highlight.toLowerCase() ? (
+                <span key={i} style={{ backgroundColor: '#fff700', color: '#000', fontWeight: 'bold', padding: '0 2px', borderRadius: '2px' }}>
+                    {part}
+                </span>
+            ) : (
+                part
+            )
         );
     };
 
@@ -248,7 +255,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                             style={{ fontSize: '16px', marginBottom: '4px', marginTop: 0, color: 'var(--text-primary)' }}
                             ellipsis={isHovered ? false : { rows: 2, tooltip: task.title }}
                         >
-                            {highlightText(task.title, searchQuery)}
+                            {(searchScope === 'all' || searchScope === 'title') ? highlightText(task.title, searchQuery) : task.title}
                         </Paragraph>
 
                         {task.tags && task.tags.length > 0 && (
@@ -258,17 +265,18 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                                         key={tag}
                                         style={{
                                             fontSize: '11px',
-                                            color: 'var(--tag-text)',
-                                            background: 'var(--tag-bg)',
+                                            color: (filterTags && filterTags.includes(tag)) ? '#000' : 'var(--tag-text)',
+                                            background: (filterTags && filterTags.includes(tag)) ? '#fff700' : 'var(--tag-bg)',
                                             borderRadius: '4px',
                                             margin: 0,
                                             padding: '0 6px',
                                             display: 'flex',
                                             alignItems: 'center',
-                                            lineHeight: '18px'
+                                            lineHeight: '18px',
+                                            fontWeight: (filterTags && filterTags.includes(tag)) ? 700 : 400
                                         }}
                                     >
-                                        #{highlightText(tag, searchQuery)}
+                                        #{tag}
                                     </Tag>
                                 ))}
                             </div>
@@ -285,7 +293,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                                 <Paragraph
                                     style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '8px' }}
                                 >
-                                    {highlightText(task.description, searchQuery)}
+                                    {(searchScope === 'all' || searchScope === 'description') ? highlightText(task.description, searchQuery) : task.description}
                                 </Paragraph>
                             )}
                         </div>

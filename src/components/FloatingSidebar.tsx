@@ -107,6 +107,14 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                 if (extractedToolbar && extractedToolbar.contains(target)) {
                     return;
                 }
+
+                // Check if click is inside an Ant Design dropdown/portal
+                if (target.closest('.ant-select-dropdown') ||
+                    target.closest('.ant-picker-dropdown') ||
+                    target.closest('.ant-modal-wrap')) {
+                    return;
+                }
+
                 toggleSidebar();
             }
         };
