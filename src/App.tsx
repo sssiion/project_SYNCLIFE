@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Layout from './components/Layout';
 import Board from './components/Board';
 import NewTaskModal from './components/NewTaskModal';
@@ -57,10 +57,10 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleEditTask = (task: Task) => {
+  const handleEditTask = useCallback((task: Task) => {
     setEditingTask(task);
     setIsModalVisible(true);
-  };
+  }, []);
 
   const handleCloseModal = () => {
     setIsModalVisible(false);

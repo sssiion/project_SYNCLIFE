@@ -1,13 +1,12 @@
 import React from 'react';
 import { Card, Tag, Typography, Button, Dropdown, Modal } from 'antd';
 import { Draggable } from '@hello-pangea/dnd';
-import { Clock, MoreVertical, Trash2, Edit, Calendar, Star } from 'lucide-react';
+import { Clock, MoreVertical, Trash2, Edit, Calendar, Star, X } from 'lucide-react';
 import type { Task } from '../types';
 import { useTaskStore } from '../store/useTaskStore';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const { Paragraph } = Typography;
-import { X } from 'lucide-react';
 
 interface TaskCardProps {
     task: Task;
@@ -15,59 +14,70 @@ interface TaskCardProps {
     onEditTask: (task: Task) => void;
     searchQuery?: string;
     filterTags?: string[];
-    searchScope?: string; // New Prop
+    searchScope?: string;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuery, filterTags, searchScope = 'all' }) => {
+// --- Helper Functions (Moved outside for performance) ---
+
+const highlightText = (text: string, highlight?: string) => {
+    if (!highlight || !text) return text;
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return (
+        <>
+            {parts.map((part, i) =>
+                part.toLowerCase() === highlight.toLowerCase() ? (
+                    <span key={i} style={{ backgroundColor: '#fff700', color: '#000', fontWeight: 'bold', padding: '0 2px', borderRadius: '2px' }}>
+                        {part}
+                    </span>
+                ) : (
+                    part
+                )
+            )}
+        </>
+    );
+};
+
+const getPriorityColor = (priority: string) => {
+    switch (priority) {
+        case 'high': return 'error';
+        case 'medium': return 'warning';
+        case 'low': return 'success';
+        default: return 'default';
+    }
+};
+
+const formatDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleDateString('ko-KR', {
+        month: 'short',
+        day: 'numeric',
+    });
+};
+
+const getDDay = (dueDate: number) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
+    const diffTime = due.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays < 0) return `D+${Math.abs(diffDays)}`;
+    return `D-${diffDays}`;
+};
+
+// --- Component Definition ---
+
+const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, index, onEditTask, searchQuery, filterTags, searchScope = 'all' }) => {
     const deleteTask = useTaskStore((state) => state.deleteTask);
     const toggleFavorite = useTaskStore((state) => state.toggleFavorite);
 
     const [isHovered, setIsHovered] = React.useState(false);
     const [isReordering, setIsReordering] = React.useState(false);
+    const [touchStart, setTouchStart] = React.useState<number | null>(null);
     const isMobile = useMediaQuery('(max-width: 1024px)');
 
-
-
-    // Highlight text function
-    const highlightText = (text: string, highlight?: string) => {
-        if (!highlight || !text) return text;
-
-        // Remove Highlighting for Tags from this function's typical usage logic if needed, 
-        // but here we just use it for Title/Description.
-        // The user specifically asked to NOT use it for Tags.
-
-        const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
-        return parts.map((part, i) =>
-            part.toLowerCase() === highlight.toLowerCase() ? (
-                <span key={i} style={{ backgroundColor: '#fff700', color: '#000', fontWeight: 'bold', padding: '0 2px', borderRadius: '2px' }}>
-                    {part}
-                </span>
-            ) : (
-                part
-            )
-        );
-    };
-
-    // Swipe Logic State
-    const [touchStart, setTouchStart] = React.useState<number | null>(null);
     const minSwipeDistance = 50;
-
-    // Helper Functions
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'high': return 'error';
-            case 'medium': return 'warning';
-            case 'low': return 'success';
-            default: return 'default';
-        }
-    };
-
-    const formatDate = (timestamp: number) => {
-        return new Date(timestamp).toLocaleDateString('ko-KR', {
-            month: 'short',
-            day: 'numeric',
-        });
-    };
 
     const handleDelete = () => {
         Modal.confirm({
@@ -82,20 +92,19 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
         });
     };
 
-    const getDDay = (dueDate: number) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const due = new Date(dueDate);
-        due.setHours(0, 0, 0, 0);
-        const diffTime = due.getTime() - today.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const handleSwipe = (direction: 'left' | 'right') => {
+        if (!isMobile) return;
 
-        if (diffDays === 0) return 'Today';
-        if (diffDays < 0) return `D+${Math.abs(diffDays)}`;
-        return `D-${diffDays}`;
+        if (direction === 'right') {
+            // Right Swipe (Left -> Right): Edit
+            onEditTask(task);
+        } else {
+            // Left Swipe (Right -> Left): Delete
+            handleDelete();
+        }
+        setIsHovered(false);
     };
 
-    // Swipe Handlers
     const onTouchStart = (e: React.TouchEvent) => {
         setTouchStart(e.targetTouches[0].clientX);
     };
@@ -107,25 +116,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
         const isSwipe = Math.abs(distance) > minSwipeDistance;
 
         if (isSwipe) {
-            // Swipe Left (distance > 0) or Right (distance < 0)
             const direction = distance > 0 ? 'left' : 'right';
             handleSwipe(direction);
         }
         setTouchStart(null);
-    };
-
-    const handleSwipe = (direction: 'left' | 'right') => {
-        if (!isMobile) return;
-
-        if (direction === 'right') {
-            // Right Swipe (Left -> Right): Edit
-            onEditTask(task);
-            // Optionally close swipe state if we had one, or visual feedback
-        } else {
-            // Left Swipe (Right -> Left): Delete
-            handleDelete();
-        }
-        setIsHovered(false);
     };
 
     const handleClick = () => {
@@ -150,7 +144,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
         },
     ];
 
-    // D-Day Logic and Styling State
+    // D-Day & Styling Logic
     let diffDays = 0;
     if (task.dueDate) {
         const today = new Date();
@@ -175,11 +169,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                         ...provided.draggableProps.style,
                         marginBottom: '16px',
                         outline: 'none',
-                        // Maintain original z-index logic
                         zIndex: snapshot.isDragging ? 9999 : 1,
-                        // CRITICAL: Allow native browser scrolling (pan-y)
                         touchAction: 'manipulation',
-                        // Prevent native context menu and ghost drag on iOS/Android
                         WebkitTouchCallout: 'none',
                         WebkitUserSelect: 'none',
                         MozUserSelect: 'none',
@@ -196,20 +187,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                     <Card
                         className={`glass-panel task-card-inner ${snapshot.isDragging ? 'is-dragging' : ''}`}
                         style={{
-                            // Inner Card Styles
-                            cursor: 'grab', // Restore grab cursor
+                            cursor: 'grab',
                             border: snapshot.isDragging ? '1px solid #74b9ff' : 'var(--card-border)',
-                            // Conditional Background Logic
                             background: isDone
                                 ? 'var(--card-bg-done)'
                                 : isUrgent
                                     ? 'var(--card-bg-urgent)'
                                     : 'var(--card-bg)',
-                            // Shadow is handled by CSS now for hover, but kept for drag/static for specific states if needed
-                            // We can let CSS handle hover shadow override.
                             boxShadow: snapshot.isDragging
                                 ? '0 20px 40px rgba(116, 185, 255, 0.4)'
-                                : '0 4px 12px rgba(0,0,0,0.02)', // Base shadow
+                                : '0 4px 12px rgba(0,0,0,0.02)',
                             opacity: snapshot.isDragging ? 0.9 : 1,
                             userSelect: 'none',
                             WebkitUserSelect: 'none',
@@ -410,6 +397,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
             )}
         </Draggable>
     );
-};
+});
 
 export default TaskCard;
