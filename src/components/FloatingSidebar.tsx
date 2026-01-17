@@ -148,7 +148,9 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                 alignItems: 'flex-start',
                                 gap: '12px',
                                 transition: 'all 0.3s ease',
-                                animation: 'fadeIn 0.3s ease-out'
+                                animation: 'fadeIn 0.3s ease-out',
+                                userSelect: 'none',
+                                WebkitUserSelect: 'none'
                             }}
                         >
                             <div style={{ width: '300px', display: 'flex', flexDirection: 'column' }}>
@@ -241,7 +243,9 @@ const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                                 animation: 'slideDown 0.3s ease-out',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: '8px'
+                                gap: '8px',
+                                userSelect: 'none',
+                                WebkitUserSelect: 'none'
                             }}
                         >
                             <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>

@@ -91,7 +91,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center', gap: '12px', userSelect: 'none', WebkitUserSelect: 'none' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
                 {/* Unified Search Bar Container */}
                 <div
@@ -189,7 +189,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             <Select
                                 showSearch={false}
                                 placeholder="우선순위"
-                                onChange={onFilterPriority}
+                                onChange={(value) => {
+                                    if (!value || value === 'all') {
+                                        onFilterPriority([]);
+                                    } else {
+                                        // Ensure value is lowercase to match task data
+                                        onFilterPriority([value.toLowerCase()]);
+                                    }
+                                }}
+                                allowClear
                                 className="glass-panel"
                                 style={{
                                     flex: 1,

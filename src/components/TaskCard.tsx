@@ -172,6 +172,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, onEditTask, searchQuer
                         zIndex: snapshot.isDragging ? 9999 : 1,
                         // CRITICAL: Allow native browser scrolling (pan-y)
                         touchAction: 'manipulation',
+                        // Prevent native context menu and ghost drag on iOS/Android
+                        WebkitTouchCallout: 'none',
+                        WebkitUserSelect: 'none',
+                        MozUserSelect: 'none',
+                        msUserSelect: 'none',
+                        userSelect: 'none',
                     }}
                     onMouseEnter={() => !isMobile && setIsHovered(true)}
                     onMouseLeave={() => !isMobile && setIsHovered(false)}

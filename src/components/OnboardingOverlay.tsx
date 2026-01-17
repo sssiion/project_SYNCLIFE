@@ -161,14 +161,12 @@ const OnboardingOverlay: React.FC = () => {
                 {!isFirstStep && (
                     <button
                         onClick={handlePrev}
-                        className="hover-scale"
                         style={{
                             background: isDarkMode ? 'rgba(255,255,255,0.1)' : 'white',
                             color: isDarkMode ? '#e2e8f0' : '#636e72',
                             border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #dfe6e9',
                             padding: '12px 24px', borderRadius: '12px',
                             fontSize: '16px', fontWeight: 700, cursor: 'pointer',
-                            transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                         }}
                     >
                         이전
@@ -176,13 +174,11 @@ const OnboardingOverlay: React.FC = () => {
                 )}
                 <button
                     onClick={isLastStep ? handleComplete : handleNext}
-                    className="hover-scale"
                     style={{
                         background: 'linear-gradient(135deg, #07D950 0%, #021859 100%)',
                         color: 'white', border: 'none', padding: '12px 32px', borderRadius: '12px',
                         fontSize: '16px', fontWeight: 700, cursor: 'pointer',
                         boxShadow: '0 4px 12px rgba(61, 220, 132, 0.3)',
-                        transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     }}
                 >
                     {isLastStep ? '시작' : '다음'}
@@ -562,13 +558,7 @@ const OnboardingOverlay: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Assignee Field Added */}
-                        <div style={{ marginBottom: '12px' }}>
-                            <div style={{ fontSize: '12px', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '6px' }}>Assignee (Optional)</div>
-                            <div style={{ width: '100%', height: '36px', border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #dfe6e9', borderRadius: '10px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: isDarkMode ? '#4a4a4a' : '#b2bec3', fontSize: '12px', boxSizing: 'border-box' }}>
-                                담당자 이름 (예: 김철수)
-                            </div>
-                        </div>
+
 
                         <div style={{ marginBottom: '12px' }}>
                             <div style={{ fontSize: '12px', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '6px' }}>Deadline (Optional)</div>
@@ -580,6 +570,14 @@ const OnboardingOverlay: React.FC = () => {
                         <div style={{ marginBottom: '20px' }}>
                             <div style={{ fontSize: '12px', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '6px' }}>Description (Optional)</div>
                             <div style={{ width: '100%', height: '60px', border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #dfe6e9', borderRadius: '10px', padding: '10px', color: isDarkMode ? '#4a4a4a' : '#b2bec3', fontSize: '12px', lineHeight: '1.4', boxSizing: 'border-box' }}>상세 내용을 입력해주세요.</div>
+                        </div>
+
+                        {/* Assignee Field Moved Here */}
+                        <div style={{ marginBottom: '20px' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: isDarkMode ? '#a0aec0' : '#636e72', marginBottom: '6px' }}>Assignee (Optional)</div>
+                            <div style={{ width: '100%', height: '36px', border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #dfe6e9', borderRadius: '10px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: isDarkMode ? '#4a4a4a' : '#b2bec3', fontSize: '12px', boxSizing: 'border-box' }}>
+                                담당자 이름 (예: 김철수)
+                            </div>
                         </div>
 
                         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
