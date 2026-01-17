@@ -12,7 +12,6 @@
     - 버그 디버깅 및 리팩토링: useTaskStore 타입 오류 수정, 성능 최적화 (Debouncing), 브라우저 호환성 문제 (Ghost Drag) 해결.
     - 문서 작성: README.md 및 기술 문서 초안 작성 보조.
 
-Note: 모든 코드는 생성 후 직접 검토 및 테스트를 거쳤으며, 프로젝트의 구조와 로직을 완벽하게 이해하고 설명할 수 있습니다.
 
 ---
 
@@ -112,6 +111,4 @@ Extra Libraries (추가 사용 라이브러리)
 - Icons: lucide-react (가볍고 통일성 있는 SVG 아이콘 세트)
 - ID Generation: uuid (고유한 태스크 ID 생성)
 
----
 
-© 2025 SYNCLIFE Co., Ltd. All rights reserved.
